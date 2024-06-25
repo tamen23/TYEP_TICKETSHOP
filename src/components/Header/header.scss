@@ -1,0 +1,105 @@
+.header {
+  padding: 0;
+  margin: 0;
+  height: 70px;
+  width: 100%;
+  position: fixed;
+  background: black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+
+  &__wrapper {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20px;
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+
+    .ticket__logo {
+      margin-right: 10px;
+    }
+
+    .underline {
+      //text-decoration: underline;
+    }
+  }
+
+  &__menu {
+    nav {
+      ul {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          margin-right: 20px;
+
+          a {
+            color: white;
+            text-decoration: none;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .hamburgerMenu {
+    display: none;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+
+    .login {
+      display: flex;
+      align-items: center;
+
+      .child__menu {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+
+
+        .org {
+          margin-right: 20px;
+
+          a {
+            text-decoration: none;
+
+            color: white;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+
+      a {
+        color: white;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
