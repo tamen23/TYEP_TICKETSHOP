@@ -1,0 +1,104 @@
+.calendar {
+  position: relative;
+  left: 45%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 500px;
+  height: 400px;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
+
+    &__icon {
+      font-size: 1.5rem;
+    }
+
+    &__title {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  }
+
+  &__body {
+    margin-bottom: 10px;
+  }
+
+  &__month {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+
+  &__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  &__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+  }
+
+  .calendar__day {
+    margin-bottom: 5px;
+    font-size: 1.2rem; /* Increase the size of the days */
+    height: 40px; /* Increase height to make them take more space */
+    line-height: 40px; /* Center the text vertically */
+
+    &--disabled {
+      color: #777;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__nav {
+    background-color: #444;
+    border: none;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &--prev {
+      margin-right: 10px;
+    }
+
+    &--next {
+      margin-left: 10px;
+    }
+
+    &:hover {
+      background-color: #555;
+    }
+  }
+
+  &__day {
+    // existing styles...
+
+    &--today {
+      background-color: #1A8FDD;
+      color: #fff;
+      height: 50px;
+      width: 40px;
+      border-radius: 50%;
+    }
+  }
+}

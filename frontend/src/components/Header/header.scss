@@ -4,11 +4,13 @@
   height: 70px;
   width: 100%;
   position: fixed;
-  background: black;
+  //background: black;
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: white;
+  background-color: #000;
+  z-index: 4000;
 
   &__wrapper {
     display: flex;
@@ -25,13 +27,33 @@
   &__logo {
     display: flex;
     align-items: center;
+    flex-direction: column;
+    position: relative;
+    &::before{
+      content: '';
+      height: 2px;
+      position: relative;
+      right: 12px;
+      top: -4px;
+      width: 70px;
+      background-color: #ffffff;
+    }
 
     .ticket__logo {
       margin-right: 10px;
+      &__image{
+        color: #fff;
+      }
+
     }
 
     .underline {
-      //text-decoration: underline;
+      position: relative;
+      height: 2px;
+      width: 70px;
+      top: 5px;
+      left: 12px;
+      background: #ffffff;
     }
   }
 
@@ -90,11 +112,22 @@
             }
           }
         }
+
+        .loginBtn{
+          a{
+            color: white;
+            text-decoration: none;
+            background-color:#1A8FDD;
+            padding: 9px 24px;
+            border-radius: 3px;
+          }
+        }
       }
 
       a {
         color: white;
         text-decoration: none;
+
 
         &:hover {
           text-decoration: underline;
