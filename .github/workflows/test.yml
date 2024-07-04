@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'  # This will run tests on push to any branch
+  pull_request:
+    branches:
+      - '**'  # This will run tests on pull request to any branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14, 16]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies and run frontend tests
+        working-directory: frontend
+        run: |
+          npm install
+          npm run test -- --watchAll=false
+
+      - name: Install dependencies and run backend tests
+        working-directory: backend
+        run: |
+          npm install
+          npm run test -- --watchAll=false
