@@ -1,31 +1,31 @@
 import express from 'express';
-import mongoose from 'mongoose'
-import dotenv from 'dotenv'
-
+import dotenv from 'dotenv';
+import authRoute from './routes/auth.js';
+import connectDB from './config/db.js';
 
 
 const app = express();
 dotenv.config();
 
 
+//connect to database 
+connectDB();
 
-const connectDB = async () => { 
-    try {
-        await mongoose.connect(process.env.MONGO_URL);
-        console.log('MongoDB connected');
-    } catch (error) {
-        console.log(error);
-    }
-}
+//middleware
+app.use(express.json());
 
-mongoose.connection.on("disconnected", () => {
-    console.log("Mongoose connection is disconnected");
+// Basic route for testing
+app.get('/', (req, res) => {
+    res.send('API is running...');
+  });
+
+//Authentification route
+app.use("/api/auth", authRoute);
+
+
+
+
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
-
-
-
-
-app.listen(8000, () => { 
-    connectDB();
-    console.log('Connected and Server is running on port 8000.');
-    }); 
