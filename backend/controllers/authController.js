@@ -166,7 +166,7 @@ export const initiatePasswordReset = async (req, res) => {
 
     await user.save();
 
-    // Here, instead of sending an email, return the token in the response
+    // return the token in the response
     res.json({ resetToken });
   } catch (err) {
     console.error(err.message);
@@ -174,7 +174,7 @@ export const initiatePasswordReset = async (req, res) => {
   }
 };
 
-// Reset password
+// Reset password using the token received in the response from initiatePasswordReset
 export const resetPassword = async (req, res) => {
   const { resetToken, newPassword } = req.body;
 
