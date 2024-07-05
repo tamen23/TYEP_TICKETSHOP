@@ -1,6 +1,5 @@
 import Description from "../components/Description/Description";
 
-
 const EvenementView = () => {
     return(
         <div>
