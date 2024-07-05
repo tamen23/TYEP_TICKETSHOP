@@ -21,3 +21,6 @@ mongoose.connection.on('disconnected', () => {
 });
 
 export default connectDB;
+
+
+///admmin new password NewPassword123

@@ -47,9 +47,11 @@ const userSchema = new mongoose.Schema({
   telephone: {
     type: String,
     required: function () {
-      return this.role !== 'admin'; // telephone is required for organisateurs and utilisateurs
+      return this.role !== 'admin';
     }
-  }
+  },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
 }, {
   timestamps: true
 });
