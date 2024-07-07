@@ -4,8 +4,9 @@ import './header.scss';
 import logo from './logo.svg';
 import ModalAuth from '../Shared/ModalAuth';
 import Login from '../Auth/Login';
+import { Link } from 'react-router-dom';
 
-const Header = ({ onShowOrganisateur, onShowApp }) => {
+const Header = ({ onShowApp }) => {
     const [showAuth, setShowAuth] = useState(false);
 
     const handlerShowAuth = () => {
@@ -16,12 +17,7 @@ const Header = ({ onShowOrganisateur, onShowApp }) => {
         setShowAuth(false);
     };
 
-    const handleOrganisateurClick = (e) => {
-        e.preventDefault();
-        if (typeof onShowOrganisateur === 'function') {
-            onShowOrganisateur();
-        }
-    };
+
 
     return (
         <div className='header'>
@@ -50,7 +46,7 @@ const Header = ({ onShowOrganisateur, onShowApp }) => {
                     <div className="login">
                         <div className="child__menu">
                             <div className="org">
-                                <a href="#" onClick={handleOrganisateurClick}>JE SUIS ORGANISEUR</a>
+                                <Link to='/organisation' >JE SUIS ORGANISEUR</Link>
                             </div>
                             <div className='loginBtn'>
                                 <a href="#" onClick={handlerShowAuth}>LOGIN</a>

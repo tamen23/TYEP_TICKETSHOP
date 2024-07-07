@@ -2,10 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
 import './modalAuth.scss';
-
 import { IoMdClose } from "react-icons/io";
 
-const ModalAuth = ({ onClose, show, children }) => {
+const OrganisateurModal = ({ onClose, show, children }) => {
     return ReactDOM.createPortal(
         <CSSTransition
             in={show}
@@ -16,14 +15,13 @@ const ModalAuth = ({ onClose, show, children }) => {
         >
             <div className="modalAuth">
                 <div className="container-auth">
-                    <IoMdClose  className="close-btn" onClick={onClose}/>
+                    <IoMdClose className="close-btnA" onClick={onClose}/>
                     {children}
                 </div>
             </div>
         </CSSTransition>,
-        document.getElementById('modalAuth')
+        document.getElementById('modalOrg')
     );
 };
 
-export default ModalAuth;
-
+export default OrganisateurModal;
