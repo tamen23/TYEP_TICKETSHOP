@@ -1,0 +1,38 @@
+.hero {
+  position: relative;
+  max-width: 1920px;
+  max-height: 900px;
+  z-index: 3000;
+
+  &__background {
+    background: url('./hero.jpg') no-repeat center center;
+    background-size: cover;
+    width: 100%;
+    //position: absolute;
+    //top: 0;
+    display: flex;
+    align-items: center;
+    //left: 0;
+    height: 703px;
+
+    &__container {
+      //position: absolute;
+      display: flex;
+      padding: 0 20px;
+      color: white;
+      width: 100%;
+      z-index: 5000;
+      top: 30%;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+    }
+
+    &__ticket, &__calendar {
+      display: flex;
+      flex-direction: column;
+      /* width: calc(50% - 10px); */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
