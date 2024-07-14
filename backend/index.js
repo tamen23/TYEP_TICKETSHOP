@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import authRoute from './routes/auth.js';
 import connectDB from './config/db.js';
+import cors from 'cors';
 
 
 const app = express();
@@ -10,6 +11,11 @@ dotenv.config();
 
 //connect to database 
 connectDB();
+
+
+// Enable CORS
+app.use(cors());
+
 
 //middleware
 app.use(express.json());

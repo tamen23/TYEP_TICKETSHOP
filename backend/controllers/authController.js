@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 
 // Register a new user
 export const registerUser = async (req, res) => {
-  const { role, username, nom, prenom, email, motDePasse, nomDeStructure, telephone } = req.body;
+  const { role, username, nom, prenom, email, motDePasse, nomDeStructure, telephone, adresse, pays, ville, codePostal } = req.body;
 
   try {
     let user = await User.findOne({ email });
@@ -16,13 +16,17 @@ export const registerUser = async (req, res) => {
 
     user = new User({
       role,
-      username,
+      username: role === 'admin' ? username : undefined, // Only set username for admin
       nom,
       prenom,
       email,
       motDePasse,
       nomDeStructure,
       telephone,
+      adresse,
+      pays,
+      ville,
+      codePostal
     });
 
     await user.save();
@@ -37,6 +41,10 @@ export const registerUser = async (req, res) => {
       email: user.email,
       nomDeStructure: user.nomDeStructure,
       telephone: user.telephone,
+      adresse: user.adresse,
+      pays: user.pays,
+      ville: user.ville,
+      codePostal: user.codePostal,
       token,
     });
   } catch (err) {
@@ -72,11 +80,27 @@ export const authUser = async (req, res) => {
       email: user.email,
       nomDeStructure: user.nomDeStructure,
       telephone: user.telephone,
+      adresse: user.adresse,
+      pays: user.pays,
+      ville: user.ville,
+      codePostal: user.codePostal,
       token,
     });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
+  }
+};
+
+// In your authController.js
+// Get logged in user
+export const getMe = async (req, res) => {
+  try {
+      const user = await User.findById(req.user.id).select('-motDePasse');
+      res.json(user);
+  } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
   }
 };
 
@@ -90,6 +114,7 @@ export const getUsers = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
 
 // Get user by ID
 export const getUserById = async (req, res) => {
@@ -107,7 +132,7 @@ export const getUserById = async (req, res) => {
 
 // Update user
 export const updateUser = async (req, res) => {
-  const { role, username, nom, prenom, email, motDePasse, nomDeStructure, telephone } = req.body;
+  const { role, username, nom, prenom, email, motDePasse, nomDeStructure, telephone, adresse, pays, ville, codePostal } = req.body;
 
   try {
     let user = await User.findById(req.params.id);
@@ -126,6 +151,10 @@ export const updateUser = async (req, res) => {
     }
     user.nomDeStructure = nomDeStructure || user.nomDeStructure;
     user.telephone = telephone || user.telephone;
+    user.adresse = adresse || user.adresse;
+    user.pays = pays || user.pays;
+    user.ville = ville || user.ville;
+    user.codePostal = codePostal || user.codePostal;
 
     await user.save();
     res.json(user);

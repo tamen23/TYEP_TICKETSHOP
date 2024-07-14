@@ -1,7 +1,9 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect, useState, useContext } from 'react';
 import { MdHideSource } from "react-icons/md";
 import { BiShowAlt } from "react-icons/bi";
 import { IoMdClose } from "react-icons/io";
+import api from '../../api';
+import AuthContext from '../../context/AuthContext';
 
 import './login.scss';
 import ModalAuth from "../Shared/ModalAuth";
@@ -9,13 +11,15 @@ import Register from "./Register";
 
 const Login = ({ close }) => {
     const outLogin = useRef(null);
-    const registerRef = useRef(null); // Add this line
+    const registerRef = useRef(null);
     const [isRegistered, setIsRegistered] = useState(false);
     const [form, setForm] = useState({
         email: '',
         password: '',
         showPassword: false
     });
+
+    const { login } = useContext(AuthContext);
 
     const handleRegister = () => {
         setIsRegistered(true);
@@ -37,9 +41,20 @@ const Login = ({ close }) => {
         if (
             outLogin.current &&
             !outLogin.current.contains(event.target) &&
-            (!registerRef.current || !registerRef.current.contains(event.target)) // Add this condition
+            (!registerRef.current || !registerRef.current.contains(event.target))
         ) {
             close();
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await login(form.email, form.password);
+            alert('Login successful');
+            close();
+        } catch (error) {
+            alert('Login failed');
         }
     };
 
@@ -54,7 +69,7 @@ const Login = ({ close }) => {
         <div className='outme' ref={outLogin}>
             <div className="auth-container">
                 <h2>Login</h2>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="input-group">
                         <input
                             type="email"
@@ -73,7 +88,7 @@ const Login = ({ close }) => {
                             onChange={handleChange}
                         />
                         <span className='toggle-password' onClick={toggleShowPassword}>
-                            {form.showPassword ? <MdHideSource className='hide'/> : <BiShowAlt className='show'/>}
+                            {form.showPassword ? <MdHideSource className='hide' /> : <BiShowAlt className='show' />}
                         </span>
                     </div>
                     <button className='button' type="submit">Validate</button>

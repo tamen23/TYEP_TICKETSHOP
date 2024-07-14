@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';  // Import PropTypes
+import React, { useState, useContext } from 'react';
+import PropTypes from 'prop-types';
 import './header.scss';
 import logo from './logo.svg';
 import ModalAuth from '../Shared/ModalAuth';
 import Login from '../Auth/Login';
 import { Link } from 'react-router-dom';
+import AuthContext from '../../context/AuthContext';
 
 const Header = ({ onShowApp }) => {
     const [showAuth, setShowAuth] = useState(false);
+    const { user, logout } = useContext(AuthContext);
 
     const handlerShowAuth = () => {
         setShowAuth(true);
@@ -17,7 +19,9 @@ const Header = ({ onShowApp }) => {
         setShowAuth(false);
     };
 
-
+    const handleLogout = () => {
+        logout();
+    };
 
     return (
         <div className='header'>
@@ -45,23 +49,30 @@ const Header = ({ onShowApp }) => {
                 <div className="header__right">
                     <div className="login">
                         <div className="child__menu">
-                            <div className="org">
-                                <Link to='/organisation' >JE SUIS ORGANISEUR</Link>
-                            </div>
-                            <div className='loginBtn'>
-                                <a href="#" onClick={handlerShowAuth}>LOGIN</a>
-                            </div>
+                            {user ? (
+                                <>
+                                    <span>Welcome, {user.role === 'admin' ? user.username : user.nom}</span>
+                                    <button onClick={handleLogout}>Logout</button>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="org">
+                                        <Link to='/organisation'>JE SUIS ORGANISEUR</Link>
+                                    </div>
+                                    <div className='loginBtn'>
+                                        <a href="#" onClick={handlerShowAuth}>LOGIN</a>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
-            {
-                showAuth && (
-                    <ModalAuth show={showAuth} onClose={handlerCloseAuth}>
-                        <Login close={handlerCloseAuth} />
-                    </ModalAuth>
-                )
-            }
+            {showAuth && (
+                <ModalAuth show={showAuth} onClose={handlerCloseAuth}>
+                    <Login close={handlerCloseAuth} />
+                </ModalAuth>
+            )}
         </div>
     );
 };

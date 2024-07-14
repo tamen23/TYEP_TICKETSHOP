@@ -1,4 +1,3 @@
-// models/User.js
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
@@ -11,7 +10,8 @@ const userSchema = new mongoose.Schema({
   },
   username: {
     type: String,
-    unique: true,
+    unique: false,
+    sparse: true,
     required: function () {
       return this.role === 'admin'; // username is required for admins
     }
@@ -38,16 +38,40 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  telephone: {
+    type: String,
+    required: function () {
+      return this.role !== 'admin'; // telephone is required for organisateurs and utilisateurs
+    }
+  },
   nomDeStructure: {
     type: String,
     required: function () {
       return this.role === 'organisateur'; // nomDeStructure is required for organisateurs
     }
   },
-  telephone: {
+  adresse: {
     type: String,
     required: function () {
-      return this.role !== 'admin';
+      return this.role === 'organisateur'; // adresse is required for organisateurs
+    }
+  },
+  pays: {
+    type: String,
+    required: function () {
+      return this.role === 'organisateur'; // pays is required for organisateurs
+    }
+  },
+  ville: {
+    type: String,
+    required: function () {
+      return this.role === 'organisateur'; // ville is required for organisateurs
+    }
+  },
+  codePostal: {
+    type: String,
+    required: function () {
+      return this.role === 'organisateur'; // codePostal is required for organisateurs
     }
   },
   resetPasswordToken: String,
