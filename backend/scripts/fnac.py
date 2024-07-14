@@ -9,9 +9,14 @@ import os
 from datetime import datetime
 from pymongo import MongoClient
 
-# Setup WebDriver
-service = Service(executable_path=r'C:\chromedriver-win64\chromedriver.exe')
-driver = webdriver.Chrome(service=service)
+# Setup WebDriver for Linux environment
+service = Service(executable_path='/usr/local/bin/chromedriver')
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
+options.add_argument('--no-sandbox')
+options.add_argument('--disable-dev-shm-usage')
+
+driver = webdriver.Chrome(service=service, options=options)
 driver.maximize_window()
 
 # MongoDB setup
