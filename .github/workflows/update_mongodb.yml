@@ -25,15 +25,15 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pymongo selenium pandas openpyxl pyppeteer
+        pip install pymongo selenium pandas openpyxl
 
     - name: Download ChromeDriver
       run: |
         sudo apt-get update
         sudo apt-get install -y unzip xvfb libxi6 libgconf-2-4
         wget -N https://chromedriver.storage.googleapis.com/91.0.4472.101/chromedriver_linux64.zip
-        unzip chromedriver_linux64.zip
-        sudo mv chromedriver_linux64/chromedriver /usr/local/bin/
+        unzip chromedriver_linux64.zip -d .
+        sudo mv chromedriver /usr/local/bin/
         sudo chmod +x /usr/local/bin/chromedriver
 
     - name: Download Google Chrome
