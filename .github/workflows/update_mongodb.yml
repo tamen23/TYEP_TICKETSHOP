@@ -1,6 +1,9 @@
 name: Update MongoDB Daily
 
 on:
+  push:
+    branches:
+      - user
   schedule:
     # Run at 7 AM UTC every day
     - cron: '0 7 * * *'
@@ -36,6 +39,9 @@ jobs:
       run: |
         wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
         sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+
+    - name: List directory contents
+      run: ls -R
 
     - name: Run update script
       env:
