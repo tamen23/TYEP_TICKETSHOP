@@ -27,7 +27,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pymongo selenium pandas openpyxl
 
-    - name: Download Google Chrome
+    - name: Install Google Chrome
       run: |
         sudo apt-get update
         sudo apt-get install -y wget gnupg
@@ -38,10 +38,10 @@ jobs:
 
     - name: Download ChromeDriver
       run: |
-        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+' | head -1)
         MAJOR_CHROME_VERSION=$(echo $CHROME_VERSION | cut -d '.' -f 1)
-        CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$MAJOR_CHROME_VERSION)
-        wget -N https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+        CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${MAJOR_CHROME_VERSION})
+        wget -N https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip
         unzip chromedriver_linux64.zip
         sudo mv chromedriver /usr/local/bin/
         sudo chmod +x /usr/local/bin/chromedriver
