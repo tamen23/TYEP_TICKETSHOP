@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import authRoute from './routes/auth.js';
 import connectDB from './config/db.js';
 import cors from 'cors';
+import ticketRoute from './routes/Evenement.js';
 
 
 const app = express();
@@ -27,6 +28,9 @@ app.get('/', (req, res) => {
 
 //Authentification route
 app.use("/api/auth", authRoute);
+
+//get all Evenements route
+app.use('/api/ticket', ticketRoute);
 
 
 
