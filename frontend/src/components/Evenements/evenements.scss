@@ -86,3 +86,52 @@
     }
   }
 }
+
+
+.evenementsFnac {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.section-titleFa {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.tickets-containerFnac {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.ticketfnac {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 200px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.ticketfnac img {
+  width: 100%;
+  height: auto;
+}
+
+.ticket-infoFnc {
+  padding: 10px;
+}
+
+.ticket-infoFnc h3 {
+  font-size: 18px;
+  margin: 0 0 10px;
+}
+
+.ticket-infoFnc p {
+  margin: 5px 0;
+}
+
+.discountFnc {
+  color: red;
+  font-weight: bold;
+}
