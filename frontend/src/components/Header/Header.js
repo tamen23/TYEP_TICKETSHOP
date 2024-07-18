@@ -60,7 +60,7 @@ const Header = ({ onShowApp }) => {
                                         <Link to='/organisation'>JE SUIS ORGANISEUR</Link>
                                     </div>
                                     <div className='loginBtn'>
-                                        <a href="#" onClick={handlerShowAuth}>LOGIN</a>
+                                        <a href="#" onClick={handlerShowAuth}>CONNECTION/INSCRIPTION</a>
                                     </div>
                                 </>
                             )}

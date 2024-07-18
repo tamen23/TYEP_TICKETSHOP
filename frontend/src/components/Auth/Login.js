@@ -4,7 +4,6 @@ import { BiShowAlt } from "react-icons/bi";
 import { IoMdClose } from "react-icons/io";
 import api from '../../api';
 import AuthContext from '../../context/AuthContext';
-
 import './login.scss';
 import ModalAuth from "../Shared/ModalAuth";
 import Register from "./Register";
@@ -51,10 +50,10 @@ const Login = ({ close }) => {
         e.preventDefault();
         try {
             await login(form.email, form.password);
-            alert('Login successful');
+            alert('Connexion réussie');
             close();
         } catch (error) {
-            alert('Login failed');
+            alert('Échec de la connexion');
         }
     };
 
@@ -68,22 +67,25 @@ const Login = ({ close }) => {
     return (
         <div className='outme' ref={outLogin}>
             <div className="auth-container">
-                <h2>Login</h2>
+                <h2>Bienvenue</h2>
+                <p>Ravi de vous revoir 👋<br />Connectez-vous à votre compte ci-dessous</p>
                 <form onSubmit={handleSubmit}>
                     <div className="input-group">
                         <input
+                            className="input"
                             type="email"
                             name="email"
-                            placeholder="Enter your email"
+                            placeholder="Entrez votre email..."
                             value={form.email}
                             onChange={handleChange}
                         />
                     </div>
                     <div className="input-group password-input">
                         <input
+                            className="input"
                             type={form.showPassword ? "text" : "password"}
                             name="password"
-                            placeholder="Enter your password"
+                            placeholder="Entrez votre mot de passe..."
                             value={form.password}
                             onChange={handleChange}
                         />
@@ -91,13 +93,11 @@ const Login = ({ close }) => {
                             {form.showPassword ? <MdHideSource className='hide' /> : <BiShowAlt className='show' />}
                         </span>
                     </div>
-                    <button className='button' type="submit">Validate</button>
+                    <button className='button' type="submit">Connexion</button>
                 </form>
-                <p>Don't have an account? <a href="#" onClick={handleRegister}>Register now.</a></p>
+                <p className='p'><d>Vous n'avez pas de compte ?</d> <a href="#" onClick={handleRegister}>Inscrivez-vous gratuitement</a></p>
             </div>
-            <div className='close' onClick={close}>
-                <IoMdClose />
-            </div>
+       
             {
                 isRegistered && <ModalAuth show={isRegistered} onClose={closeRegisterModal}>
                     <Register closeRegisterModal={closeRegisterModal} openLoginModal={close} registerRef={registerRef} />

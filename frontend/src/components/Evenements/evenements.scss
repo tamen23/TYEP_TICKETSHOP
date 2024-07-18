@@ -135,3 +135,18 @@
   color: red;
   font-weight: bold;
 }
+
+
+.pagination{
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  text-align: center;
+  gap: 3px;
+}
+
+.pageBtn{
+  border: none;
+  width: 5px;
+
+}
