@@ -1,152 +1,121 @@
-.evenements {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-
-  .tickets-container {
-    display: flex;
-    gap: 20px;
-    width: 100%;
-    flex-direction: column;
-
-    &__ticket-column {
-      display: flex;
-      flex-direction: row-reverse;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      align-items: center;
-
-      .tickets-container__image {
-        width: 600px;
-        height: 164px;
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-      }
-
-      .tickets-container__dateT, .tickets-container__date {
-        width: 600px;
-        height: 164px;
-        padding: 15px;
-        background-color: #fff;
-
-        .tickets-container__date__time {
-          font-size: 14px;
-          color: #999;
-        }
-
-        .tickets-container__date__line {
-          height: 1px;
-          background: #1A8FDD;
-          margin: 10px 0;
-        }
-
-        .tickets-container__date__desc {
-          font-size: 16px;
-        }
-      }
-
-      .tickets-container__more {
-        width: 600px;
-        height: 164px;
-        padding: 15px;
-        background-color: #1A8FDD;
-        color: #fff;
-
-        .btn {
-          margin-top: 10px;
-
-          a {
-            background-color: #fff;
-            color: #1A8FDD;
-            padding: 10px;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 5px;
-          }
-        }
-      }
-    }
-  }
-
-  .section-title {
-    display: flex;
-    justify-content: center;
-    position: relative;
-    margin-bottom: 20px;
-
-    &::after {
-      content: '';
-      position: absolute;
-      width: 100px;
-      background: #1A8FDD;
-      height: 3px;
-      bottom: -10px;
-    }
-  }
-}
-
-
 .evenementsFnac {
   padding: 20px;
   background-color: #f9f9f9;
-}
 
-.section-titleFa {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
+  .section-titleFa {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
 
-.tickets-containerFnac {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
+  .filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    position: relative;
 
-.ticketfnac {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  width: 200px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+    .react-datepicker-wrapper {
+      width: auto;
+    }
 
-.ticketfnac img {
-  width: 100%;
-  height: auto;
-}
+    select,
+    .react-datepicker__input-container input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+    }
 
-.ticket-infoFnc {
-  padding: 10px;
-}
+    button {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+      background-color: #f0f0f0;
+      cursor: pointer;
+    }
 
-.ticket-infoFnc h3 {
-  font-size: 18px;
-  margin: 0 0 10px;
-}
+    button:hover {
+      background-color: #ddd;
+    }
 
-.ticket-infoFnc p {
-  margin: 5px 0;
-}
+    .calendar-container {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 2;
+    }
 
-.discountFnc {
-  color: red;
-  font-weight: bold;
-}
+    .react-datepicker {
+      z-index: 2;
+    }
 
+    .react-datepicker__input-container {
+      display: none;
+    }
+  }
 
-.pagination{
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  text-align: center;
-  gap: 3px;
-}
+  .tickets-containerFnac {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
 
-.pageBtn{
-  border: none;
-  width: 5px;
+  .ticketfnac {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 200px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
 
+  .ticketfnac img {
+    width: 100%;
+    height: auto;
+  }
+
+  .ticket-infoFnc {
+    padding: 10px;
+  }
+
+  .ticket-infoFnc h3 {
+    font-size: 18px;
+    margin: 0 0 10px;
+  }
+
+  .ticket-infoFnc p {
+    margin: 5px 0;
+  }
+
+  .discountFnc {
+    color: red;
+    font-weight: bold;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    text-align: center;
+    gap: 5px;
+  }
+
+  .ticket-link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer; /* Ensures the link looks clickable */
+  }
+
+  .ticket-link:hover {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .no-events-message {
+    text-align: center;
+    font-size: 18px;
+    color: #999;
+    margin-top: 20px;
+  }
 }
