@@ -10,8 +10,12 @@ const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
         nom: '',
         prenom: '',
         email: '',
-        motDePasse: '',
+        dateDeNaissance: '',
         telephone: '',
+        nationalite: '',
+        typeIdentification: '',
+        motDePasse: '',
+        confirmerMotDePasse: '',
         showPassword: false
     });
     const [isRegistered, setIsRegistered] = useState(false); // State to control login modal
@@ -32,20 +36,27 @@ const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (form.motDePasse !== form.confirmerMotDePasse) {
+            alert('Les mots de passe ne correspondent pas');
+            return;
+        }
         try {
             const response = await api.post('/auth/register', {
                 role: 'utilisateur',
                 nom: form.nom,
                 prenom: form.prenom,
                 email: form.email,
-                motDePasse: form.motDePasse,
+                dateDeNaissance: form.dateDeNaissance,
                 telephone: form.telephone,
+                nationalite: form.nationalite,
+                typeIdentification: form.typeIdentification,
+                motDePasse: form.motDePasse,
             });
-            alert('Registration successful');
+            alert('Inscription réussie');
             closeRegisterModal(); // Close the registration modal
             setIsRegistered(true); // Set state to show login component
         } catch (error) {
-            alert('Registration failed');
+            alert('Échec de l\'inscription');
         }
     };
 
@@ -66,23 +77,24 @@ const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
         <div className="auth-container" ref={registerRef}>
             {!isRegistered ? (
                 <>
-                    <h2>Register</h2>
+                    <h2>S'inscrire</h2>
+                    <p>Entrez vos informations ci-dessous pour créer votre compte et commencer.</p>
                     <form onSubmit={handleSubmit}>
                         <div className="input-group">
                             <input
                                 type="text"
-                                name="nom"
-                                placeholder="Nom"
-                                value={form.nom}
+                                name="prenom"
+                                placeholder="Prénom"
+                                value={form.prenom}
                                 onChange={handleChange}
                             />
                         </div>
                         <div className="input-group">
                             <input
                                 type="text"
-                                name="prenom"
-                                placeholder="Prenom"
-                                value={form.prenom}
+                                name="nom"
+                                placeholder="Nom"
+                                value={form.nom}
                                 onChange={handleChange}
                             />
                         </div>
@@ -97,18 +109,51 @@ const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
                         </div>
                         <div className="input-group">
                             <input
+                                type="date"
+                                name="dateDeNaissance"
+                                placeholder="Date de naissance"
+                                value={form.dateDeNaissance}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="input-group">
+                            <input
                                 type="text"
                                 name="telephone"
-                                placeholder="Telephone"
+                                placeholder="Téléphone"
                                 value={form.telephone}
                                 onChange={handleChange}
                             />
+                        </div>
+                        <div className="input-group">
+                            <select
+                                name="nationalite"
+                                value={form.nationalite}
+                                onChange={handleChange}
+                            >
+                                <option value="" disabled>Nationalité</option>
+                                <option value="France">France</option>
+                                <option value="Brazil">Brésil</option>
+                                {/* Ajoutez plus d'options ici */}
+                            </select>
+                        </div>
+                        <div className="input-group">
+                            <select
+                                name="typeIdentification"
+                                value={form.typeIdentification}
+                                onChange={handleChange}
+                            >
+                                <option value="" disabled>Type d'identification</option>
+                                <option value="Passport">Passeport</option>
+                                <option value="ID Card">Carte d'identité</option>
+                                {/* Ajoutez plus d'options ici */}
+                            </select>
                         </div>
                         <div className="input-group password-input">
                             <input
                                 type={form.showPassword ? "text" : "password"}
                                 name="motDePasse"
-                                placeholder="Mot de Passe"
+                                placeholder="Mot de passe"
                                 value={form.motDePasse}
                                 onChange={handleChange}
                             />
@@ -116,9 +161,21 @@ const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
                                 {form.showPassword ? <MdHideSource className='hideD' /> : <BiShowAlt className='showD' />}
                             </span>
                         </div>
-                        <button className='button' type="submit">Validate</button>
+                        <div className="input-group">
+                            <input
+                                type={form.showPassword ? "text" : "password"}
+                                name="confirmerMotDePasse"
+                                placeholder="Confirmer le mot de passe"
+                                value={form.confirmerMotDePasse}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="buttons">
+                            <button className='button cancel' type="button" onClick={closeRegisterModal}>Annuler</button>
+                            <button className='button confirm' type="submit">Confirmer</button>
+                        </div>
                     </form>
-                    <p>Already have an account? <a href="#" onClick={handleLoginLinkClick}>Log in now.</a></p>
+                    <p>Vous avez déjà un compte ? <a href="#" onClick={handleLoginLinkClick}>Connectez-vous</a></p>
                 </>
             ) : (
                 <Login close={closeRegisterModal} />
