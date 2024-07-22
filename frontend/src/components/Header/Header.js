@@ -7,18 +7,21 @@ import Login from '../Auth/Login';
 import { Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 
-const Header = ({ onShowApp }) => {
+const Header = ({ onShowApp, onShowOrganisateur }) => {
     const [showAuth, setShowAuth] = useState(false);
     const { user, logout } = useContext(AuthContext);
 
+    // Handler to show authentication modal
     const handlerShowAuth = () => {
         setShowAuth(true);
     };
 
+    // Handler to close authentication modal
     const handlerCloseAuth = () => {
         setShowAuth(false);
     };
 
+    // Handler for user logout
     const handleLogout = () => {
         logout();
     };
@@ -40,7 +43,7 @@ const Header = ({ onShowApp }) => {
                                 <li><a href="#" onClick={onShowApp}>HOME</a></li>
                                 <li><a href="#">EVENEMENTS</a></li>
                                 <li><a href="#">CONCERTS</a></li>
-                                <li><a href="#">DEVENIR PARTENAIRE</a></li>
+                                <li><a href="#" onClick={onShowOrganisateur}>DEVENIR PARTENAIRE</a></li>
                             </ul>
                         </nav>
                     </div>

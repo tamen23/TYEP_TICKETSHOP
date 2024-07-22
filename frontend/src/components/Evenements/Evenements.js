@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import './evenements.scss';
 import api from '../../api';
 import DatePicker from 'react-datepicker';
@@ -11,8 +11,11 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import axios from 'axios';
+import AuthContext from '../../context/AuthContext';
 
 const Evenements = () => {
+    const { user } = useContext(AuthContext);
     const [tickets, setTickets] = useState([]);
     const [filteredTickets, setFilteredTickets] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -27,7 +30,7 @@ const Evenements = () => {
     const [availableCategories, setAvailableCategories] = useState([]);
     const [open, setOpen] = useState(false);
     const [selectedLink, setSelectedLink] = useState('');
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState(user ? user.email : '');
     const [emailError, setEmailError] = useState('');
     const [showCalendar, setShowCalendar] = useState(false);
     const calendarRef = useRef(null);
@@ -156,17 +159,26 @@ const Evenements = () => {
     // Close the popup dialog
     const handleClose = () => {
         setOpen(false);
-        setEmail('');
+        setEmail(user ? user.email : '');
         setEmailError('');
     };
 
     // Validate email and redirect if valid
-    const handleEmailSubmit = () => {
-        // Basic email validation regex
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            setEmailError('Please enter a valid email address.');
-            return;
+    const handleEmailSubmit = async () => {
+        if (!user) {
+            // Basic email validation regex
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                setEmailError('Please enter a valid email address.');
+                return;
+            }
+
+            try {
+                await axios.post('http://localhost:8000/api/email/storeEmail', { email });
+            } catch (error) {
+                setEmailError('Failed to store email. Please try again.');
+                return;
+            }
         }
 
         // If email is valid, redirect to the selected link in a new tab
@@ -261,21 +273,26 @@ const Evenements = () => {
                 <DialogTitle>Redirecting to Event Page</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Please enter your email address to be redirected to the event page.
+                        {user 
+                            ? 'A mail will be sent to your account. Click submit to continue.'
+                            : 'Please enter your email address to be redirected to the event page.'
+                        }
                     </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="email"
-                        label="Email Address"
-                        type="email"
-                        fullWidth
-                        variant="standard"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        error={!!emailError}
-                        helperText={emailError}
-                    />
+                    {!user && (
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="email"
+                            label="Email Address"
+                            type="email"
+                            fullWidth
+                            variant="standard"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            error={!!emailError}
+                            helperText={emailError}
+                        />
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>

@@ -9,33 +9,38 @@ import ModalAuth from "../Shared/ModalAuth";
 import Register from "./Register";
 
 const Login = ({ close }) => {
-    const outLogin = useRef(null);
-    const registerRef = useRef(null);
-    const [isRegistered, setIsRegistered] = useState(false);
+    const outLogin = useRef(null);  // Reference for detecting clicks outside login modal
+    const registerRef = useRef(null);  // Reference for the registration modal
+    const [isRegistered, setIsRegistered] = useState(false);  // State to toggle registration modal
     const [form, setForm] = useState({
         email: '',
         password: '',
         showPassword: false
     });
 
-    const { login } = useContext(AuthContext);
+    const { login } = useContext(AuthContext);  // Authentication context for login
 
+    // Function to open registration modal
     const handleRegister = () => {
         setIsRegistered(true);
     };
 
+    // Function to close registration modal
     const closeRegisterModal = () => {
         setIsRegistered(false);
     };
 
+    // Function to toggle password visibility
     const toggleShowPassword = () => {
         setForm({ ...form, showPassword: !form.showPassword });
     };
 
+    // Function to handle input changes
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
+    // Function to handle clicks outside the login modal
     const handleClickOutside = (event) => {
         if (
             outLogin.current &&
@@ -46,6 +51,7 @@ const Login = ({ close }) => {
         }
     };
 
+    // Function to handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -57,6 +63,7 @@ const Login = ({ close }) => {
         }
     };
 
+    // Adding and cleaning up the event listener for clicks outside the modal
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
@@ -95,7 +102,7 @@ const Login = ({ close }) => {
                     </div>
                     <button className='button' type="submit">Connexion</button>
                 </form>
-                <p className='p'><d>Vous n'avez pas de compte ?</d> <a href="#" onClick={handleRegister}>Inscrivez-vous gratuitement</a></p>
+                <p className='p'>Vous n'avez pas de compte ? <a href="#" onClick={handleRegister}>Inscrivez-vous gratuitement</a></p>
             </div>
        
             {
