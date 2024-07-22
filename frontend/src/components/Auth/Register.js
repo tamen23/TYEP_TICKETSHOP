@@ -10,12 +10,8 @@ const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
         nom: '',
         prenom: '',
         email: '',
-        dateDeNaissance: '',
-        telephone: '',
-        nationalite: '',
-        typeIdentification: '',
         motDePasse: '',
-        confirmerMotDePasse: '',
+        telephone: '',
         showPassword: false
     });
     const [isRegistered, setIsRegistered] = useState(false); // State to control login modal
@@ -46,11 +42,8 @@ const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
                 nom: form.nom,
                 prenom: form.prenom,
                 email: form.email,
-                dateDeNaissance: form.dateDeNaissance,
-                telephone: form.telephone,
-                nationalite: form.nationalite,
-                typeIdentification: form.typeIdentification,
                 motDePasse: form.motDePasse,
+                telephone: form.telephone,
             });
             alert('Inscription réussie');
             closeRegisterModal(); // Close the registration modal
@@ -77,24 +70,23 @@ const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
         <div className="auth-container" ref={registerRef}>
             {!isRegistered ? (
                 <>
-                    <h2>S'inscrire</h2>
-                    <p>Entrez vos informations ci-dessous pour créer votre compte et commencer.</p>
+                    <h2>Register</h2>
                     <form onSubmit={handleSubmit}>
-                        <div className="input-group">
-                            <input
-                                type="text"
-                                name="prenom"
-                                placeholder="Prénom"
-                                value={form.prenom}
-                                onChange={handleChange}
-                            />
-                        </div>
                         <div className="input-group">
                             <input
                                 type="text"
                                 name="nom"
                                 placeholder="Nom"
                                 value={form.nom}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="input-group">
+                            <input
+                                type="text"
+                                name="prenom"
+                                placeholder="Prenom"
+                                value={form.prenom}
                                 onChange={handleChange}
                             />
                         </div>
@@ -109,51 +101,18 @@ const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
                         </div>
                         <div className="input-group">
                             <input
-                                type="date"
-                                name="dateDeNaissance"
-                                placeholder="Date de naissance"
-                                value={form.dateDeNaissance}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="input-group">
-                            <input
                                 type="text"
                                 name="telephone"
-                                placeholder="Téléphone"
+                                placeholder="Telephone"
                                 value={form.telephone}
                                 onChange={handleChange}
                             />
-                        </div>
-                        <div className="input-group">
-                            <select
-                                name="nationalite"
-                                value={form.nationalite}
-                                onChange={handleChange}
-                            >
-                                <option value="" disabled>Nationalité</option>
-                                <option value="France">France</option>
-                                <option value="Brazil">Brésil</option>
-                                {/* Ajoutez plus d'options ici */}
-                            </select>
-                        </div>
-                        <div className="input-group">
-                            <select
-                                name="typeIdentification"
-                                value={form.typeIdentification}
-                                onChange={handleChange}
-                            >
-                                <option value="" disabled>Type d'identification</option>
-                                <option value="Passport">Passeport</option>
-                                <option value="ID Card">Carte d'identité</option>
-                                {/* Ajoutez plus d'options ici */}
-                            </select>
                         </div>
                         <div className="input-group password-input">
                             <input
                                 type={form.showPassword ? "text" : "password"}
                                 name="motDePasse"
-                                placeholder="Mot de passe"
+                                placeholder="Mot de Passe"
                                 value={form.motDePasse}
                                 onChange={handleChange}
                             />
