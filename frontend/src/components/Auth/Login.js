@@ -1,57 +1,19 @@
-import React, { useRef, useEffect, useState, useContext } from 'react';
-import { MdHideSource } from "react-icons/md";
-import { BiShowAlt } from "react-icons/bi";
-import { IoMdClose } from "react-icons/io";
-import api from '../../api';
+import React, { useState, useContext } from 'react';
 import AuthContext from '../../context/AuthContext';
 import './login.scss';
-import ModalAuth from "../Shared/ModalAuth";
-import Register from "./Register";
 
 const Login = ({ close }) => {
-    const outLogin = useRef(null);  // Reference for detecting clicks outside login modal
-    const registerRef = useRef(null);  // Reference for the registration modal
-    const [isRegistered, setIsRegistered] = useState(false);  // State to toggle registration modal
     const [form, setForm] = useState({
         email: '',
         password: '',
-        showPassword: false
     });
 
-    const { login } = useContext(AuthContext);  // Authentication context for login
+    const { login } = useContext(AuthContext);
 
-    // Function to open registration modal
-    const handleRegister = () => {
-        setIsRegistered(true);
-    };
-
-    // Function to close registration modal
-    const closeRegisterModal = () => {
-        setIsRegistered(false);
-    };
-
-    // Function to toggle password visibility
-    const toggleShowPassword = () => {
-        setForm({ ...form, showPassword: !form.showPassword });
-    };
-
-    // Function to handle input changes
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    // Function to handle clicks outside the login modal
-    const handleClickOutside = (event) => {
-        if (
-            outLogin.current &&
-            !outLogin.current.contains(event.target) &&
-            (!registerRef.current || !registerRef.current.contains(event.target))
-        ) {
-            close();
-        }
-    };
-
-    // Function to handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -63,53 +25,43 @@ const Login = ({ close }) => {
         }
     };
 
-    // Adding and cleaning up the event listener for clicks outside the modal
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
     return (
-        <div className='outme' ref={outLogin}>
-            <div className="auth-container">
-                <h2>Bienvenue</h2>
-                <p>Ravi de vous revoir 👋<br />Connectez-vous à votre compte ci-dessous</p>
-                <form onSubmit={handleSubmit}>
-                    <div className="input-group">
-                        <input
-                            className="input"
-                            type="email"
-                            name="email"
-                            placeholder="Entrez votre email..."
-                            value={form.email}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="input-group password-input">
-                        <input
-                            className="input"
-                            type={form.showPassword ? "text" : "password"}
-                            name="password"
-                            placeholder="Entrez votre mot de passe..."
-                            value={form.password}
-                            onChange={handleChange}
-                        />
-                        <span className='toggle-password' onClick={toggleShowPassword}>
-                            {form.showPassword ? <MdHideSource className='hide' /> : <BiShowAlt className='show' />}
-                        </span>
-                    </div>
-                    <button className='button' type="submit">Connexion</button>
-                </form>
-                <p className='p'>Vous n'avez pas de compte ? <a href="#" onClick={handleRegister}>Inscrivez-vous gratuitement</a></p>
-            </div>
-       
-            {
-                isRegistered && <ModalAuth show={isRegistered} onClose={closeRegisterModal}>
-                    <Register closeRegisterModal={closeRegisterModal} openLoginModal={close} registerRef={registerRef} />
-                </ModalAuth>
-            }
+        <div className="modalAuth-content">
+            <form onSubmit={handleSubmit}>
+                <h2>CONNECTEZ-VOUS</h2>
+                <p>Please authorize to continue</p>
+                <div className="wrapper">
+                    <label>Email</label>
+                    <input
+                        type="email"
+                        className="inputLogin"
+                        placeholder="iloveyou@gmail.com"
+                        name="email"
+                        value={form.email}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="wrapper">
+                    <label>Password</label>
+                    <input
+                        type="password"
+                        className="inputLogin"
+                        placeholder="Enter password"
+                        name="password"
+                        value={form.password}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="wrapper">
+                    <button type="submit" className="login-button">Connectez-vous</button>
+                </div>
+                <div className="wrapper">
+                    <a href="#" className="forgot-password">Forgot your password?</a>
+                </div>
+                <div className="wrapper">
+                    <a href="#" className="create-account">Create account</a>
+                </div>
+            </form>
         </div>
     );
 };

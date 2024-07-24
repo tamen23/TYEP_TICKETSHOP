@@ -1,0 +1,81 @@
+.search-bar {
+  box-sizing: border-box;
+  margin: 0;
+  min-width: 0;
+  position: relative;
+  z-index: 4;
+  display: flex;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
+  border: solid 1px #949494;
+  box-shadow: 0 0.5rem 1rem rgba(45, 45, 45, 0.12), 0 0.25rem 0.5rem rgba(45, 45, 45, 0.16), 0 0 0.125rem rgba(45, 45, 45, 0.2);
+  flex-direction: row;
+  flex-grow: 1;
+  max-width: 900px;
+  min-width: 735px;
+  width: 100%;
+}
+
+.search-barContent {
+  box-sizing: border-box;
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  height: 60px;
+}
+
+.input_wraper {
+  box-sizing: border-box;
+  min-width: 0;
+  position: relative;
+  width: 100%;
+  flex: 1;
+  align-items: stretch;
+  justify-items: stretch;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.input_wraper1 {
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  color: #595959;
+  flex-direction: column;
+
+  flex: 1;
+
+  span {
+    clip: rect(0 0 0 0);
+    word-wrap: normal;
+    border: 0;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+}
+
+.inBar {
+  color: #2d2d2d;
+  padding: 0.5rem 0.25rem;
+  text-overflow: ellipsis;
+  border: none;
+  flex-grow: 1;
+  width: 100%;
+  border-left: none;
+  border-top: none;
+  border-bottom: 0;
+  border-right: none;
+}

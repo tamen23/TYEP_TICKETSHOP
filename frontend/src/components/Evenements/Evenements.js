@@ -1,116 +1,110 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import './evenements.scss';
 import api from '../../api';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import Pagination from '@mui/material/Pagination';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import AuthContext from '../../context/AuthContext';
+import Filters from './Filters';
+import SearchBar from './SearchBar';
+import TicketList from './TicketList';
+import DialogComponent from './DialogComponent';
 
 const Evenements = () => {
     const { user } = useContext(AuthContext);
     const [tickets, setTickets] = useState([]);
     const [filteredTickets, setFilteredTickets] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const ticketsPerPage = 12; // Limit to 12 tickets per page
+    const ticketsPerPage = 16;
     const [filters, setFilters] = useState({
-        startDate: null,
-        endDate: null,
+        title: '',
         location: '',
-        category: ''
+        category: '',
+        dateRange: '',
+        period: '',
+        publisher: ''
     });
-    const [availableLocations, setAvailableLocations] = useState([]);
     const [availableCategories, setAvailableCategories] = useState([]);
+    const [availableDates, setAvailableDates] = useState([]);
     const [open, setOpen] = useState(false);
     const [selectedLink, setSelectedLink] = useState('');
     const [email, setEmail] = useState(user ? user.email : '');
     const [emailError, setEmailError] = useState('');
-    const [showCalendar, setShowCalendar] = useState(false);
-    const calendarRef = useRef(null);
-    const buttonRef = useRef(null);
 
-    // Fetch tickets from the API
     const fetchTickets = async () => {
         try {
             const response = await api.get('/ticket/getEvenement');
-            setTickets(response.data);
-            setFilteredTickets(response.data);
-            setAvailableLocations([...new Set(response.data.map(ticket => ticket.Ville))]);
-            setAvailableCategories([...new Set(response.data.map(ticket => ticket.Catégorie))]);
+            const ticketsData = response.data;
+            setTickets(ticketsData);
+            setFilteredTickets(ticketsData);
+            setAvailableCategories([...new Set(ticketsData.map(ticket => ticket.Catégorie))]);
+            setAvailableDates(getUniqueDates(ticketsData));
             console.log(response.data);
         } catch (error) {
             console.error('Error fetching tickets:', error);
         }
     };
 
-    // Initial fetch on component mount
+    const getUniqueDates = (tickets) => {
+        const allDates = tickets.map(ticket => new Date(ticket['Prochaine lieu, date et heure'].split(', ')[1]));
+        const uniqueDates = Array.from(new Set(allDates.map(date => date.toISOString().split('T')[0])));
+        return uniqueDates;
+    };
+
     useEffect(() => {
         fetchTickets();
     }, []);
 
-    // Apply filters whenever the filter state changes
     useEffect(() => {
         applyFilters();
     }, [filters]);
 
-    // Hide calendar when mouse is not over it or the button
-    useEffect(() => {
-        const handleMouseOver = (event) => {
-            if (
-                calendarRef.current && 
-                !calendarRef.current.contains(event.target) && 
-                !buttonRef.current.contains(event.target)
-            ) {
-                setShowCalendar(false);
-            }
-        };
-
-        document.addEventListener('mouseover', handleMouseOver);
-        return () => {
-            document.removeEventListener('mouseover', handleMouseOver);
-        };
-    }, []);
-
-    // Apply filtering logic
     const applyFilters = () => {
         let filtered = tickets;
 
-        // Date filtering logic
-        if (filters.startDate || filters.endDate) {
+        if (filters.title) {
+            filtered = filtered.filter(ticket =>
+                ticket['Titre de l\'offre'].toLowerCase().includes(filters.title.toLowerCase())
+            );
+        }
+
+        if (filters.location) {
+            filtered = filtered.filter(ticket =>
+                ticket.Ville.toLowerCase().includes(filters.location.toLowerCase())
+            );
+        }
+
+        if (filters.category) {
+            filtered = filtered.filter(ticket =>
+                ticket.Catégorie.toLowerCase() === filters.category.toLowerCase()
+            );
+        }
+
+        if (filters.dateRange) {
             filtered = filtered.filter(ticket => {
-                const nextDate = new Date(ticket['Prochaine date']);
-                if (filters.startDate && filters.endDate) {
-                    return nextDate >= filters.startDate && nextDate <= filters.endDate;
-                } else if (filters.startDate) {
-                    return nextDate.toDateString() === filters.startDate.toDateString();
-                } else if (filters.endDate) {
-                    return nextDate <= filters.endDate;
+                const ticketDate = new Date(ticket['Prochaine lieu, date et heure'].split(', ')[1]);
+                return ticketDate.toISOString().split('T')[0] === filters.dateRange;
+            });
+        }
+
+        if (filters.period) {
+            filtered = filtered.filter(ticket => {
+                const ticketTime = new Date(ticket['Prochaine lieu, date et heure'].split(', ')[1]).getHours();
+                if (filters.period === 'Soir') {
+                    return ticketTime >= 18 && ticketTime < 24;
+                } else if (filters.period === 'Nuit') {
+                    return ticketTime >= 0 && ticketTime < 6;
                 }
                 return true;
             });
         }
 
-        // Location filtering logic
-        if (filters.location) {
-            filtered = filtered.filter(ticket => ticket.Ville.toLowerCase().includes(filters.location.toLowerCase()));
-        }
-
-        // Category filtering logic
-        if (filters.category) {
-            filtered = filtered.filter(ticket => ticket.Catégorie.toLowerCase() === filters.category.toLowerCase());
+        if (filters.publisher) {
+            filtered = filtered.filter(ticket => ticket.Publisher.toLowerCase() === filters.publisher.toLowerCase());
         }
 
         setFilteredTickets(filtered);
     };
 
-    // Handle changes in filter inputs
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters(prevFilters => ({
@@ -119,54 +113,25 @@ const Evenements = () => {
         }));
     };
 
-    // Handle changes in date range picker
-    const handleDateChange = (dates) => {
-        const [start, end] = dates;
-        if (start && !end) {
-            // Single date selection
-            if (filters.startDate && start.toDateString() === filters.startDate.toDateString()) {
-                setFilters(prevFilters => ({
-                    ...prevFilters,
-                    startDate: null,
-                    endDate: null
-                }));
-            } else {
-                setFilters(prevFilters => ({
-                    ...prevFilters,
-                    startDate: start,
-                    endDate: null
-                }));
-            }
-        } else {
-            // Range date selection
-            setFilters(prevFilters => ({
-                ...prevFilters,
-                startDate: start,
-                endDate: end
-            }));
-        }
+    const handleSearchClick = () => {
+        applyFilters();
     };
 
-    // Handle pagination changes
     const handleChangePage = (event, pageNumber) => setCurrentPage(pageNumber);
 
-    // Open the popup dialog
     const handleClickOpen = (link) => {
         setSelectedLink(link);
         setOpen(true);
     };
 
-    // Close the popup dialog
     const handleClose = () => {
         setOpen(false);
         setEmail(user ? user.email : '');
         setEmailError('');
     };
 
-    // Validate email and redirect if valid
     const handleEmailSubmit = async () => {
         if (!user) {
-            // Basic email validation regex
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 setEmailError('Please enter a valid email address.');
@@ -181,12 +146,10 @@ const Evenements = () => {
             }
         }
 
-        // If email is valid, redirect to the selected link in a new tab
         window.open(selectedLink, '_blank');
         handleClose();
     };
 
-    // Calculate the tickets to be displayed on the current page
     const indexOfLastTicket = currentPage * ticketsPerPage;
     const indexOfFirstTicket = indexOfLastTicket - ticketsPerPage;
     const currentTickets = filteredTickets.slice(indexOfFirstTicket, indexOfLastTicket);
@@ -194,66 +157,18 @@ const Evenements = () => {
     return (
         <div className="evenementsFnac">
             <h2 className="section-titleFa">TICKETS</h2>
-            
-            <div className="filters">
-                <button 
-                    ref={buttonRef}
-                    onClick={() => setShowCalendar(!showCalendar)}
-                    style={{ color: filters.startDate || filters.endDate ? 'black' : 'inherit' }}
-                >
-                    {filters.startDate && filters.endDate
-                        ? `${filters.startDate.toLocaleDateString()} - ${filters.endDate.toLocaleDateString()}`
-                        : filters.startDate
-                        ? filters.startDate.toLocaleDateString()
-                        : "Filter by Date Range"}
-                </button>
-                {showCalendar && (
-                    <div ref={calendarRef} className="calendar-container">
-                        <DatePicker
-                            selected={filters.startDate}
-                            onChange={handleDateChange}
-                            startDate={filters.startDate}
-                            endDate={filters.endDate}
-                            selectsRange
-                            inline
-                            isClearable
-                        />
-                    </div>
-                )}
-                <select name="location" value={filters.location} onChange={handleFilterChange}>
-                    <option value="">Filter by Location</option>
-                    {availableLocations.map(location => (
-                        <option key={location} value={location}>{location}</option>
-                    ))}
-                </select>
-                <select name="category" value={filters.category} onChange={handleFilterChange}>
-                    <option value="">Filter by Category</option>
-                    {availableCategories.map(category => (
-                        <option key={category} value={category}>{category}</option>
-                    ))}
-                </select>
-            </div>
-            
-            <div className="tickets-containerFnac">
-                {currentTickets.length > 0 ? (
-                    currentTickets.map(ticket => (
-                        <div className="ticketfnac" key={ticket._id}>
-                            <div className="ticket-link" onClick={() => handleClickOpen(ticket["Lien de l'offre"])}>
-                                <img src={ticket["Lien de l'image"]} alt={ticket["Titre de l'offre"]} />
-                                <div className="ticket-infoFnc">
-                                    <h3>{ticket["Titre de l'offre"]}</h3>
-                                    <p>Price: ${ticket.Prix}</p>
-                                    <p>Location: {ticket.Ville}</p>
-                                    <p>Next date: {ticket["Prochaine date"]}</p>
-                                    <p>Categories: {ticket.Catégorie}</p>
-                                </div>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p className="no-events-message">No events match the chosen filters.</p>
-                )}
-            </div>
+
+            <SearchBar filters={filters} handleFilterChange={handleFilterChange} handleSearchClick={handleSearchClick} />
+
+            <Filters
+                filters={filters}
+                availableCategories={availableCategories}
+                availableDates={availableDates}
+                handleFilterChange={handleFilterChange}
+            />
+
+            <TicketList currentTickets={currentTickets} handleClickOpen={handleClickOpen} />
+
             <div className="pagination">
                 <Pagination
                     count={Math.ceil(filteredTickets.length / ticketsPerPage)}
@@ -267,40 +182,18 @@ const Evenements = () => {
                     showLastButton
                 />
             </div>
-            
-            {/* Popup Dialog for Email Entry */}
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Redirecting to Event Page</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        {user 
-                            ? 'A mail will be sent to your account. Click submit to continue.'
-                            : 'Please enter your email address to be redirected to the event page.'
-                        }
-                    </DialogContentText>
-                    {!user && (
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="email"
-                            label="Email Address"
-                            type="email"
-                            fullWidth
-                            variant="standard"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            error={!!emailError}
-                            helperText={emailError}
-                        />
-                    )}
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleEmailSubmit}>Submit</Button>
-                </DialogActions>
-            </Dialog>
+
+            <DialogComponent
+                open={open}
+                handleClose={handleClose}
+                handleEmailSubmit={handleEmailSubmit}
+                user={user}
+                email={email}
+                setEmail={setEmail}
+                emailError={emailError}
+            />
         </div>
     );
-}
+};
 
 export default Evenements;

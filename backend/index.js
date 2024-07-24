@@ -2,18 +2,16 @@ import express from 'express';
 import dotenv from 'dotenv';
 import authRoute from './routes/auth.js';
 import connectDB from './config/db.js';
-import sgMail from './config/sendgrid.js';
 import cors from 'cors';
 import ticketRoute from './routes/Evenement.js';
 import emailRoute from './routes/email.js';
-
+import connectWithRetry from './connectWithRetry.js'
 
 const app = express();
 dotenv.config();
 
+connectWithRetry()
 
-//connect to database 
-connectDB();
 
 
 // Enable CORS

@@ -1,27 +1,30 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import './header.scss';
 import logo from './logo.svg';
 import ModalAuth from '../Shared/ModalAuth';
-import Login from '../Auth/Login';
 import { Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
+import Login from '../Auth/Login';
+import Register from "../Auth/Register";
+import './header.scss';
 
 const Header = ({ onShowApp, onShowOrganisateur }) => {
     const [showAuth, setShowAuth] = useState(false);
     const { user, logout } = useContext(AuthContext);
+    const [isLoginForCarriers, setIsLoginForCarriers] = useState(true);
+    const [authClickClass, setAuthClickClass] = useState('');
 
-    // Handler to show authentication modal
-    const handlerShowAuth = () => {
+    const handlerShowAuth = (isLogin) => {
+        setIsLoginForCarriers(isLogin);
         setShowAuth(true);
+        setAuthClickClass('container-authClick'); // Ajouter la classe lorsque l'un des boutons est cliqué
     };
 
-    // Handler to close authentication modal
     const handlerCloseAuth = () => {
         setShowAuth(false);
+        setAuthClickClass(''); // Réinitialiser la classe lorsque le modal est fermé
     };
 
-    // Handler for user logout
     const handleLogout = () => {
         logout();
     };
@@ -58,24 +61,33 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                                     <button onClick={handleLogout}>Logout</button>
                                 </>
                             ) : (
-                                <>
-                                    <div className="org">
-                                        <Link to='/organisation'>JE SUIS ORGANISEUR</Link>
+                                <div className='top_menu'>
+                                    <div className='itemLog'>
+                                        <div className="org">
+                                            <Link to='/organisation'>JE SUIS ORGANISEUR</Link>
+                                        </div>
+                                        <div className='loginBtn'>
+                                            <div className='loginA'>CONNECTION/INSCRIPTION</div>
+                                            <div className='item-sign'>
+                                                <div onClick={() => handlerShowAuth(true)} className={authClickClass}>CONNEXION</div>
+                                                <div onClick={() => handlerShowAuth(false)} className={authClickClass}>INSCRIPTION</div>
+                                                {showAuth && (
+                                                    <ModalAuth
+                                                        show={showAuth}
+                                                        onClose={handlerCloseAuth}
+                                                    >
+                                                        {isLoginForCarriers ? <Login close={handlerCloseAuth} /> : <Register close={handlerCloseAuth} />}
+                                                    </ModalAuth>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className='loginBtn'>
-                                        <a href="#" onClick={handlerShowAuth}>CONNECTION/INSCRIPTION</a>
-                                    </div>
-                                </>
+                                </div>
                             )}
                         </div>
                     </div>
                 </div>
             </div>
-            {showAuth && (
-                <ModalAuth show={showAuth} onClose={handlerCloseAuth}>
-                    <Login close={handlerCloseAuth} />
-                </ModalAuth>
-            )}
         </div>
     );
 };

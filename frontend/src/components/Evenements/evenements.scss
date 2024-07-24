@@ -1,121 +1,164 @@
 .evenementsFnac {
   padding: 20px;
   background-color: #f9f9f9;
+}
 
-  .section-titleFa {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
+.section-titleFa {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
 
-  .filters {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    align-items: center;
-    position: relative;
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
 
-    .react-datepicker-wrapper {
-      width: auto;
-    }
+.search-bar input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  flex: 1;
+  height: 35px;
+  width: 360px;
+}
 
-    select,
-    .react-datepicker__input-container input {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 14px;
-    }
+.search-bar button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
 
-    button {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 14px;
-      background-color: #f0f0f0;
-      cursor: pointer;
-    }
+.search-bar button:hover {
+  background-color: #0056b3;
+}
 
-    button:hover {
-      background-color: #ddd;
-    }
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+  position: relative;
+}
 
-    .calendar-container {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      z-index: 2;
-    }
+.react-datepicker-wrapper {
+  width: auto;
+}
 
-    .react-datepicker {
-      z-index: 2;
-    }
+select,
+.react-datepicker__input-container input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
 
-    .react-datepicker__input-container {
-      display: none;
-    }
-  }
+button {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
 
-  .tickets-containerFnac {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
+button:hover {
+  background-color: #ddd;
+}
 
-  .ticketfnac {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    width: 200px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
+.calendar-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 2;
+}
 
-  .ticketfnac img {
-    width: 100%;
-    height: auto;
-  }
+.react-datepicker {
+  z-index: 2;
+}
 
-  .ticket-infoFnc {
-    padding: 10px;
-  }
+.react-datepicker__input-container {
+  display: none;
+}
 
-  .ticket-infoFnc h3 {
-    font-size: 18px;
-    margin: 0 0 10px;
-  }
+.tickets-containerFnac {
+  max-width: 2480px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
 
-  .ticket-infoFnc p {
-    margin: 5px 0;
-  }
+.ticketfnac {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 200px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
 
-  .discountFnc {
-    color: red;
-    font-weight: bold;
-  }
+.ticketfnac:hover {
+  transform: scale(1.04);
+}
 
-  .pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    text-align: center;
-    gap: 5px;
-  }
+.ticketfnac img {
+  width: 100%;
+  height: auto;
+}
 
-  .ticket-link {
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer; /* Ensures the link looks clickable */
-  }
+.ticket-infoFnc {
+  padding: 10px;
+}
 
-  .ticket-link:hover {
-    color: inherit;
-    text-decoration: none;
-  }
+.ticket-infoFnc h3 {
+  font-size: 18px;
+  margin: 0 0 10px;
+}
 
-  .no-events-message {
-    text-align: center;
-    font-size: 18px;
-    color: #999;
-    margin-top: 20px;
-  }
+.ticket-infoFnc p {
+  margin: 5px 0;
+}
+
+.discountFnc {
+  color: red;
+  font-weight: bold;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  text-align: center;
+  gap: 5px;
+}
+
+.ticket-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.ticket-link:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+.no-events-message {
+  text-align: center;
+  font-size: 18px;
+  color: #999;
+  margin-top: 20px;
 }

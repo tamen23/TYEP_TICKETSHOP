@@ -1,33 +1,26 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { MdHideSource } from "react-icons/md";
-import { BiShowAlt } from "react-icons/bi";
+import React, { useState } from 'react';
 import api from '../../api';
 import './register.scss';
-import Login from './Login'; // Import the Login component
 
-const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
+const Register = ({ close }) => {
     const [form, setForm] = useState({
         nom: '',
         prenom: '',
         email: '',
         motDePasse: '',
+        confirmerMotDePasse: '',
         telephone: '',
-        showPassword: false
     });
-    const [isRegistered, setIsRegistered] = useState(false); // State to control login modal
-
-    const toggleShowPassword = () => {
-        setForm({ ...form, showPassword: !form.showPassword });
-    };
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleLoginLinkClick = (e) => {
-        e.preventDefault();
-        closeRegisterModal();
-        openLoginModal();
+    const handlePhoneChange = (e) => {
+        const { value } = e.target;
+        if (/^\d*$/.test(value)) {
+            setForm({ ...form, telephone: value });
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -37,7 +30,7 @@ const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
             return;
         }
         try {
-            const response = await api.post('/auth/register', {
+            await api.post('/auth/register', {
                 role: 'utilisateur',
                 nom: form.nom,
                 prenom: form.prenom,
@@ -46,99 +39,109 @@ const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
                 telephone: form.telephone,
             });
             alert('Inscription réussie');
-            closeRegisterModal(); // Close the registration modal
-            setIsRegistered(true); // Set state to show login component
+            close();
         } catch (error) {
             alert('Échec de l\'inscription');
         }
     };
 
-    const handleClickOutside = (event) => {
-        if (registerRef.current && !registerRef.current.contains(event.target)) {
-            closeRegisterModal();
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
     return (
-        <div className="auth-container" ref={registerRef}>
-            {!isRegistered ? (
-                <>
-                    <h2>Register</h2>
-                    <form onSubmit={handleSubmit}>
-                        <div className="input-group">
-                            <input
-                                type="text"
-                                name="nom"
-                                placeholder="Nom"
-                                value={form.nom}
-                                onChange={handleChange}
-                            />
+        <div className="modalAuth-content">
+            <form onSubmit={handleSubmit}>
+                <h2>INSCRIVEZ-VOUS</h2>
+                <p>Please authorize to continue</p>
+                <div className="wrapper">
+                    <div className='wrapper-flex'>
+                        <div className='wrapper'>
+                            <label>Nom</label>
+                            <div className="input-group">
+                                <input
+                                    type="text"
+                                    className="inputLogin"
+                                    placeholder="Nom"
+                                    name="nom"
+                                    value={form.nom}
+                                    onChange={handleChange}
+                                />
+                            </div>
                         </div>
-                        <div className="input-group">
-                            <input
-                                type="text"
-                                name="prenom"
-                                placeholder="Prenom"
-                                value={form.prenom}
-                                onChange={handleChange}
-                            />
+                        <div className='wrapper'>
+                            <label>Prénom</label>
+                            <div className="input-group">
+                                <input
+                                    type="text"
+                                    className="inputLogin"
+                                    placeholder="Prénom"
+                                    name="prenom"
+                                    value={form.prenom}
+                                    onChange={handleChange}
+                                />
+                            </div>
                         </div>
-                        <div className="input-group">
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Email"
-                                value={form.email}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="input-group">
-                            <input
-                                type="text"
-                                name="telephone"
-                                placeholder="Telephone"
-                                value={form.telephone}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="input-group password-input">
-                            <input
-                                type={form.showPassword ? "text" : "password"}
-                                name="motDePasse"
-                                placeholder="Mot de Passe"
-                                value={form.motDePasse}
-                                onChange={handleChange}
-                            />
-                            <span className='span' onClick={toggleShowPassword}>
-                                {form.showPassword ? <MdHideSource className='hideD' /> : <BiShowAlt className='showD' />}
-                            </span>
-                        </div>
-                        <div className="input-group">
-                            <input
-                                type={form.showPassword ? "text" : "password"}
-                                name="confirmerMotDePasse"
-                                placeholder="Confirmer le mot de passe"
-                                value={form.confirmerMotDePasse}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="buttons">
-                            <button className='button cancel' type="button" onClick={closeRegisterModal}>Annuler</button>
-                            <button className='button confirm' type="submit">Confirmer</button>
-                        </div>
-                    </form>
-                    <p>Vous avez déjà un compte ? <a href="#" onClick={handleLoginLinkClick}>Connectez-vous</a></p>
-                </>
-            ) : (
-                <Login close={closeRegisterModal} />
-            )}
+                    </div>
+                </div>
+                <div className="wrapper">
+                    <label>Téléphone</label>
+                    <div className="input-group">
+                        <input
+                            type="text"
+                            className="inputLogin"
+                            placeholder="Téléphone"
+                            name="telephone"
+                            value={form.telephone}
+                            onChange={handlePhoneChange}
+                        />
+                    </div>
+                </div>
+                <div className="wrapper">
+                    <label>Email</label>
+                    <div className="input-group">
+                        <input
+                            type="email"
+                            className="inputLogin"
+                            placeholder="Email"
+                            name="email"
+                            value={form.email}
+                            onChange={handleChange}
+                        />
+                    </div>
+                </div>
+                <div className="wrapper">
+                    <label>Mot de passe</label>
+                    <div className="input-group">
+                        <input
+                            type="password"
+                            className="inputLogin"
+                            placeholder="Mot de passe"
+                            name="motDePasse"
+                            value={form.motDePasse}
+                            onChange={handleChange}
+                        />
+                    </div>
+                </div>
+                <div className="wrapper">
+                    <label>Confirmer le mot de passe</label>
+                    <div className="input-group">
+                        <input
+                            type="password"
+                            className="inputLogin"
+                            placeholder="Confirmer le mot de passe"
+                            name="confirmerMotDePasse"
+                            value={form.confirmerMotDePasse}
+                            onChange={handleChange}
+                        />
+                    </div>
+                </div>
+                <div className="wrapper">
+                    <button type="submit" className="login-button">Inscrivez-vous</button>
+                </div>
+                <div className="wrapper">
+                    <a href="#" className="forgot-password">Forgot your password?</a>
+                </div>
+                <div className="wrapper">
+                    <a href="#" className="create-account" onClick={close}>Connectez-vous</a>
+                </div>
+            </form>
         </div>
     );
 };

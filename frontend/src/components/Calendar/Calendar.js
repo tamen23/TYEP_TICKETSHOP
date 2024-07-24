@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './calendar.scss';
 
-const Calendar = () => {
+const Calendar = ({ onDateSelect }) => {
     const date = new Date();
     const [month, setMonth] = useState(date.getMonth());
     const [year, setYear] = useState(date.getFullYear());
@@ -33,6 +33,15 @@ const Calendar = () => {
 
     const monthName = new Date(year, month).toLocaleString('default', { month: 'long' });
 
+    const handleDayClick = (day) => {
+        if (!day.disabled) {
+            const selectedDate = new Date(year, month, day.date);
+            if (typeof onDateSelect === 'function') {
+                onDateSelect(selectedDate);
+            }
+        }
+    };
+
     return (
         <div className="calendar">
             <div className="calendar__header">
@@ -50,7 +59,11 @@ const Calendar = () => {
                 </div>
                 <div className="calendar__days">
                     {generateDays(year, month, today, currentMonth, currentYear).map((day, index) => (
-                        <div key={index} className={`calendar__day ${day.disabled ? 'calendar__day--disabled' : ''} ${day.isToday ? 'calendar__day--today' : ''}`}>
+                        <div
+                            key={index}
+                            className={`calendar__day ${day.disabled ? 'calendar__day--disabled' : ''} ${day.isToday ? 'calendar__day--today' : ''}`}
+                            onClick={() => handleDayClick(day)}
+                        >
                             {day.date}
                         </div>
                     ))}

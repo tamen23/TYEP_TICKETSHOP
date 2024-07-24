@@ -1,120 +1,87 @@
-.auth-container {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    width:100%;
-    margin: 0 auto;
-    color: #000;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
-    h2 {
-        text-align: center;
-        margin-bottom: 10px;
-        color: #000;
-    }
-
-    p {
-        text-align: center;
-        margin-bottom: 20px;
-        color: #666;
-    }
-
-    .google-login {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 20px;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #444;
-
-        &:hover {
-            background-color: #f1f1f1;
-        }
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        .input-group {
-            width: 100%;
-            margin-bottom: 15px;
-            position: relative;
-
-            input {
-                width: 100%;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                padding: 10px;
-                font-size: 14px;
-                color: #333;
-                box-sizing: border-box;
-            }
-
-            .password-input {
-                position: relative;
-
-                .toggle-password {
-                    position: absolute;
-                    right: 170px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    cursor: pointer;
-                    color: #888;
-                }
-            }
-        }
-
-        .button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            background-color: #6A67CE;
-            width: 100%;
-            color: #fff;
-            cursor: pointer;
-            transition: background-color 0.3s;
-
-            &:hover {
-                background-color: #5753C9;
-            }
-        }
-    }
-
-    p {
-        margin-top: 10px;
-        text-align: center;
-        color: #666;
-
-        a {
-            color: #6A67CE;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-    }
+.login-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
 }
 
-.close {
+.login-container {
+    background: white;
+    padding: 20px;
+    border-radius: 4px;
+    width: 320px;
+    position: relative;
+    text-align: center;
+}
+
+.close-btn {
     position: absolute;
     top: 10px;
-    right: 210px;
+    right: 10px;
     cursor: pointer;
-    color: #000;
 }
 
-.hide, .show {
-    color: #888;
+.input-wrapper {
+    margin-bottom: 15px;
+    text-align: left;
 }
 
+.label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
 
-span.toggle-password {
+.new-form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.toggle-password {
     position: absolute;
-    right: 13px;
-    top: 10px;
+    right: 10px;
+    top: calc(50% - 10px);
+    cursor: pointer;
 }
+
+.login-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.forgot-password {
+    color: #328eee;
+    text-decoration: none;
+}
+
+.login-button {
+    background-color: #77ca37;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 410px;
+}
+
+.create-account {
+    display: block;
+    margin-top: 15px;
+    color: #328eee;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+
