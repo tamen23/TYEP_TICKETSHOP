@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 app.use("/api/auth", authRoute);
 
 //get all Evenements route
-app.use('/api/ticket', ticketRoute);
+app.use('/api/ticket', ticketRoute,);
 
 
 

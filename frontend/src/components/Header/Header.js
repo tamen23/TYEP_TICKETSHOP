@@ -33,13 +33,16 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
         <div className='header'>
             <div className='header__wrapper'>
                 <div className="header__left">
+                    <Link to='/'>
                     <div className="header__logo">
-                        <div className="ticket__logo">
-                            <img src={logo} alt="TiCKETSHOP" />
-                            TiCKETSHOP
-                        </div>
-                        <div className="underline"></div>
+
+                            <div className="ticket__logo">
+                                <img src={logo} alt="TiCKETSHOP"/>
+                                TiCKETSHOP
+                            </div>
+                            <div className="underline"></div>
                     </div>
+                    </Link>
                     <div className="header__menu">
                         <nav>
                             <ul>
@@ -76,7 +79,9 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                                                         show={showAuth}
                                                         onClose={handlerCloseAuth}
                                                     >
-                                                        {isLoginForCarriers ? <Login close={handlerCloseAuth} /> : <Register close={handlerCloseAuth} />}
+                                                        {isLoginForCarriers ?
+                                                          <Login close={handlerCloseAuth} switchToRegister={() => handlerShowAuth(false)} /> :
+                                                          <Register close={handlerCloseAuth} switchToLogin={() => handlerShowAuth(true)} />}
                                                     </ModalAuth>
                                                 )}
                                             </div>

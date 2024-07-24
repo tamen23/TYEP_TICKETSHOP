@@ -1,7 +1,14 @@
 import axios from 'axios';
 
-const api = axios.create({
+const apiInstance = axios.create({
   baseURL: 'http://localhost:8000/api',
 });
 
-export default api;
+export default apiInstance;
+
+export const ApiService = {
+  register(userData) {
+    return apiInstance.post('/auth/register', userData);
+  },
+
+};

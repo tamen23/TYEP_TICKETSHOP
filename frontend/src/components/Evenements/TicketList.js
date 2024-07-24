@@ -1,6 +1,11 @@
 import React from 'react';
 
 const TicketList = ({ currentTickets, handleClickOpen }) => {
+    const calculatePeriod = (dateTime) => {
+        const ticketTime = new Date(dateTime.split(', ')[1]).getHours();
+        return (ticketTime >= 18 || ticketTime < 5) ? 'Soir' : 'Journée';
+    };
+
     return (
         <div className="tickets-containerFnac">
             {currentTickets.length > 0 ? (

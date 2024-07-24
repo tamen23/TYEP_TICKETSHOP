@@ -136,13 +136,14 @@
   font-size: 15px;
   line-height: 18px;
   padding: 12px 25px;
-  background: #1a8fdd;
+  border:1px solid #1a8fdd;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 }
 
 .loginA:hover {
   color: #fff;
+  background: #1a8fdd;
 }
 
 .item-sign {
@@ -200,4 +201,9 @@
 
 .item-sign:hover .item-sign {
   transform: scale(0, 0);
+}
+
+
+.headerLinkr{
+  text-decoration: none;
 }
