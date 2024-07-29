@@ -6,6 +6,7 @@ import sgMail from './config/sendgrid.js';
 import cors from 'cors';
 import ticketRoute from './routes/Evenement.js';
 import emailRoute from './routes/email.js';
+import eventRoute from './routes/event.js';
 
 
 const app = express();
@@ -36,6 +37,9 @@ app.use("/api/auth", authRoute);
 
 //get all Evenements route
 app.use('/api/ticket', ticketRoute);
+
+//get all events route
+app.use('/api/event', eventRoute);
 
 
 
