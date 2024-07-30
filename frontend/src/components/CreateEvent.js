@@ -6,7 +6,7 @@ import { styled } from '@mui/system';
 import api from '../api';
 import AuthContext from '../context/AuthContext';
 
-// Styles for the form
+// Styles for the form container
 const Container = styled('div')({
   padding: 24,
   marginTop: 24,
@@ -15,14 +15,15 @@ const Container = styled('div')({
   boxShadow: '0px 3px 6px rgba(0,0,0,0.1)',
 });
 
+// Ensure space between step design and first field
 const FormSection = styled('div')({
-  marginTop: 24, // Ensure space between step design and first field
+  marginTop: 24,
 });
 
 const CreateEvent = () => {
   const { user } = useContext(AuthContext);
 
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(0); // Track the current step in the form
   const [formData, setFormData] = useState({
     name: '',
     venue: '',
@@ -53,6 +54,7 @@ const CreateEvent = () => {
     recurrence: '',
   });
 
+  // Handle change in text fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -61,6 +63,7 @@ const CreateEvent = () => {
     });
   };
 
+  // Handle change in checkbox fields
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
     setFormData((prevData) => ({
@@ -69,6 +72,7 @@ const CreateEvent = () => {
     }));
   };
 
+  // Calculate duration whenever start or end time changes
   useEffect(() => {
     if (formData.start_time && formData.end_time) {
       const start = new Date(`1970-01-01T${formData.start_time}:00`);
@@ -81,6 +85,7 @@ const CreateEvent = () => {
     }
   }, [formData.start_time, formData.end_time]);
 
+  // Move to the next step if current step is valid
   const handleNext = () => {
     if (validateStep(step)) {
       setStep((prevStep) => prevStep + 1);
@@ -89,10 +94,12 @@ const CreateEvent = () => {
     }
   };
 
+  // Move to the previous step
   const handleBack = () => {
     setStep((prevStep) => prevStep - 1);
   };
 
+  // Validate the current step
   const validateStep = (step) => {
     switch (step) {
       case 0:
@@ -114,6 +121,7 @@ const CreateEvent = () => {
     }
   };
 
+  // Validate the pricing step based on pricing type
   const validatePricingStep = () => {
     if (formData.pricing === 'free') {
       return formData.capacity && validateSeatCategories();
@@ -123,6 +131,7 @@ const CreateEvent = () => {
     return false;
   };
 
+  // Ensure total capacity matches seat counts
   const validateSeatCategories = () => {
     const totalCapacity = ['simple', 'vip', 'premium']
       .filter(category => formData.seatCategories.includes(category))
@@ -131,10 +140,12 @@ const CreateEvent = () => {
       formData.seatCategories.every(category => Number(formData[`${category}_count`]) > 0);
   };
 
+  // Ensure seat prices are set for paid events
   const validateSeatPrices = () => {
     return formData.seatCategories.every(category => formData[`${category}_price`] !== '');
   };
 
+  // Handle form submission
   const handleSubmit = async () => {
     try {
       const response = await api.post('/event/create', formData);
@@ -244,6 +255,20 @@ const CreateEvent = () => {
                     helperText="Generate it"
                   />
                 </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    onClick={handleNext}
+                  >
+                    Next
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={() => setStep(0)}
+                  >
+                    Cancel
+                  </Button>
+                </Grid>
               </Grid>
             </FormSection>
           )}
@@ -294,6 +319,26 @@ const CreateEvent = () => {
                   </TextField>
                 </Grid>
               </Grid>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                <Button
+                  variant="contained"
+                  onClick={handleBack}
+                >
+                  Back
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                >
+                  Next
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => setStep(0)}
+                >
+                  Cancel
+                </Button>
+              </div>
             </FormSection>
           )}
 
@@ -338,6 +383,26 @@ const CreateEvent = () => {
                   />
                 </Grid>
               </Grid>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                <Button
+                  variant="contained"
+                  onClick={handleBack}
+                >
+                  Back
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                >
+                  Next
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => setStep(0)}
+                >
+                  Cancel
+                </Button>
+              </div>
             </FormSection>
           )}
 
@@ -393,6 +458,26 @@ const CreateEvent = () => {
                   />
                 </Grid>
               </Grid>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                <Button
+                  variant="contained"
+                  onClick={handleBack}
+                >
+                  Back
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                >
+                  Next
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => setStep(0)}
+                >
+                  Cancel
+                </Button>
+              </div>
             </FormSection>
           )}
 
@@ -568,6 +653,26 @@ const CreateEvent = () => {
                   </>
                 )}
               </Grid>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                <Button
+                  variant="contained"
+                  onClick={handleBack}
+                >
+                  Back
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                >
+                  Next
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => setStep(0)}
+                >
+                  Cancel
+                </Button>
+              </div>
             </FormSection>
           )}
 
@@ -606,10 +711,30 @@ const CreateEvent = () => {
                   </Grid>
                 )}
               </Grid>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                <Button
+                  variant="contained"
+                  onClick={handleBack}
+                >
+                  Back
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                >
+                  Next
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => setStep(0)}
+                >
+                  Cancel
+                </Button>
+              </div>
             </FormSection>
           )}
 
-{step === 6 && (
+          {step === 6 && (
             <FormSection>
               <Typography variant="h6" gutterBottom>
                 Validate your event details before submitting.
@@ -709,42 +834,9 @@ const CreateEvent = () => {
                 >
                   Submit
                 </Button>
-                <Button
-                  variant="contained"
-                  onClick={() => setStep(0)}
-                >
-                  Cancel
-                </Button>
               </div>
             </FormSection>
           )}
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-            {step > 0 && step < steps.length - 1 && (
-              <Button
-                variant="contained"
-                onClick={handleBack}
-              >
-                Back
-              </Button>
-            )}
-            {step < steps.length - 1 && (
-              <Button
-                variant="contained"
-                onClick={handleNext}
-              >
-                Next
-              </Button>
-            )}
-            {step > 0 && (
-              <Button
-                variant="contained"
-                onClick={() => setStep(0)}
-              >
-                Cancel
-              </Button>
-            )}
-          </div>
         </div>
       )}
     </Container>
