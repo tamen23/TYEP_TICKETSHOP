@@ -7,7 +7,7 @@ import EvenementView from "./view/EvenementView";
 import Footer from "./components/Footer/Footer";
 import Organisateur from './view/Organisateur';
 import Login from './components/Auth/Login'; // Import Login component
-//import PrivateRoute from './components/PrivateRoute'; // Import PrivateRoute component
+import CreateEvent from './components/CreateEvent';
 
 function App() {
     const [isOrganisateurVisible, setIsOrganisateurVisible] = useState(false);
@@ -36,6 +36,7 @@ function App() {
                         <Route path="/" element={<Home />} /> {/* Accessible to everyone for now */}
                         <Route path="/organisation" element={<Organisateur />} /> {/* Accessible to everyone for now */}
                         <Route path="/description" element={<EvenementView />} /> {/* Accessible to everyone for now */}
+                        <Route path="/create-event" element={<CreateEvent />} /> {/* Accessible to everyone for now */}
                     </Routes>
                     <Footer />
                 </div>
