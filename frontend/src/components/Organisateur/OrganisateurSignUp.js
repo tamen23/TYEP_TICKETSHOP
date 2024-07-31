@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import './organisateurSignUp.scss';
-import OrganisateurModal from '../Shared/OrganisateurModal';
-import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { TextField, Button, Grid, Container, Typography, IconButton, InputAdornment } from '@mui/material';
 import { MdHideSource } from "react-icons/md";
 import { BiShowAlt } from "react-icons/bi";
-import Login from '../Auth/Login'; // Correct import of Login component
+import axios from 'axios';
+import Login from '../Auth/Login';
 
-const OrganisateurSignUp = ({ onClose, show }) => {
+const OrganisateurSignUp = ({ onClose }) => {
     const [form, setForm] = useState({
         nom: '',
         prenom: '',
@@ -24,27 +24,27 @@ const OrganisateurSignUp = ({ onClose, show }) => {
     });
 
     const [error, setError] = useState(null);
-    const [isRegistered, setIsRegistered] = useState(false); // State to control login modal
+    const [isRegistered, setIsRegistered] = useState(false);
 
     const toggleShowPassword = () => {
         setForm({ ...form, showPassword: !form.showPassword });
     };
 
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setForm({ ...form, [name]: value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(null); // Clear previous errors
+        setError(null);
 
-        // Validate email and password confirmation
         if (form.email !== form.emailConfirm) {
-            setError('Email addresses do not match');
+            setError('Les adresses e-mail ne correspondent pas.');
             return;
         }
         if (form.motDePasse !== form.passwordConfirm) {
-            setError('Passwords do not match');
+            setError('Les mots de passe ne correspondent pas.');
             return;
         }
 
@@ -64,133 +64,191 @@ const OrganisateurSignUp = ({ onClose, show }) => {
             });
 
             console.log('Registration Response:', response.data);
-            alert('Registration successful');
-            setIsRegistered(true); // Set state to show login component
+            alert('Inscription réussie');
+            setIsRegistered(true);
         } catch (error) {
             console.error('Registration Error:', error.response ? error.response.data : error.message);
-            setError(error.response ? error.response.data.msg : 'Registration failed');
+            setError(error.response ? error.response.data.msg : 'L\'inscription a échoué');
         }
     };
 
     return (
         <>
             {!isRegistered ? (
-                <OrganisateurModal onClose={onClose} show={show}>
-                    <div className="signUpForm">
-                        <h2>INSCRIVEZ-VOUS</h2>
-                        {error && <p className="error">{error}</p>}
-                        <form onSubmit={handleSubmit}>
-                            <div className="formGroup">
-                                <input
-                                    type="text"
+                <Container maxWidth="sm">
+                    <Typography variant="h4" gutterBottom>INSCRIVEZ-VOUS</Typography>
+                    {error && <Typography color="error">{error}</Typography>}
+                    <form onSubmit={handleSubmit}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Nom *"
                                     name="nom"
-                                    placeholder="Nom *"
                                     value={form.nom}
                                     onChange={handleChange}
+                                    id={uuidv4()}
+                                    required
                                 />
-                                <input
-                                    type="text"
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Prénom *"
                                     name="prenom"
-                                    placeholder="Prénom *"
                                     value={form.prenom}
                                     onChange={handleChange}
+                                    id={uuidv4()}
+                                    required
                                 />
-                            </div>
-                            <div className="formGroup">
-                                <input
-                                    type="email"
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Adresse e-mail *"
                                     name="email"
-                                    placeholder="Adresse e-mail"
+                                    type="email"
                                     value={form.email}
                                     onChange={handleChange}
+                                    id={uuidv4()}
+                                    required
                                 />
-                                <input
-                                    type="email"
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Répétez adresse e-mail *"
                                     name="emailConfirm"
-                                    placeholder="Répétez adresse e-mail *"
+                                    type="email"
                                     value={form.emailConfirm}
                                     onChange={handleChange}
+                                    id={uuidv4()}
+                                    required
                                 />
-                            </div>
-                            <div className="formGroup password-input">
-                                <input
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Mot de passe *"
                                     type={form.showPassword ? "text" : "password"}
                                     name="motDePasse"
-                                    placeholder="Mot de passe"
                                     value={form.motDePasse}
                                     onChange={handleChange}
+                                    id={uuidv4()}
+                                    required
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton onClick={toggleShowPassword}>
+                                                    {form.showPassword ? <MdHideSource /> : <BiShowAlt />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        )
+                                    }}
                                 />
-                                <input
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Répétez mot de passe *"
                                     type={form.showPassword ? "text" : "password"}
                                     name="passwordConfirm"
-                                    placeholder="Répétez mot de passe *"
                                     value={form.passwordConfirm}
                                     onChange={handleChange}
+                                    id={uuidv4()}
+                                    required
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton onClick={toggleShowPassword}>
+                                                    {form.showPassword ? <MdHideSource /> : <BiShowAlt />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        )
+                                    }}
                                 />
-                                <span className='toggle-password' onClick={toggleShowPassword}>
-                                    {form.showPassword ? <MdHideSource className='hide' /> : <BiShowAlt className='show' />}
-                                </span>
-                            </div>
-                            <div className="formGroup">
-                                <input
-                                    type="text"
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="N° Téléphone *"
                                     name="telephone"
-                                    placeholder="N° Téléphone *"
                                     value={form.telephone}
                                     onChange={handleChange}
+                                    id={uuidv4()}
+                                    required
                                 />
-                                <input
-                                    type="text"
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Adresse *"
                                     name="adresse"
-                                    placeholder="Adresse *"
                                     value={form.adresse}
                                     onChange={handleChange}
+                                    id={uuidv4()}
+                                    required
                                 />
-                            </div>
-                            <div className="formGroup">
-                                <select
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Pays *"
                                     name="pays"
                                     value={form.pays}
                                     onChange={handleChange}
-                                >
-                                    <option value="">Pays</option>
-                                    <option value="France">France</option>
-                                    <option value="Belgique">Belgique</option>
-                                    {/* Add other countries as needed */}
-                                </select>
-                                <input
-                                    type="text"
+                                    id={uuidv4()}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Ville *"
                                     name="ville"
-                                    placeholder="Ville"
                                     value={form.ville}
                                     onChange={handleChange}
+                                    id={uuidv4()}
+                                    required
                                 />
-                                <input
-                                    type="text"
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Code postal *"
                                     name="codePostal"
-                                    placeholder="Code postal *"
                                     value={form.codePostal}
                                     onChange={handleChange}
+                                    id={uuidv4()}
+                                    required
                                 />
-                            </div>
-                            <div className="formGroup">
-                                <input
-                                    type="text"
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    label="Nom de l'organisation *"
                                     name="nomDeStructure"
-                                    placeholder="Nom de l'organisation *"
                                     value={form.nomDeStructure}
                                     onChange={handleChange}
+                                    id={uuidv4()}
+                                    required
                                 />
-                            </div>
-                            <button type="submit">S'inscrire</button>
-                            <p className="alreadyRegistered">Déjà inscrit</p>
-                        </form>
-                    </div>
-                </OrganisateurModal>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button fullWidth variant="contained" color="primary" type="submit">
+                                    S'inscrire
+                                </Button>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Typography variant="body2" align="center" className="alreadyRegistered">
+                                    Déjà inscrit
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </form>
+                </Container>
             ) : (
-                <OrganisateurModal onClose={onClose} show={show}>
-                    <Login close={onClose} />
-                </OrganisateurModal>
+                <Login close={onClose} />
             )}
         </>
     );

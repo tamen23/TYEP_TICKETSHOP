@@ -29,30 +29,38 @@
   align-items: center;
   flex-direction: column;
   position: relative;
+  padding-left: 10px;
 }
 
 .header__logo::before {
   content: '';
   height: 2px;
   position: absolute;
-  top: -4px;
+  top: 31px;
   width: 70px;
+  right: -10px;
   background-color: #ffffff;
 }
 
+
+
+
 .ticket__logo {
   margin-right: 10px;
+  color: #ffffff;
 }
 
-.underline {
+.underlinel {
   height: 2px;
   width: 70px;
   background: #ffffff;
   position: absolute;
-  top: 5px;
+  top: 3px;
   left: 12px;
 }
-
+.header__menu{
+  padding-left: 40px;
+}
 .header__menu nav ul {
   display: flex;
   list-style: none;
@@ -104,6 +112,8 @@
   height: 100%;
 }
 
+
+
 .org {
   display: flex;
   align-items: center;
@@ -113,10 +123,12 @@
 .org a {
   text-decoration: none;
   color: white;
+  position: relative;
 }
 
 .org a:hover {
   text-decoration: underline;
+  color:#1a8fdd;
 }
 
 .loginBtn {
@@ -205,5 +217,24 @@
 
 
 .headerLinkr{
+  text-decoration: none;
+}
+
+.profile-logo{
+  font-size: 20px;
+}
+
+/* header.scss */
+.header__logo a {
+    text-decoration: none;
+  color: white;
+}
+
+
+a{
+  text-decoration: none;
+}
+
+ul{
   text-decoration: none;
 }

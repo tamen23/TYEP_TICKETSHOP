@@ -32,10 +32,10 @@ function App() {
                     />
                     {isOrganisateurVisible && <div>Organisateur Content</div>}
                     <Routes>
-                        <Route path="/login" element={<Login />} /> {/* Add Login Route */}
-                        <Route path="/" element={<Home />} /> {/* Accessible to everyone for now */}
-                        <Route path="/organisation" element={<Organisateur />} /> {/* Accessible to everyone for now */}
-                        <Route path="/description" element={<EvenementView />} /> {/* Accessible to everyone for now */}
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/" element={<Home />} />
+                        <Route path="/organisation" element={<Organisateur />} />
+                        <Route path="/description" element={<EvenementView />} />
                     </Routes>
                     <Footer />
                 </div>

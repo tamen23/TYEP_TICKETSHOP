@@ -1,55 +1,73 @@
 import React, { useState, useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import logo from './logo.svg';
 import ModalAuth from '../Shared/ModalAuth';
-import { Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 import Login from '../Auth/Login';
 import Register from "../Auth/Register";
+import OrganisateurSignUp from "../Organisateur/OrganisateurSignUp";
+import Profile from '../Shared/Profile'; // Importer le composant Profile
 import './header.scss';
+import { CgProfile } from "react-icons/cg";
 
 const Header = ({ onShowApp, onShowOrganisateur }) => {
     const [showAuth, setShowAuth] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
     const { user, logout } = useContext(AuthContext);
-    const [isLoginForCarriers, setIsLoginForCarriers] = useState(true);
-    const [authClickClass, setAuthClickClass] = useState('');
+    const [authMode, setAuthMode] = useState('login');
+    const location = useLocation();
 
-    const handlerShowAuth = (isLogin) => {
-        setIsLoginForCarriers(isLogin);
+    const handlerShowAuth = (mode) => {
+        setAuthMode(mode);
         setShowAuth(true);
-        setAuthClickClass('container-authClick'); // Ajouter la classe lorsque l'un des boutons est cliqué
     };
 
     const handlerCloseAuth = () => {
         setShowAuth(false);
-        setAuthClickClass(''); // Réinitialiser la classe lorsque le modal est fermé
+    };
+
+    const toggleProfile = () => {
+        setShowProfile(!showProfile);
     };
 
     const handleLogout = () => {
         logout();
     };
 
+    const isOrganisateur = user && user.role === 'organisateur'; // Vérifiez le rôle de l'utilisateur
+
     return (
         <div className='header'>
             <div className='header__wrapper'>
                 <div className="header__left">
                     <Link to='/'>
-                    <div className="header__logo">
-
+                        <div className="header__logo">
                             <div className="ticket__logo">
                                 <img src={logo} alt="TiCKETSHOP"/>
                                 TiCKETSHOP
                             </div>
-                            <div className="underline"></div>
-                    </div>
+                            <div className="underlinel"></div>
+                        </div>
                     </Link>
                     <div className="header__menu">
                         <nav>
                             <ul>
-                                <li><a href="#" onClick={onShowApp}>HOME</a></li>
-                                <li><a href="#">EVENEMENTS</a></li>
-                                <li><a href="#">CONCERTS</a></li>
-                                <li><a href="#" onClick={onShowOrganisateur}>DEVENIR PARTENAIRE</a></li>
+                                {isOrganisateur ? (
+                                    <>
+                                        <li><Link to="/dashboard">DASHBOARD</Link></li>
+                                        <li><Link to="/events">MES ÉVÉNEMENTS</Link></li>
+                                        <li><Link to="/contacts">CONTACT</Link></li>
+                                        <li><Link to="/profile">PROFIL</Link></li>
+                                    </>
+                                ) : (
+                                    <>
+                                        <li><a href="#" onClick={onShowApp}>HOME</a></li>
+                                        <li><a href="#">EVENEMENTS</a></li>
+                                        <li><a href="#">CONCERTS</a></li>
+                                        <li><a href="#" onClick={onShowOrganisateur}>DEVENIR PARTENAIRE</a></li>
+                                    </>
+                                )}
                             </ul>
                         </nav>
                     </div>
@@ -60,28 +78,40 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                         <div className="child__menu">
                             {user ? (
                                 <>
-                                    <span>Welcome, {user.role === 'admin' ? user.username : user.nom}</span>
-                                    <button onClick={handleLogout}>Logout</button>
+                                    <div onClick={toggleProfile} className="profile-logo">
+                                        <CgProfile className="profile-logo" />
+                                    </div>
+                                    {showProfile && (
+                                        <Profile user={user} logout={handleLogout} />
+                                    )}
                                 </>
                             ) : (
                                 <div className='top_menu'>
                                     <div className='itemLog'>
                                         <div className="org">
-                                            <Link to='/organisation'>JE SUIS ORGANISEUR</Link>
+                                            {location.pathname !== '/organisation' ? (
+                                                <Link to='/organisation'>JE SUIS ORGANISEUR</Link>
+                                            ) : (
+                                                <Link to='/'>JE SUIS Utilisateur</Link>
+                                            )}
                                         </div>
                                         <div className='loginBtn'>
-                                            <div className='loginA'>CONNECTION/INSCRIPTION</div>
+                                            <div className='loginA'>CONNEXION/INSCRIPTION</div>
                                             <div className='item-sign'>
-                                                <div onClick={() => handlerShowAuth(true)} className={authClickClass}>CONNEXION</div>
-                                                <div onClick={() => handlerShowAuth(false)} className={authClickClass}>INSCRIPTION</div>
+                                                <div onClick={() => handlerShowAuth('login')} className='auth-button'>CONNEXION</div>
+                                                <div onClick={() => handlerShowAuth('register')} className='auth-button'>INSCRIPTION</div>
                                                 {showAuth && (
                                                     <ModalAuth
                                                         show={showAuth}
                                                         onClose={handlerCloseAuth}
                                                     >
-                                                        {isLoginForCarriers ?
-                                                          <Login close={handlerCloseAuth} switchToRegister={() => handlerShowAuth(false)} /> :
-                                                          <Register close={handlerCloseAuth} switchToLogin={() => handlerShowAuth(true)} />}
+                                                        {location.pathname === '/organisation' && authMode === 'register' ? (
+                                                            <OrganisateurSignUp />
+                                                        ) : authMode === 'register' ? (
+                                                            <Register close={handlerCloseAuth} switchToLogin={() => handlerShowAuth('login')} />
+                                                        ) : (
+                                                            <Login close={handlerCloseAuth} switchToRegister={() => handlerShowAuth('register')} />
+                                                        )}
                                                     </ModalAuth>
                                                 )}
                                             </div>
