@@ -7,7 +7,6 @@ import { styled } from '@mui/system';
 import api from '../api';
 import AuthContext from '../context/AuthContext';
 
-// Styles for the form container
 const Container = styled('div')({
   padding: 24,
   marginTop: 24,
@@ -16,7 +15,6 @@ const Container = styled('div')({
   boxShadow: '0px 3px 6px rgba(0,0,0,0.1)',
 });
 
-// Ensure space between step design and first field
 const FormSection = styled('div')({
   marginTop: 24,
 });
@@ -25,7 +23,7 @@ const CreateEvent = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [step, setStep] = useState(0); // Track the current step in the form
+  const [step, setStep] = useState(0); 
   const [formData, setFormData] = useState({
     name: '',
     venue: '',
@@ -37,7 +35,7 @@ const CreateEvent = () => {
     sub_category: '',
     target_audience: [],
     description: '',
-    images: '',
+    images: [], // Change to array for multiple images
     date: '',
     start_time: '',
     end_time: '',
@@ -56,7 +54,8 @@ const CreateEvent = () => {
     recurrence: '',
   });
 
-  // Handle change in text fields
+  const [imagePreviews, setImagePreviews] = useState([]); // To store image previews
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -65,7 +64,6 @@ const CreateEvent = () => {
     });
   };
 
-  // Handle change in checkbox fields
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
     setFormData((prevData) => ({
@@ -74,7 +72,18 @@ const CreateEvent = () => {
     }));
   };
 
-  // Calculate duration whenever start or end time changes
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setFormData((prevData) => ({
+      ...prevData,
+      images: files,
+    }));
+
+    // Generate image previews
+    const previews = files.map(file => URL.createObjectURL(file));
+    setImagePreviews(previews);
+  };
+
   useEffect(() => {
     if (formData.start_time && formData.end_time) {
       const start = new Date(`1970-01-01T${formData.start_time}:00`);
@@ -87,7 +96,6 @@ const CreateEvent = () => {
     }
   }, [formData.start_time, formData.end_time]);
 
-  // Move to the next step if current step is valid
   const handleNext = () => {
     if (validateStep(step)) {
       setStep((prevStep) => prevStep + 1);
@@ -96,12 +104,10 @@ const CreateEvent = () => {
     }
   };
 
-  // Move to the previous step
   const handleBack = () => {
     setStep((prevStep) => prevStep - 1);
   };
 
-  // Validate the current step
   const validateStep = (step) => {
     switch (step) {
       case 0:
@@ -109,7 +115,7 @@ const CreateEvent = () => {
       case 1:
         return formData.category && formData.sub_category;
       case 2:
-        return formData.target_audience.length > 0 && formData.description && formData.images;
+        return formData.target_audience.length > 0 && formData.description && formData.images.length > 0;
       case 3:
         return formData.date && formData.start_time && formData.end_time && formData.duration;
       case 4:
@@ -123,7 +129,6 @@ const CreateEvent = () => {
     }
   };
 
-  // Validate the pricing step based on pricing type
   const validatePricingStep = () => {
     if (formData.pricing === 'free') {
       return formData.capacity && validateSeatCategories();
@@ -133,7 +138,6 @@ const CreateEvent = () => {
     return false;
   };
 
-  // Ensure total capacity matches seat counts
   const validateSeatCategories = () => {
     const totalCapacity = ['simple', 'vip', 'premium']
       .filter(category => formData.seatCategories.includes(category))
@@ -142,15 +146,28 @@ const CreateEvent = () => {
       formData.seatCategories.every(category => Number(formData[`${category}_count`]) > 0);
   };
 
-  // Ensure seat prices are set for paid events
   const validateSeatPrices = () => {
     return formData.seatCategories.every(category => formData[`${category}_price`] !== '');
   };
 
-  // Handle form submission
   const handleSubmit = async () => {
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach(key => {
+      if (key === 'images') {
+        formData[key].forEach(image => {
+          formDataToSend.append('images', image);
+        });
+      } else {
+        formDataToSend.append(key, formData[key]);
+      }
+    });
+
     try {
-      const response = await api.post('/event/create', formData);
+      const response = await api.post('/event/create', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
       console.log('Event created successfully:', response.data);
       if (user.role === 'admin') {
         navigate('/admin-dashboard');
@@ -380,14 +397,22 @@ const CreateEvent = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
-                    label="Images"
-                    fullWidth
-                    name="images"
-                    value={formData.images}
-                    onChange={handleChange}
-                    helperText="Upload images or add links"
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleFileChange}
                   />
+                  <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+                    {imagePreviews.map((preview, index) => (
+                      <img
+                        key={index}
+                        src={preview}
+                        alt={`Preview ${index}`}
+                        style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                      />
+                    ))}
+                  </div>
                 </Grid>
               </Grid>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
@@ -767,6 +792,18 @@ const CreateEvent = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="body1"><strong>Description:</strong> {formData.description}</Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                    {imagePreviews.map((preview, index) => (
+                      <img
+                        key={index}
+                        src={preview}
+                        alt={`Preview ${index}`}
+                        style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                      />
+                    ))}
+                  </div>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="body1"><strong>Date:</strong> {formData.date}</Typography>

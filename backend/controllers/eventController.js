@@ -1,13 +1,17 @@
 import Event from '../models/Event.js';
+import fs from 'fs';
+import path from 'path';
 
 // Controller to create a new event
 export const createEvent = async (req, res) => {
   try {
     const {
-      name, venue, street_address, postal_code, city, country, category, sub_category, target_audience, description, images, date,
+      name, venue, street_address, postal_code, city, country, category, sub_category, target_audience, description, date,
       start_time, end_time, duration, pricing, capacity, seatCategories, simple_count, vip_count, premium_count, simple_price,
       vip_price, premium_price, recurring, recurrence
     } = req.body;
+
+    const images = req.files ? req.files.map(file => file.path) : [];
 
     // Construct seat categories array
     const seatCategoriesData = [];
@@ -46,10 +50,12 @@ export const updateEvent = async (req, res) => {
     }
 
     const {
-      name, venue, street_address, postal_code, city, country, category, sub_category, target_audience, description, images, date,
+      name, venue, street_address, postal_code, city, country, category, sub_category, target_audience, description, date,
       start_time, end_time, duration, pricing, capacity, seatCategories, simple_count, vip_count, premium_count, simple_price,
       vip_price, premium_price, recurring, recurrence
     } = req.body;
+
+    const images = req.files ? req.files.map(file => file.path) : event.images;
 
     // Construct seat categories array
     const seatCategoriesData = [];
