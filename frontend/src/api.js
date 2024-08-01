@@ -1,14 +1,16 @@
+
 import axios from 'axios';
 
-const apiInstance = axios.create({
+const api = axios.create({
   baseURL: 'http://localhost:8000/api',
 });
 
-export default apiInstance;
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token'); // or however you're storing the token
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-export const ApiService = {
-  register(userData) {
-    return apiInstance.post('/auth/register', userData);
-  },
-
-};
+export default api;

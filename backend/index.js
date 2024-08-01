@@ -2,16 +2,19 @@ import express from 'express';
 import dotenv from 'dotenv';
 import authRoute from './routes/auth.js';
 import connectDB from './config/db.js';
+import sgMail from './config/sendgrid.js';
 import cors from 'cors';
 import ticketRoute from './routes/Evenement.js';
 import emailRoute from './routes/email.js';
-import connectWithRetry from './connectWithRetry.js'
+import eventRoute from './routes/event.js';
+
 
 const app = express();
 dotenv.config();
 
-connectWithRetry()
 
+//connect to database 
+connectDB();
 
 
 // Enable CORS
@@ -33,7 +36,10 @@ app.get('/', (req, res) => {
 app.use("/api/auth", authRoute);
 
 //get all Evenements route
-app.use('/api/ticket', ticketRoute,);
+app.use('/api/ticket', ticketRoute);
+
+//get all events route
+app.use('/api/event', eventRoute);
 
 
 
