@@ -9,33 +9,31 @@ const router = express.Router();
 
 // Public routes
 // Register a new user
-router.post('/register', registerUser); // Public
+router.post('/register', registerUser);
 
 // Authenticate user & get token
-router.post('/login', authUser); // Public
+router.post('/login', authUser);
 
 // Initiate password reset
-router.post('/forgotpassword', initiatePasswordReset); // Public
+router.post('/forgotpassword', initiatePasswordReset);
 
 // Reset password
-router.post('/resetpassword', resetPassword); // Public
+router.post('/resetpassword', resetPassword);
 
-// In your auth.js routes file
-router.get('/me', protect, getMe); // Protected route to get logged-in user's data
-
-
+// Protected route to get logged-in user's data
+router.get('/me', protect, getMe);
 
 // Protected routes (Admin only)
 // Get all users
-router.get('/', protect, admin, getUsers); // Admin
+router.get('/', protect, admin, getUsers);
 
 // Get user by ID
-router.get('/:id', protect, admin, getUserById); // Admin
+router.get('/:id', protect, admin, getUserById);
 
 // Update user
-router.put('/:id', protect, admin, updateUser); // Admin
+router.put('/:id', protect, admin, updateUser);
 
 // Delete user
-router.delete('/:id', protect, admin, deleteUser); // Admin
+router.delete('/:id', protect, admin, deleteUser);
 
 export default router;
