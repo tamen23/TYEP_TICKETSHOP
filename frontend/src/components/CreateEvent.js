@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   TextField, Button, Grid, Typography, MenuItem, Stepper, InputLabel, Step, StepLabel, Select, FormControl, FormControlLabel, FormGroup, Checkbox, FormHelperText, FormLabel,
 } from '@mui/material';
@@ -22,6 +23,7 @@ const FormSection = styled('div')({
 
 const CreateEvent = () => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [step, setStep] = useState(0); // Track the current step in the form
   const [formData, setFormData] = useState({
@@ -150,6 +152,11 @@ const CreateEvent = () => {
     try {
       const response = await api.post('/event/create', formData);
       console.log('Event created successfully:', response.data);
+      if (user.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else if (user.role === 'organisateur') {
+        navigate('organisator-dashboard');
+      }
     } catch (error) {
       console.error('Error creating event:', error);
     }

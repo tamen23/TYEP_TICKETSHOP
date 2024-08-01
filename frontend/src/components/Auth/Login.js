@@ -1,14 +1,12 @@
 import React, { useRef, useEffect, useState, useContext } from 'react';
 import { MdHideSource } from "react-icons/md";
 import { BiShowAlt } from "react-icons/bi";
-import { IoMdClose } from "react-icons/io";
-import api from '../../api';
 import AuthContext from '../../context/AuthContext';
 import './login.scss';
 import ModalAuth from "../Shared/ModalAuth";
 import Register from "./Register";
 
-const Login = ({ close }) => {
+const Login = () => {
     const outLogin = useRef(null);  // Reference for detecting clicks outside login modal
     const registerRef = useRef(null);  // Reference for the registration modal
     const [isRegistered, setIsRegistered] = useState(false);  // State to toggle registration modal
@@ -40,24 +38,12 @@ const Login = ({ close }) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    // Function to handle clicks outside the login modal
-    const handleClickOutside = (event) => {
-        if (
-            outLogin.current &&
-            !outLogin.current.contains(event.target) &&
-            (!registerRef.current || !registerRef.current.contains(event.target))
-        ) {
-            close();
-        }
-    };
-
     // Function to handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await login(form.email, form.password);
             alert('Connexion réussie');
-            close();
         } catch (error) {
             alert('Échec de la connexion');
         }
@@ -70,6 +56,17 @@ const Login = ({ close }) => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
+    // Function to handle clicks outside the login modal
+    const handleClickOutside = (event) => {
+        if (
+            outLogin.current &&
+            !outLogin.current.contains(event.target) &&
+            (!registerRef.current || !registerRef.current.contains(event.target))
+        ) {
+            // Handle closing logic if needed
+        }
+    };
 
     return (
         <div className='outme' ref={outLogin}>
@@ -107,7 +104,7 @@ const Login = ({ close }) => {
        
             {
                 isRegistered && <ModalAuth show={isRegistered} onClose={closeRegisterModal}>
-                    <Register closeRegisterModal={closeRegisterModal} openLoginModal={close} registerRef={registerRef} />
+                    <Register closeRegisterModal={closeRegisterModal} openLoginModal={() => setIsRegistered(false)} registerRef={registerRef} />
                 </ModalAuth>
             }
         </div>
