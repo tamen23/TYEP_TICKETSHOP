@@ -35,7 +35,7 @@ const CreateEvent = () => {
     sub_category: '',
     target_audience: [],
     description: '',
-    images: [], // Change to array for multiple images
+    images: [], // Change to array for multiple images //new
     date: '',
     start_time: '',
     end_time: '',
@@ -54,7 +54,7 @@ const CreateEvent = () => {
     recurrence: '',
   });
 
-  const [imagePreviews, setImagePreviews] = useState([]); // To store image previews
+  const [imagePreviews, setImagePreviews] = useState([]); // To store image previews //new
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -80,8 +80,8 @@ const CreateEvent = () => {
     }));
 
     // Generate image previews
-    const previews = files.map(file => URL.createObjectURL(file));
-    setImagePreviews(previews);
+    const previews = files.map(file => URL.createObjectURL(file)); //new
+    setImagePreviews(previews); //new
   };
 
   useEffect(() => {
@@ -151,28 +151,28 @@ const CreateEvent = () => {
   };
 
   const handleSubmit = async () => {
-    const formDataToSend = new FormData();
-    Object.keys(formData).forEach(key => {
-      if (key === 'images') {
-        formData[key].forEach(image => {
-          formDataToSend.append('images', image);
-        });
-      } else {
-        formDataToSend.append(key, formData[key]);
-      }
-    });
+    const formDataToSend = new FormData(); //new
+    Object.keys(formData).forEach(key => { //new
+      if (key === 'images') { //new
+        formData[key].forEach(image => { //new
+          formDataToSend.append('images', image); //new
+        }); //new
+      } else { //new
+        formDataToSend.append(key, formData[key]); //new
+      } //new
+    }); //new
 
     try {
-      const response = await api.post('/event/create', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      const response = await api.post('/event/create', formDataToSend, { //new
+        headers: { //new
+          'Content-Type': 'multipart/form-data' //new
+        } //new
+      }); //new
       console.log('Event created successfully:', response.data);
       if (user.role === 'admin') {
         navigate('/admin-dashboard');
       } else if (user.role === 'organisateur') {
-        navigate('organisator-dashboard');
+        navigate('/organisator-dashboard');
       }
     } catch (error) {
       console.error('Error creating event:', error);
@@ -401,18 +401,18 @@ const CreateEvent = () => {
                     type="file"
                     multiple
                     accept="image/*"
-                    onChange={handleFileChange}
+                    onChange={handleFileChange} //new
                   />
                   <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-                    {imagePreviews.map((preview, index) => (
+                    {imagePreviews.map((preview, index) => ( //new
                       <img
                         key={index}
                         src={preview}
                         alt={`Preview ${index}`}
                         style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                       />
-                    ))}
-                  </div>
+                    ))} 
+                  </div> 
                 </Grid>
               </Grid>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>

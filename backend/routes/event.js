@@ -1,8 +1,7 @@
 import express from 'express';
-import { createEvent, updateEvent, deleteEvent, getEventById, getAllEvents, approveEvent } from '../controllers/eventController.js';
+import { createEvent, updateEvent, deleteEvent, getEventById, getAllEvents, approveEvent, getEventsByOrganizer } from '../controllers/eventController.js';
 import { protect, adminOrOrganisateur, admin } from '../middlewares/authMiddleware.js';
 import { uploadImages } from '../middlewares/uploadMiddleware.js';
-
 
 const router = express.Router();
 
@@ -23,5 +22,8 @@ router.get('/', protect, getAllEvents);
 
 // Route to approve an event (admin only)
 router.put('/:id/approve', protect, admin, approveEvent);
+
+// Route to get all events by organizer
+router.get('/organizer', protect, adminOrOrganisateur, getEventsByOrganizer);
 
 export default router;

@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
 // Initialize upload variable
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 1000000 }, // 1MB limit
+  limits: { fileSize: 50000000 }, // 50MB limit //new
   fileFilter: (req, file, cb) => {
     checkFileType(file, cb);
   }
@@ -32,19 +32,14 @@ function checkFileType(file, cb) {
 }
 
 // Upload images
-export const uploadImages = (req, res) => {
+export const uploadImages = (req, res, next) => {
   upload(req, res, (err) => {
     if (err) {
-      res.status(400).json({ msg: err });
-    } else {
-      if (req.files == undefined) {
-        res.status(400).json({ msg: 'No file selected' });
-      } else {
-        res.status(200).json({
-          msg: 'Images uploaded successfully',
-          files: req.files.map(file => file.path)
-        });
-      }
+      return res.status(400).json({ msg: err });
     }
+    if (req.files === undefined) {
+      return res.status(400).json({ msg: 'No file selected' });
+    }
+    next(); // Proceed to the next middleware/controller
   });
 };

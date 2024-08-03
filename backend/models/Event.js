@@ -45,7 +45,7 @@ baseEventSchema.pre('save', function(next) {
   if (this.end_time <= this.start_time) {
     throw new Error('End time must be after start time');
   }
-  if (this.date < new Date()) {
+  if (this.date <= new Date()) {
     throw new Error('Event date must be in the future');
   }
   next();

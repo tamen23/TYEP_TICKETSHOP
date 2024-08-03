@@ -11,7 +11,11 @@ export const createEvent = async (req, res) => {
       vip_price, premium_price, recurring, recurrence
     } = req.body;
 
-    const images = req.files ? req.files.map(file => file.path) : [];
+    const images = req.files ? req.files.map(file => file.path) : []; // new
+
+    // Debugging: log the request body and files
+    console.log('Request Body:', req.body); // new
+    console.log('Uploaded Files:', images); // new
 
     // Construct seat categories array
     const seatCategoriesData = [];
@@ -29,15 +33,15 @@ export const createEvent = async (req, res) => {
       organizer_id: req.user._id,
       name, venue, street_address, postal_code, city, country, category, sub_category, target_audience, description, images, date,
       start_time, end_time, duration, pricing, capacity,
-      seat_categories: seatCategoriesData, recurring, recurrence: recurring ? recurrence : undefined, status: 'pending approval'
+      seat_categories: seatCategoriesData, recurring: recurring === 'true', recurrence: recurring === 'true' ? recurrence : undefined, status: 'pending approval' // modified
     });
 
     event.validateUserRole(req.user); // Validate user role
     const savedEvent = await event.save(); // Save event to database
     res.status(201).json(savedEvent);
   } catch (error) {
-    console.error('Error creating event:', error);
-    res.status(500).json({ msg: 'Server error' });
+    console.error('Error creating event:', error); // new
+    res.status(500).json({ msg: 'Server error', error: error.message }); // new
   }
 };
 
@@ -55,7 +59,7 @@ export const updateEvent = async (req, res) => {
       vip_price, premium_price, recurring, recurrence
     } = req.body;
 
-    const images = req.files ? req.files.map(file => file.path) : event.images;
+    const images = req.files ? req.files.map(file => file.path) : event.images; // new
 
     // Construct seat categories array
     const seatCategoriesData = [];
@@ -72,15 +76,15 @@ export const updateEvent = async (req, res) => {
     Object.assign(event, {
       name, venue, street_address, postal_code, city, country, category, sub_category, target_audience,
       description, images, date, start_time, end_time, duration, pricing, capacity, seat_categories: seatCategoriesData,
-      recurring, recurrence: recurring ? recurrence : undefined
+      recurring: recurring === 'true', recurrence: recurring === 'true' ? recurrence : undefined // modified
     });
 
     event.validateUserRole(req.user); // Validate user role
     const updatedEvent = await event.save(); // Save updated event to database
     res.status(200).json(updatedEvent);
   } catch (error) {
-    console.error('Error updating event:', error);
-    res.status(500).json({ msg: 'Server error' });
+    console.error('Error updating event:', error); // new
+    res.status(500).json({ msg: 'Server error', error: error.message }); // new
   }
 };
 
@@ -144,6 +148,17 @@ export const approveEvent = async (req, res) => {
     res.status(200).json(approvedEvent);
   } catch (error) {
     console.error('Error approving event:', error);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+// Controller to fetch all events by organizer
+export const getEventsByOrganizer = async (req, res) => {
+  try {
+    const events = await Event.find({ organizer_id: req.user._id });
+    res.status(200).json(events);
+  } catch (error) {
+    console.error('Error fetching events:', error);
     res.status(500).json({ msg: 'Server error' });
   }
 };
