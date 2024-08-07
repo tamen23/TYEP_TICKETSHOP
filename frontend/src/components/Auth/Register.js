@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdHideSource } from "react-icons/md";
 import { BiShowAlt } from "react-icons/bi";
 import api from '../../api';
@@ -64,7 +64,7 @@ const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
+    }, []);  
 
     return (
         <div className="auth-container" ref={registerRef}>

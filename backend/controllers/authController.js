@@ -104,10 +104,12 @@ export const getMe = async (req, res) => {
   }
 };
 
-// Get all users
+// Get all users or filter by role
 export const getUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const { role } = req.query;
+    const query = role ? { role } : {};
+    const users = await User.find(query);
     res.json(users);
   } catch (err) {
     console.error(err.message);

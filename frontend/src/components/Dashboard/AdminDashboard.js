@@ -1,69 +1,52 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Container, Typography, Grid, Card, CardContent, Button } from '@mui/material';
-import { styled } from '@mui/system';
-import api from '../../api';
+import React from 'react';
+import { Route, Routes, Link, useLocation, Navigate } from 'react-router-dom';
+import { Box, Button, Typography, AppBar, Toolbar } from '@mui/material';
+import UserList from './UserList';
+import OrganizerList from './OrganizerList';
+import EventList from './EventList';
+import EventDetailsList from './EventDetailsList';
 import AuthContext from '../../context/AuthContext';
+import './AdminDashboard.scss';
 
-// Styles for the container
-const DashboardContainer = styled(Container)({
-  padding: 24,
-  marginTop: 24,
-  backgroundColor: '#f5f5f5',
-  borderRadius: 8,
-  boxShadow: '0px 3px 6px rgba(0,0,0,0.1)',
-});
 
 const AdminDashboard = () => {
-  const { user } = useContext(AuthContext);
-  const [events, setEvents] = useState([]);
+    const { user } = React.useContext(AuthContext);
+    const location = useLocation();
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await api.get('/events');
-        setEvents(response.data);
-      } catch (error) {
-        console.error('Error fetching events:', error);
-      }
-    };
-    fetchEvents();
-  }, []);
-
-  const handleApprove = async (eventId) => {
-    try {
-      await api.put(`/events/${eventId}/approve`);
-      setEvents(events.filter(event => event._id !== eventId));
-    } catch (error) {
-      console.error('Error approving event:', error);
-    }
-  };
-
-  return (
-    <DashboardContainer>
-      <Typography variant="h4" gutterBottom>
-        Welcome Admin
-      </Typography>
-      <Typography variant="h6" gutterBottom>
-        Events Pending Approval
-      </Typography>
-      <Grid container spacing={3}>
-        {events.map((event) => (
-          <Grid item xs={12} sm={6} md={4} key={event._id}>
-            <Card>
-              <CardContent>
-                <Typography variant="h5">{event.name}</Typography>
-                <Typography variant="body1">{event.description}</Typography>
-                <Typography variant="body2">{event.date}</Typography>
-                <Button variant="contained" color="primary" onClick={() => handleApprove(event._id)}>
-                  Approve
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </DashboardContainer>
-  );
+    return (
+        <Box display="flex">
+            <Box width="250px" bgcolor="#f0f0f0" p={2} height="100vh" position="fixed">
+                <Typography variant="h6" gutterBottom>Welcome, {user.username}</Typography>
+                <hr />
+                <Button component={Link} to="/admin-dashboard/users" fullWidth>Users</Button>
+                <Button component={Link} to="/admin-dashboard/organizers" fullWidth>Organizers</Button>
+                <Button component={Link} to="/admin-dashboard/events" fullWidth>Events</Button>
+                <Button component={Link} to="/admin-dashboard/event-details" fullWidth>Event Details</Button>
+                <Button component={Link} to="/create-event" fullWidth variant="contained" color="primary">Create Event</Button>
+            </Box>
+            <Box flex={1} ml="250px">
+                <AppBar position="static">
+                    <Toolbar>
+                        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                            Admin Dashboard
+                        </Typography>
+                        <Typography variant="body1">
+                            Welcome, {user.username}
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <Box p={3}>
+                    <Routes>
+                        <Route path="/" element={<Navigate to="users" />} />
+                        <Route path="users" element={<UserList />} />
+                        <Route path="organizers" element={<OrganizerList />} />
+                        <Route path="events" element={<EventList />} />
+                        <Route path="event-details" element={<EventDetailsList />} />
+                    </Routes>
+                </Box>
+            </Box>
+        </Box>
+    );
 };
 
 export default AdminDashboard;

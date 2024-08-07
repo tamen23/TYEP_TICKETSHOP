@@ -25,7 +25,7 @@ router.get('/me', protect, getMe);
 
 // Protected routes (Admin only)
 // Get all users
-router.get('/', protect, admin, getUsers);
+router.get('/users', protect, admin, getUsers);
 
 // Get user by ID
 router.get('/:id', protect, admin, getUserById);

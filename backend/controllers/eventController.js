@@ -33,7 +33,7 @@ export const createEvent = async (req, res) => {
       organizer_id: req.user._id,
       name, venue, street_address, postal_code, city, country, category, sub_category, target_audience, description, images, date,
       start_time, end_time, duration, pricing, capacity,
-      seat_categories: seatCategoriesData, recurring: recurring === 'true', recurrence: recurring === 'true' ? recurrence : undefined, status: 'pending approval' // modified
+      seat_categories: seatCategoriesData, recurring: recurring === 'true', recurrence: recurring === 'true' ? recurrence : undefined, status: 'draft' // modified
     });
 
     event.validateUserRole(req.user); // Validate user role
@@ -123,7 +123,7 @@ export const getEventById = async (req, res) => {
 // Controller to get all events
 export const getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find();
+    const events = await Event.find().populate('organizer_id', 'nom prenom nomDeStructure email telephone');
     res.status(200).json(events);
   } catch (error) {
     console.error('Error fetching events:', error);
@@ -131,8 +131,9 @@ export const getAllEvents = async (req, res) => {
   }
 };
 
-// Controller to approve an event (admin only)
-export const approveEvent = async (req, res) => {
+
+// Controller to update the status of an event(admin only)
+export const updateEventStatus = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
     if (!event) {
@@ -143,11 +144,16 @@ export const approveEvent = async (req, res) => {
       return res.status(401).json({ msg: 'Not authorized' });
     }
 
-    event.status = 'approved';
-    const approvedEvent = await event.save();
-    res.status(200).json(approvedEvent);
+    const { status } = req.body;
+    if (!['draft', 'approved', 'canceled'].includes(status)) {
+      return res.status(400).json({ msg: 'Invalid status value' });
+    }
+
+    event.status = status;
+    const updatedEvent = await event.save();
+    res.status(200).json(updatedEvent);
   } catch (error) {
-    console.error('Error approving event:', error);
+    console.error('Error updating event status:', error);
     res.status(500).json({ msg: 'Server error' });
   }
 };
