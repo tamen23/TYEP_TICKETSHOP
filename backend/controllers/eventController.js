@@ -1,5 +1,12 @@
 import Event from '../models/Event.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
+// Manually construct __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Controller to create a new event
 export const createEvent = async (req, res) => {
@@ -10,15 +17,14 @@ export const createEvent = async (req, res) => {
       vip_price, premium_price, recurring, recurrence
     } = req.body;
 
-    const images = req.files ? req.files.map(file => file.path) : []; // new
-
+    const images = req.files ? req.files.map(file => file.path.replace(/\\/g, '/')) : []; // Normalize paths
 
     // Ensure target_audience is an array
     const targetAudienceArray = target_audience.split(',');
 
     // Debugging: log the request body and files
-    console.log('Request Body:', req.body); // new
-    console.log('Uploaded Files:', images); // new
+    console.log('Request Body:', req.body);
+    console.log('Uploaded Files:', images);
 
     // Construct seat categories array
     const seatCategoriesData = [];
@@ -34,17 +40,17 @@ export const createEvent = async (req, res) => {
 
     const event = new Event({
       organizer_id: req.user._id,
-      name, venue, street_address, postal_code, city, country, category, sub_category, target_audience : targetAudienceArray, description, images, date,
+      name, venue, street_address, postal_code, city, country, category, sub_category, target_audience: targetAudienceArray, description, images, date,
       start_time, end_time, duration, pricing, capacity,
-      seat_categories: seatCategoriesData, recurring: recurring === 'true', recurrence: recurring === 'true' ? recurrence : undefined, status: 'draft' // modified
+      seat_categories: seatCategoriesData, recurring: recurring === 'true', recurrence: recurring === 'true' ? recurrence : undefined, status: 'draft'
     });
 
     event.validateUserRole(req.user); // Validate user role
     const savedEvent = await event.save(); // Save event to database
     res.status(201).json(savedEvent);
   } catch (error) {
-    console.error('Error creating event:', error); // new
-    res.status(500).json({ msg: 'Server error', error: error.message }); // new
+    console.error('Error creating event:', error);
+    res.status(500).json({ msg: 'Server error', error: error.message });
   }
 };
 
@@ -62,7 +68,7 @@ export const updateEvent = async (req, res) => {
       vip_price, premium_price, recurring, recurrence
     } = req.body;
 
-    const images = req.files ? req.files.map(file => file.path) : event.images; // new
+    const images = req.files ? req.files.map(file => file.path.replace(/\\/g, '/')) : event.images; // Normalize paths
 
     // Construct seat categories array
     const seatCategoriesData = [];
@@ -79,15 +85,15 @@ export const updateEvent = async (req, res) => {
     Object.assign(event, {
       name, venue, street_address, postal_code, city, country, category, sub_category, target_audience,
       description, images, date, start_time, end_time, duration, pricing, capacity, seat_categories: seatCategoriesData,
-      recurring: recurring === 'true', recurrence: recurring === 'true' ? recurrence : undefined // modified
+      recurring: recurring === 'true', recurrence: recurring === 'true' ? recurrence : undefined
     });
 
     event.validateUserRole(req.user); // Validate user role
     const updatedEvent = await event.save(); // Save updated event to database
     res.status(200).json(updatedEvent);
   } catch (error) {
-    console.error('Error updating event:', error); // new
-    res.status(500).json({ msg: 'Server error', error: error.message }); // new
+    console.error('Error updating event:', error);
+    res.status(500).json({ msg: 'Server error', error: error.message });
   }
 };
 
@@ -100,6 +106,16 @@ export const deleteEvent = async (req, res) => {
     }
 
     event.validateUserRole(req.user); // Validate user role
+    // Delete images associated with the event
+    if (event.images && event.images.length > 0) {
+      event.images.forEach(image => {
+        const imagePath = path.join(__dirname, '..', image);
+        fs.unlink(imagePath, err => {
+          if (err) console.error('Error deleting image:', err);
+        });
+      });
+    }
+
     await Event.findByIdAndDelete(req.params.id); // Use findByIdAndDelete to remove the event
     res.status(200).json({ msg: 'Event removed' });
   } catch (error) {
