@@ -46,6 +46,9 @@ app.use('/api/event', eventRoute);
 //admin routes
 app.use('/api/admin', adminRoutes);
 
+// Serve static files from the "uploads" directory
+app.use('/uploads', express.static('uploads'));
+
 
 
 ///port usage

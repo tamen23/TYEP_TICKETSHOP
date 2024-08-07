@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  TextField, Button, Grid, Typography, MenuItem, Stepper, InputLabel, Step, StepLabel, Select, FormControl, FormControlLabel, FormGroup, Checkbox, FormHelperText, FormLabel,
+  TextField, Button, Grid, Typography, MenuItem, Stepper, InputLabel, Step, StepLabel, Select, FormControl, FormControlLabel, FormGroup, Checkbox, FormHelperText, FormLabel, Dialog, DialogTitle, DialogContent
 } from '@mui/material';
 import { styled } from '@mui/system';
 import api from '../api';
@@ -55,7 +55,8 @@ const CreateEvent = () => {
   });
 
   const [imagePreviews, setImagePreviews] = useState([]); // To store image previews //new
-
+  const [openImageModal, setOpenImageModal] = useState(false);
+  const [currentImage, setCurrentImage] = useState('');
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -82,6 +83,15 @@ const CreateEvent = () => {
     // Generate image previews
     const previews = files.map(file => URL.createObjectURL(file)); //new
     setImagePreviews(previews); //new
+  };
+
+  const handleImageClick = (image) => {
+    setCurrentImage(image);
+    setOpenImageModal(true);
+  };
+  const handleCloseImageModal = () => {
+    setOpenImageModal(false);
+    setCurrentImage('');
   };
 
   useEffect(() => {
@@ -409,10 +419,17 @@ const CreateEvent = () => {
                         key={index}
                         src={preview}
                         alt={`Preview ${index}`}
-                        style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                        style={{ width: '100px', height: '100px', objectFit: 'cover', cursor: 'pointer' }}
+                        onClick={() => handleImageClick(preview)}
                       />
                     ))} 
                   </div> 
+                  <Dialog open={openImageModal} onClose={handleCloseImageModal}>
+                    <DialogTitle>Image Preview</DialogTitle>
+                    <DialogContent>
+                      <img src={currentImage} alt="Current Preview" style={{ width: '100%', height: 'auto' }} />
+                    </DialogContent>
+                  </Dialog>
                 </Grid>
               </Grid>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
@@ -655,6 +672,7 @@ const CreateEvent = () => {
                           type="number"
                           value={formData.simple_price}
                           onChange={handleChange}
+                          helperText="Simple seat price in €"
                         />
                       </Grid>
                     )}
@@ -667,6 +685,7 @@ const CreateEvent = () => {
                           type="number"
                           value={formData.vip_price}
                           onChange={handleChange}
+                          helperText="VIP seat price in €"
                         />
                       </Grid>
                     )}
@@ -679,6 +698,7 @@ const CreateEvent = () => {
                           type="number"
                           value={formData.premium_price}
                           onChange={handleChange}
+                          helperText="Premium seat price in €"
                         />
                       </Grid>
                     )}

@@ -1,6 +1,5 @@
 import Event from '../models/Event.js';
-import fs from 'fs';
-import path from 'path';
+
 
 // Controller to create a new event
 export const createEvent = async (req, res) => {
@@ -12,6 +11,10 @@ export const createEvent = async (req, res) => {
     } = req.body;
 
     const images = req.files ? req.files.map(file => file.path) : []; // new
+
+
+    // Ensure target_audience is an array
+    const targetAudienceArray = target_audience.split(',');
 
     // Debugging: log the request body and files
     console.log('Request Body:', req.body); // new
@@ -31,7 +34,7 @@ export const createEvent = async (req, res) => {
 
     const event = new Event({
       organizer_id: req.user._id,
-      name, venue, street_address, postal_code, city, country, category, sub_category, target_audience, description, images, date,
+      name, venue, street_address, postal_code, city, country, category, sub_category, target_audience : targetAudienceArray, description, images, date,
       start_time, end_time, duration, pricing, capacity,
       seat_categories: seatCategoriesData, recurring: recurring === 'true', recurrence: recurring === 'true' ? recurrence : undefined, status: 'draft' // modified
     });
@@ -97,7 +100,7 @@ export const deleteEvent = async (req, res) => {
     }
 
     event.validateUserRole(req.user); // Validate user role
-    await event.remove(); // Remove event from database
+    await Event.findByIdAndDelete(req.params.id); // Use findByIdAndDelete to remove the event
     res.status(200).json({ msg: 'Event removed' });
   } catch (error) {
     console.error('Error deleting event:', error);
@@ -131,8 +134,7 @@ export const getAllEvents = async (req, res) => {
   }
 };
 
-
-// Controller to update the status of an event(admin only)
+// Controller to update the status of an event (admin only)
 export const updateEventStatus = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);

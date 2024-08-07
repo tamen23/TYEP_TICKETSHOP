@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, MenuItem, Select, Snackbar, Alert, Modal } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import { useNotifications } from '../../context/NotificationsContext';
+import { useNotifications } from '../../context/NotificationsContext'; 
 import api from '../../api';
 
 const EventList = () => {
     const [events, setEvents] = useState([]);
     const [page, setPage] = useState(1);
     const { showNotification } = useNotifications();
-    const [openModal, setOpenModal] = useState(false);
-    const [selectedImage, setSelectedImage] = useState('');
+    const [open, setOpen] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -55,26 +55,26 @@ const EventList = () => {
     const itemsPerPage = 15;
     const paginatedEvents = events.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
-    const handleImageClick = (image) => {
+    const handleClickOpen = (image) => {
         setSelectedImage(image);
-        setOpenModal(true);
+        setOpen(true);
     };
 
-    const handleCloseModal = () => {
-        setOpenModal(false);
-        setSelectedImage('');
+    const handleClose = () => {
+        setOpen(false);
+        setSelectedImage(null);
     };
 
     return (
         <Box>
-            <TableContainer component={Paper} className="table-container">
+            <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell>No</TableCell>
-                            <TableCell>Organizer Name</TableCell>
-                            <TableCell>Organizer Structure</TableCell>
                             <TableCell>Event Name</TableCell>
+                            <TableCell>Organizer Name</TableCell>
+                            <TableCell>Nom de Structure</TableCell>
                             <TableCell>Venue</TableCell>
                             <TableCell>Address</TableCell>
                             <TableCell>Category</TableCell>
@@ -93,9 +93,9 @@ const EventList = () => {
                         {paginatedEvents.length > 0 ? paginatedEvents.map((event, index) => (
                             <TableRow key={event._id}>
                                 <TableCell>{(page - 1) * itemsPerPage + index + 1}</TableCell>
+                                <TableCell>{event.name}</TableCell>
                                 <TableCell>{event.organizer_id.nom} {event.organizer_id.prenom}</TableCell>
                                 <TableCell>{event.organizer_id.nomDeStructure}</TableCell>
-                                <TableCell>{event.name}</TableCell>
                                 <TableCell>{event.venue}</TableCell>
                                 <TableCell>{event.street_address}, {event.city}, {event.country}</TableCell>
                                 <TableCell>{event.category}</TableCell>
@@ -106,29 +106,31 @@ const EventList = () => {
                                 <TableCell>{event.capacity}</TableCell>
                                 <TableCell>
                                     {event.seat_categories.map((seat, idx) => (
-                                        <div key={idx}>{seat.type}: {seat.count} seats @ ${seat.price}</div>
+                                        <div key={idx}>
+                                            <strong>{seat.type}:</strong> {seat.count} seats price {seat.price} €
+                                        </div>
                                     ))}
                                 </TableCell>
                                 <TableCell>
                                     {event.images.map((image, idx) => (
-                                        <img
+                                        <img 
                                             key={idx}
-                                            src={`http://localhost:8000/${image}`}
-                                            alt="Event"
-                                            style={{ width: '50px', cursor: 'pointer' }}
-                                            onClick={() => handleImageClick(`http://localhost:8000/${image}`)}
+                                            src={`http://localhost:8000/${image}`} 
+                                            alt={`Event ${idx + 1}`} 
+                                            style={{ width: '50px', height: '50px', cursor: 'pointer' }}
+                                            onClick={() => handleClickOpen(`http://localhost:8000/${image}`)}
                                         />
                                     ))}
                                 </TableCell>
                                 <TableCell>
-                                    <Select
+                                    <select
                                         value={event.status}
                                         onChange={(e) => handleStatusChange(event._id, e.target.value)}
                                     >
-                                        <MenuItem value="draft">Draft</MenuItem>
-                                        <MenuItem value="approved">Approved</MenuItem>
-                                        <MenuItem value="canceled">Canceled</MenuItem>
-                                    </Select>
+                                        <option value="draft">Draft</option>
+                                        <option value="approved">Approved</option>
+                                        <option value="canceled">Canceled</option>
+                                    </select>
                                 </TableCell>
                                 <TableCell>
                                     <Button variant="contained" color="secondary" onClick={() => handleDelete(event._id)}>
@@ -153,15 +155,25 @@ const EventList = () => {
                     color="primary"
                 />
             </Stack>
-            <Modal open={openModal} onClose={handleCloseModal}>
-                <Box style={{
-                    position: 'absolute', top: '50%', left: '50%',
-                    transform: 'translate(-50%, -50%)', width: '80%',
-                    bgcolor: 'background.paper', boxShadow: 24, p: 4
-                }}>
-                    <img src={selectedImage} alt="Selected Event" style={{ width: '100%' }} />
-                </Box>
-            </Modal>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="image-dialog-title"
+                maxWidth="md"
+                fullWidth
+            >
+                <DialogTitle id="image-dialog-title">Event Image</DialogTitle>
+                <DialogContent>
+                    {selectedImage && (
+                        <img src={selectedImage} alt="Event" style={{ width: '100%' }} />
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };
