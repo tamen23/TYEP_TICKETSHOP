@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Event from '../models/Event.js';
 import fs from 'fs';
 import path from 'path';
@@ -22,9 +23,6 @@ export const createEvent = async (req, res) => {
     // Ensure target_audience is an array
     const targetAudienceArray = target_audience.split(',');
 
-    // Debugging: log the request body and files
-    console.log('Request Body:', req.body);
-    console.log('Uploaded Files:', images);
 
     // Construct seat categories array
     const seatCategoriesData = [];
@@ -124,18 +122,29 @@ export const deleteEvent = async (req, res) => {
   }
 };
 
-// Controller to get a specific event by ID
+
+/// Controller to get a specific event by ID
 export const getEventById = async (req, res) => {
   try {
-    const event = await Event.findById(req.params.id);
-    if (!event) {
-      return res.status(404).json({ msg: 'Event not found' });
+    const eventId = req.params.id;
+    
+
+    // Check if the ID is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      console.log('Invalid event ID:', eventId);
+      return res.status(400).json({ msg: 'Invalid event ID' });
     }
 
+    const event = await Event.findById(eventId);
+    if (!event) {
+      console.log('Event not found for ID:', eventId);
+      return res.status(404).json({ msg: 'Event not found' });
+    }
+    console.log('Event found:', event);
     res.status(200).json(event);
   } catch (error) {
     console.error('Error fetching event:', error);
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ msg: 'Server error', error: error.message });
   }
 };
 
@@ -176,6 +185,21 @@ export const updateEventStatus = async (req, res) => {
   }
 };
 
+// Controller to get all approved events
+export const getApprovedEvents = async (req, res) => {
+  try {
+    console.log('Fetching approved events...');
+
+    const events = await Event.find({ status: 'approved' }).populate('organizer_id', 'nom prenom nomDeStructure email telephone');
+
+    console.log('Approved events fetched successfully:', events);
+
+    res.status(200).json(events);
+  } catch (error) {
+    console.error('Error fetching approved events:', error);
+    res.status(500).json({ msg: 'Server error', error: error.message });
+  }
+};
 // Controller to fetch all events by organizer
 export const getEventsByOrganizer = async (req, res) => {
   try {

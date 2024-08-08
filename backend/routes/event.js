@@ -1,5 +1,5 @@
 import express from 'express';
-import { createEvent, updateEvent, deleteEvent, getEventById, getAllEvents, updateEventStatus, getEventsByOrganizer } from '../controllers/eventController.js';
+import { createEvent, updateEvent, deleteEvent, getEventById, getAllEvents, updateEventStatus, getEventsByOrganizer, getApprovedEvents } from '../controllers/eventController.js';
 import { protect, adminOrOrganisateur, admin } from '../middlewares/authMiddleware.js';
 import { uploadImages } from '../middlewares/uploadMiddleware.js';
 
@@ -14,6 +14,9 @@ router.put('/:id', protect, adminOrOrganisateur, uploadImages, updateEvent);
 // Route to delete an event
 router.delete('/:id', protect, adminOrOrganisateur, deleteEvent);
 
+// Route to get all approved events
+router.get('/approved', protect, getApprovedEvents);
+
 // Route to get a specific event by ID
 router.get('/:id', protect, getEventById);
 
@@ -25,5 +28,8 @@ router.put('/:id/status', protect, admin, updateEventStatus);
 
 // Route to get all events by organizer
 router.get('/organizer', protect, adminOrOrganisateur, getEventsByOrganizer);
+
+// Route to get all approved events
+router.get('/approved', protect, getApprovedEvents);
 
 export default router;
