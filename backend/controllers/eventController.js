@@ -1,6 +1,13 @@
+import mongoose from 'mongoose';
 import Event from '../models/Event.js';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// Manually construct __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Controller to create a new event
 export const createEvent = async (req, res) => {
@@ -11,7 +18,11 @@ export const createEvent = async (req, res) => {
       vip_price, premium_price, recurring, recurrence
     } = req.body;
 
-    const images = req.files ? req.files.map(file => file.path) : [];
+    const images = req.files ? req.files.map(file => file.path.replace(/\\/g, '/')) : []; // Normalize paths
+
+    // Ensure target_audience is an array
+    const targetAudienceArray = target_audience.split(',');
+
 
     // Construct seat categories array
     const seatCategoriesData = [];
@@ -27,9 +38,9 @@ export const createEvent = async (req, res) => {
 
     const event = new Event({
       organizer_id: req.user._id,
-      name, venue, street_address, postal_code, city, country, category, sub_category, target_audience, description, images, date,
+      name, venue, street_address, postal_code, city, country, category, sub_category, target_audience: targetAudienceArray, description, images, date,
       start_time, end_time, duration, pricing, capacity,
-      seat_categories: seatCategoriesData, recurring, recurrence: recurring ? recurrence : undefined, status: 'pending approval'
+      seat_categories: seatCategoriesData, recurring: recurring === 'true', recurrence: recurring === 'true' ? recurrence : undefined, status: 'draft'
     });
 
     event.validateUserRole(req.user); // Validate user role
@@ -37,7 +48,7 @@ export const createEvent = async (req, res) => {
     res.status(201).json(savedEvent);
   } catch (error) {
     console.error('Error creating event:', error);
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ msg: 'Server error', error: error.message });
   }
 };
 
@@ -55,7 +66,7 @@ export const updateEvent = async (req, res) => {
       vip_price, premium_price, recurring, recurrence
     } = req.body;
 
-    const images = req.files ? req.files.map(file => file.path) : event.images;
+    const images = req.files ? req.files.map(file => file.path.replace(/\\/g, '/')) : event.images; // Normalize paths
 
     // Construct seat categories array
     const seatCategoriesData = [];
@@ -72,7 +83,7 @@ export const updateEvent = async (req, res) => {
     Object.assign(event, {
       name, venue, street_address, postal_code, city, country, category, sub_category, target_audience,
       description, images, date, start_time, end_time, duration, pricing, capacity, seat_categories: seatCategoriesData,
-      recurring, recurrence: recurring ? recurrence : undefined
+      recurring: recurring === 'true', recurrence: recurring === 'true' ? recurrence : undefined
     });
 
     event.validateUserRole(req.user); // Validate user role
@@ -80,7 +91,7 @@ export const updateEvent = async (req, res) => {
     res.status(200).json(updatedEvent);
   } catch (error) {
     console.error('Error updating event:', error);
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ msg: 'Server error', error: error.message });
   }
 };
 
@@ -93,7 +104,17 @@ export const deleteEvent = async (req, res) => {
     }
 
     event.validateUserRole(req.user); // Validate user role
-    await event.remove(); // Remove event from database
+    // Delete images associated with the event
+    if (event.images && event.images.length > 0) {
+      event.images.forEach(image => {
+        const imagePath = path.join(__dirname, '..', image);
+        fs.unlink(imagePath, err => {
+          if (err) console.error('Error deleting image:', err);
+        });
+      });
+    }
+
+    await Event.findByIdAndDelete(req.params.id); // Use findByIdAndDelete to remove the event
     res.status(200).json({ msg: 'Event removed' });
   } catch (error) {
     console.error('Error deleting event:', error);
@@ -101,25 +122,36 @@ export const deleteEvent = async (req, res) => {
   }
 };
 
-// Controller to get a specific event by ID
+
+/// Controller to get a specific event by ID
 export const getEventById = async (req, res) => {
   try {
-    const event = await Event.findById(req.params.id);
-    if (!event) {
-      return res.status(404).json({ msg: 'Event not found' });
+    const eventId = req.params.id;
+    
+
+    // Check if the ID is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      console.log('Invalid event ID:', eventId);
+      return res.status(400).json({ msg: 'Invalid event ID' });
     }
 
+    const event = await Event.findById(eventId);
+    if (!event) {
+      console.log('Event not found for ID:', eventId);
+      return res.status(404).json({ msg: 'Event not found' });
+    }
+    console.log('Event found:', event);
     res.status(200).json(event);
   } catch (error) {
     console.error('Error fetching event:', error);
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ msg: 'Server error', error: error.message });
   }
 };
 
 // Controller to get all events
 export const getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find();
+    const events = await Event.find().populate('organizer_id', 'nom prenom nomDeStructure email telephone');
     res.status(200).json(events);
   } catch (error) {
     console.error('Error fetching events:', error);
@@ -127,8 +159,8 @@ export const getAllEvents = async (req, res) => {
   }
 };
 
-// Controller to approve an event (admin only)
-export const approveEvent = async (req, res) => {
+// Controller to update the status of an event (admin only)
+export const updateEventStatus = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
     if (!event) {
@@ -139,11 +171,42 @@ export const approveEvent = async (req, res) => {
       return res.status(401).json({ msg: 'Not authorized' });
     }
 
-    event.status = 'approved';
-    const approvedEvent = await event.save();
-    res.status(200).json(approvedEvent);
+    const { status } = req.body;
+    if (!['draft', 'approved', 'canceled'].includes(status)) {
+      return res.status(400).json({ msg: 'Invalid status value' });
+    }
+
+    event.status = status;
+    const updatedEvent = await event.save();
+    res.status(200).json(updatedEvent);
   } catch (error) {
-    console.error('Error approving event:', error);
+    console.error('Error updating event status:', error);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+// Controller to get all approved events
+export const getApprovedEvents = async (req, res) => {
+  try {
+    console.log('Fetching approved events...');
+
+    const events = await Event.find({ status: 'approved' }).populate('organizer_id', 'nom prenom nomDeStructure email telephone');
+
+    console.log('Approved events fetched successfully:', events);
+
+    res.status(200).json(events);
+  } catch (error) {
+    console.error('Error fetching approved events:', error);
+    res.status(500).json({ msg: 'Server error', error: error.message });
+  }
+};
+// Controller to fetch all events by organizer
+export const getEventsByOrganizer = async (req, res) => {
+  try {
+    const events = await Event.find({ organizer_id: req.user._id });
+    res.status(200).json(events);
+  } catch (error) {
+    console.error('Error fetching events:', error);
     res.status(500).json({ msg: 'Server error' });
   }
 };

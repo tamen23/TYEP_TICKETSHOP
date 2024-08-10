@@ -28,7 +28,7 @@ const baseEventSchema = new mongoose.Schema({
   capacity: { type: Number, required: true },
   pricing: { type: String, required: true, enum: ['free', 'paid'] },
   seat_categories: [seatCategorySchema], // Embedded seat categories schema
-  status: { type: String, enum: ['draft', 'pending approval', 'approved', 'canceled'], default: 'draft' }, // Status of the event
+  status: { type: String, enum: ['draft', 'approved', 'canceled'], default: 'draft' }, // Status of the event
   recurring: { type: Boolean, default: false }, // Indicates if the event is recurring
   recurrence: { type: String, enum: ['daily', 'weekly', 'monthly'], required: function() { return this.recurring; } }, // Recurrence pattern
 }, { timestamps: true });
@@ -45,7 +45,7 @@ baseEventSchema.pre('save', function(next) {
   if (this.end_time <= this.start_time) {
     throw new Error('End time must be after start time');
   }
-  if (this.date < new Date()) {
+  if (this.date <= new Date()) {
     throw new Error('Event date must be in the future');
   }
   next();

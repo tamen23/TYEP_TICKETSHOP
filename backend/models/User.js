@@ -95,6 +95,12 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.motDePasse);
 };
 
+// Add the remove method for mongoose 7 compatibility
+userSchema.method('remove', function () {
+  return this.model('User').deleteOne({ _id: this._id });
+});
+
+
 // Create and export the model
 const User = mongoose.model('User', userSchema);
 export default User;

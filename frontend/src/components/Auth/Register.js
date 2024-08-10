@@ -13,7 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { ApiService } from '../../api'; // Importez le service ApiService
+import ApiService from '../../api'; // Importez le service ApiService
 
 function Copyright(props) {
   return (
