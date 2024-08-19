@@ -1,7 +1,13 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import api from '../api';
 
+// Create the AuthContext
 const AuthContext = createContext();
+
+// Create a custom hook to use the AuthContext
+export const useAuth = () => {
+    return useContext(AuthContext);
+};
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);

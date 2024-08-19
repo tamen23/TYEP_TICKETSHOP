@@ -8,6 +8,8 @@ import ticketRoute from './routes/Evenement.js';
 import emailRoute from './routes/email.js';
 import eventRoute from './routes/event.js';
 import adminRoutes from './routes/adminRoutes.js';  // Adjust the path as necessary
+import ticketRoutes from './routes/ticketRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 
 
 
@@ -43,13 +45,17 @@ app.use('/api/ticket', ticketRoute);
 //get all events route
 app.use('/api/event', eventRoute);
 
+//get all Orders route
+app.use('/api/orders', orderRoutes);
+
+//get all Tickets route billets 
+app.use('/api/tickets', ticketRoutes);
+
 //admin routes
 app.use('/api/admin', adminRoutes);
 
 // Serve static files from the "uploads" directory
 app.use('/uploads', express.static('uploads'));
-
-
 
 ///port usage
 const PORT = process.env.PORT || 8000;
