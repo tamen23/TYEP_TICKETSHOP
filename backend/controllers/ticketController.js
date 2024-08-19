@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 import EventTicket from '../models/EventTicket.js';
-import Order from '../models/Order.js';
-import UserPurchaseInfo from '../models/UserPurchaseInfo.js';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);

@@ -7,80 +7,96 @@ import Stripe from 'stripe';
 const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Controller to handle ticket purchases
+// Controller to handle ticket purchases
 export const purchaseTickets = async (req, res) => {
-  try {
-    const { userId, tickets, totalAmount, userDetails, eventId } = req.body;
+    try {
+        const { userId, tickets, totalAmount, userDetails, eventId } = req.body;
 
-    console.log('Received request body:', JSON.stringify(req.body, null, 2));
+        console.log('Received request body:', JSON.stringify(req.body, null, 2));
 
-    if (!tickets || tickets.length === 0) {
-      console.log('No tickets provided or tickets array is empty');
-      return res.status(400).json({ message: 'No tickets provided' });
+        if (!tickets || tickets.length === 0) {
+            console.log('No tickets provided or tickets array is empty');
+            return res.status(400).json({ message: 'No tickets provided' });
+        }
+
+        console.log('Tickets array:', JSON.stringify(tickets, null, 2));
+
+        const ticketIds = tickets.map(ticket => new mongoose.Types.ObjectId(ticket.ticketId));
+        console.log('Ticket IDs:', ticketIds);
+
+        const availableTickets = await EventTicket.find({
+            _id: { $in: ticketIds },
+            event: new mongoose.Types.ObjectId(eventId)
+        });
+
+        console.log("First check Available tickets fetched from database:", availableTickets);
+
+        if (availableTickets.length !== tickets.length) {
+            const missingTickets = tickets.filter(
+                ticket => !availableTickets.some(availableTicket => availableTicket._id.equals(ticket.ticketId))
+            );
+            console.log('Some tickets are not available:', missingTickets);
+            return res.status(400).json({
+                message: 'Some tickets are not available',
+                missingTickets: missingTickets.map(ticket => ticket.ticketId),
+            });
+        }
+
+        const order = new Order({
+            user: userId,
+            event: eventId,
+            tickets: tickets.map(ticket => ({
+                ticket: ticket.ticketId,
+                quantity: ticket.quantity,
+            })),
+            totalAmount,
+            status: 'pending',
+        });
+
+        console.log('Order to be saved:', JSON.stringify(order, null, 2));
+        await order.save();
+
+        // Logic for saving user purchase information
+        let userPurchaseInfo;
+
+        if (userId) {
+            // If user is logged in, check if the user purchase info already exists
+            userPurchaseInfo = await UserPurchaseInfo.findOne({ user: userId });
+
+            if (!userPurchaseInfo) {
+                // If it doesn't exist, create a new one
+                console.log('Saving new user purchase info for logged-in user:', userDetails);
+                userPurchaseInfo = new UserPurchaseInfo({
+                    user: userId,
+                    ...userDetails,
+                });
+                await userPurchaseInfo.save();
+            } else {
+                console.log('User purchase info already exists for logged-in user. No new record created.');
+            }
+
+        } else {
+            // If user is not logged in (guest), check by email
+            userPurchaseInfo = await UserPurchaseInfo.findOne({ email: userDetails.email });
+
+            if (!userPurchaseInfo) {
+                // If no record exists for the provided email, create a new one
+                console.log('Saving new user purchase info for non-logged-in user:', userDetails);
+                userPurchaseInfo = new UserPurchaseInfo({
+                    ...userDetails, // Since there's no userId, we only save the userDetails
+                });
+                await userPurchaseInfo.save();
+            } else {
+                console.log('User purchase info already exists for the provided email. No new record created.');
+            }
+        }
+
+        // Respond with the created order's ID
+        res.status(200).json({ orderId: order._id });
+    } catch (error) {
+        console.error('Error in purchaseTickets:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
-
-    console.log('Tickets array:', JSON.stringify(tickets, null, 2));
-
-    const ticketIds = [];
-    for (const ticket of tickets) {
-      if (mongoose.Types.ObjectId.isValid(ticket.ticketId)) {
-        ticketIds.push(new mongoose.Types.ObjectId(ticket.ticketId));
-      } else {
-        console.log(`Invalid ticketId: ${ticket.ticketId}`);
-        return res.status(400).json({ message: `Invalid ticketId: ${ticket.ticketId}` });
-      }
-    }
-
-    console.log('Ticket IDs:', ticketIds);
-    console.log('Event ID being used:', eventId);
-
-    const availableTickets = await EventTicket.find({
-      _id: { $in: ticketIds },
-      event: new mongoose.Types.ObjectId(eventId)
-    });
-
-    console.log("First check Available tickets fetched from database:", availableTickets);
-    console.log('Available tickets fetched from database:', JSON.stringify(availableTickets, null, 2));
-
-    if (availableTickets.length !== tickets.length) {
-      const missingTickets = tickets.filter(
-        ticket => !availableTickets.some(availableTicket => availableTicket._id.equals(ticket.ticketId))
-      );
-      console.log('Some tickets are not available:', missingTickets);
-      return res.status(400).json({
-        message: 'Some tickets are not available',
-        missingTickets: missingTickets.map(ticket => ticket.ticketId),
-      });
-    }
-
-    const order = new Order({
-      user: userId,
-      event: eventId,
-      tickets: tickets.map(ticket => ({
-        ticket: ticket.ticketId,
-        quantity: ticket.quantity,
-      })),
-      totalAmount,
-      status: 'pending',
-    });
-
-    console.log('Order to be saved:', JSON.stringify(order, null, 2));
-
-    await order.save();
-
-    if (userDetails && userId) {
-      console.log('Saving user purchase info:', userDetails);
-      const userPurchaseInfo = new UserPurchaseInfo({
-        user: userId,
-        ...userDetails,
-      });
-      await userPurchaseInfo.save();
-    }
-
-    res.status(200).json({ orderId: order._id });
-  } catch (error) {
-    console.error('Error in purchaseTickets:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
 };
 
 
@@ -175,15 +191,17 @@ export const getUserPurchaseInfo = async (req, res) => {
     // Fetch the user purchase information by userId
     const userPurchaseInfo = await UserPurchaseInfo.findOne({ user: userId });
 
-    // If user purchase info not found, respond with an error
-    if (!userPurchaseInfo) {
-      return res.status(404).json({ message: 'User purchase info not found' });
+    // If user purchase info is found, respond with it
+    if (userPurchaseInfo) {
+      return res.status(200).json(userPurchaseInfo);
     }
 
-    // Respond with the user purchase information
-    res.status(200).json(userPurchaseInfo);
+    // If user purchase info is not found, respond with a specific message
+    return res.status(404).json({ message: 'User purchase info not found' });
+
   } catch (error) {
     console.error('Error fetching user purchase info:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+

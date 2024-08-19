@@ -37,6 +37,7 @@ const OrderPage = () => {
         email: '',
     });
 
+    // Fetch basic user info from the user collection
     useEffect(() => {
         if (user) {
             setUserDetails(prevDetails => ({
@@ -47,6 +48,38 @@ const OrderPage = () => {
                 email: user.email || '',
             }));
         }
+    }, [user]);
+
+    // Fetch existing purchase info if available
+    useEffect(() => {
+        const fetchUserPurchaseInfo = async () => {
+            try {
+                if (user) {
+                    console.log("Fetching user purchase info..."); // Debugging line
+                    const response = await api.get(`/orders/user-purchase-info/${user._id}`);
+                    console.log("User purchase info response:", response.data); // Debugging line
+                    if (response.status === 200 && response.data) {
+                        setUserDetails(prevDetails => ({
+                            ...prevDetails,
+                            sex: response.data.sex || prevDetails.sex,
+                            lastName: response.data.lastName || prevDetails.lastName,
+                            firstName: response.data.firstName || prevDetails.firstName,
+                            address: response.data.address || prevDetails.address,
+                            postalCode: response.data.postalCode || prevDetails.postalCode,
+                            city: response.data.city || prevDetails.city,
+                            country: response.data.country || prevDetails.country,
+                            birthDate: response.data.birthDate || prevDetails.birthDate,
+                            phoneNumber: response.data.phoneNumber || prevDetails.phoneNumber,
+                            email: response.data.email || prevDetails.email,
+                        }));
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching user purchase info:", error.message);
+            }
+        };
+    
+        fetchUserPurchaseInfo();
     }, [user]);
 
     useEffect(() => {
@@ -122,9 +155,7 @@ const OrderPage = () => {
             showNotification('Error purchasing tickets', 'error');
         }
     };
-    
 
-    // Define the closePaymentModal function here
     const closePaymentModal = () => {
         setPaymentModalOpen(false);
     };
@@ -132,7 +163,6 @@ const OrderPage = () => {
     if (loading) return <CircularProgress />;
     if (error) return <Typography variant="h6">{error}</Typography>;
 
-    // Ensure event and order data is available before rendering the component
     if (!event || !order || tickets.length === 0) {
         return <Typography variant="h6">Error loading order details...</Typography>;
     }
@@ -399,7 +429,7 @@ const OrderPage = () => {
                     </Grid>
                 )}
             </Box>
-            {/* Payment modal integration */}
+
             <PaymentPage
                 open={paymentModalOpen}
                 handleClose={closePaymentModal}
