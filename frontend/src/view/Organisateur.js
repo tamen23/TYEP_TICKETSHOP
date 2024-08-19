@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Button, Container } from '@mui/material';
 import backgroundImg from './marcela-laskoski-YrtFlrLo2DQ-unsplash.jpg'; // Assurez-vous de remplacer par le chemin correct
-import './organisateur.scss';
+import './Organisateur.css';
 
 const Organisateur = () => {
     return (

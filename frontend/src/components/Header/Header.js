@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
 import PropTypes from 'prop-types';
 import logo from './logo.svg';
 import ModalAuth from '../Shared/ModalAuth';
@@ -17,6 +17,7 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
     const { user, logout } = useContext(AuthContext);
     const [authMode, setAuthMode] = useState('login');
     const location = useLocation();
+    const navigate = useNavigate(); // Initialize useNavigate
 
     const handlerShowAuth = (mode) => {
         setAuthMode(mode);
@@ -33,6 +34,11 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
 
     const handleLogout = () => {
         logout();
+    };
+
+    const handleProductionClick = (event) => {
+        event.preventDefault(); // Prevent default link behavior
+        navigate('/soon'); // Redirect to /soon page
     };
 
     const isOrganisateur = user && user.role === 'organisateur'; // Vérifiez le rôle de l'utilisateur
@@ -57,15 +63,16 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                                     <>
                                         <li><Link to="/dashboard">DASHBOARD</Link></li>
                                         <li><Link to="/events">MES ÉVÉNEMENTS</Link></li>
-                                        <li><Link to="/contacts">CONTACT</Link></li>
+                                        <li><Link to="/contact">CONTACT</Link></li>
                                         <li><Link to="/profile">PROFIL</Link></li>
                                     </>
                                 ) : (
                                     <>
-                                        <li><a href="#" onClick={onShowApp}>HOME</a></li>
-                                        <li><a href="#">EVENEMENTS</a></li>
-                                        <li><a href="#">CONCERTS</a></li>
-                                        <li><a href="#" onClick={onShowOrganisateur}>DEVENIR PARTENAIRE</a></li>
+                                        <li><a href="/" onClick={onShowApp}>HOME</a></li>
+                                        <li><a href="#" onClick={handleProductionClick}>EVENEMENTS</a></li>
+                                        <li><a href="#" onClick={handleProductionClick}>CONCERTS</a></li>
+                                        <li><Link to="/contact">CONTACT</Link></li>
+                                        <li><a href="#" onClick={handleProductionClick}>DEVENIR PARTENAIRE</a></li>
                                     </>
                                 )}
                             </ul>
@@ -92,7 +99,7 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                                             {location.pathname !== '/organisation' ? (
                                                 <Link to='/organisation'>JE SUIS ORGANISEUR</Link>
                                             ) : (
-                                                <Link to='/'>JE SUIS Utilisateur</Link>
+                                                <Link to='/'>JE SUIS UTILISATEUR</Link>
                                             )}
                                         </div>
                                         <div className='loginBtn'>

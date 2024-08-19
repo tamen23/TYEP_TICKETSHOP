@@ -5,7 +5,7 @@ import connectDB from './config/db.js';
 import sgMail from './config/sendgrid.js';
 import cors from 'cors';
 import ticketRoute from './routes/Evenement.js';
-import emailRoute from './routes/email.js';
+import contactRoutes from './routes/contact.js';
 import eventRoute from './routes/event.js';
 import adminRoutes from './routes/adminRoutes.js';  // Adjust the path as necessary
 
@@ -27,7 +27,7 @@ app.use(cors());
 app.use(express.json());
 
 // Email route
-app.use('/api/email', emailRoute);
+
 
 // Basic route for testing
 app.get('/', (req, res) => {
@@ -49,6 +49,7 @@ app.use('/api/admin', adminRoutes);
 // Serve static files from the "uploads" directory
 app.use('/uploads', express.static('uploads'));
 
+app.use('/api/email', contactRoutes);
 
 
 ///port usage
