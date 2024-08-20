@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Event from '../models/Event.js';
+import EventTicket from '../models/EventTicket.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -176,12 +177,37 @@ export const updateEventStatus = async (req, res) => {
       return res.status(400).json({ msg: 'Invalid status value' });
     }
 
+    // Update event status
     event.status = status;
     const updatedEvent = await event.save();
+
+    // Create tickets if the event is approved and tickets haven't been created yet
+    if (status === 'approved') {
+      // Check if tickets already exist for this event
+      const existingTickets = await EventTicket.find({ event: event._id });
+      if (existingTickets.length === 0) {
+        const tickets = [];
+
+        // Generate tickets based on seat categories
+        event.seat_categories.forEach(category => {
+          tickets.push({
+            event: event._id,
+            category: category.type,
+            price: category.price,
+            count: category.count,
+            sold: 0,
+          });
+        });
+
+        // Insert the generated tickets into the database
+        await EventTicket.insertMany(tickets);
+      }
+    }
+
     res.status(200).json(updatedEvent);
   } catch (error) {
     console.error('Error updating event status:', error);
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ msg: 'Server error', error: error.message });
   }
 };
 

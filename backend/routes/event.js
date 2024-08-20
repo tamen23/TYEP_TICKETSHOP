@@ -15,10 +15,10 @@ router.put('/:id', protect, adminOrOrganisateur, uploadImages, updateEvent);
 router.delete('/:id', protect, adminOrOrganisateur, deleteEvent);
 
 // Route to get all approved events
-router.get('/approved', protect, getApprovedEvents);
+router.get('/approved', getApprovedEvents);
 
 // Route to get a specific event by ID
-router.get('/:id', protect, getEventById);
+router.get('/:id',  getEventById);
 
 // Route to get all events
 router.get('/', protect, getAllEvents);
@@ -29,7 +29,5 @@ router.put('/:id/status', protect, admin, updateEventStatus);
 // Route to get all events by organizer
 router.get('/organizer', protect, adminOrOrganisateur, getEventsByOrganizer);
 
-// Route to get all approved events
-router.get('/approved', protect, getApprovedEvents);
 
 export default router;

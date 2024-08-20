@@ -13,19 +13,19 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import ApiService from '../../api'; // Importez le service ApiService
+import axios from 'axios';
 
 function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
+    return (
+        <Typography variant="body2" color="text.secondary" align="center" {...props}>
+            {'Copyright © '}
+            <Link color="inherit" href="https://mui.com/">
+                Your Website
+            </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+        </Typography>
+    );
 }
 
 const defaultTheme = createTheme();
@@ -44,17 +44,17 @@ const Register = ({ close, switchToLogin }) => {
 
   const formik = useFormik({
     initialValues: {
-      nom: '',
-      prenom: '',
-      email: '',
-      motDePasse: '',
-      confirmerMotDePasse: '',
-      telephone: '',
+        nom: '',
+        prenom: '',
+        email: '',
+        motDePasse: '',
+        confirmerMotDePasse: '',
+        telephone: '',
     },
     validationSchema: validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        await ApiService.register({
+        const response = await axios.post('http://localhost:8000/api/auth/register', {
           role: 'utilisateur',
           nom: values.nom,
           prenom: values.prenom,
@@ -62,14 +62,12 @@ const Register = ({ close, switchToLogin }) => {
           motDePasse: values.motDePasse,
           telephone: values.telephone,
         });
-        alert('Inscription réussie');
-        switchToLogin(); // Bascule vers le formulaire de connexion après une inscription réussie
+        // If registration is successful, switch to login page
+        switchToLogin();
       } catch (error) {
-        if (error.response) {
-          console.error('Error response:', error.response);
-          setErrorMessage(error.response.data.message || 'Une erreur s\'est produite lors de l\'inscription');
+        if (error.response && error.response.data && error.response.data.msg) {
+          setErrorMessage(error.response.data.msg);
         } else {
-          console.error('Error:', error.message);
           setErrorMessage('Échec de l\'inscription');
         }
       }
