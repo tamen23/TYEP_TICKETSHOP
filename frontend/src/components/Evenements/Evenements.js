@@ -13,7 +13,6 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import AuthContext from '../../context/AuthContext';
-import { Card, CardContent, CardMedia, Typography, CardActionArea } from '@mui/material';
 
 const Evenements = () => {
     const { user } = useContext(AuthContext);
@@ -238,33 +237,18 @@ const Evenements = () => {
             <div className="tickets-containerFnac">
                 {currentTickets.length > 0 ? (
                     currentTickets.map(ticket => (
-                        <Card key={ticket.id}>
-                            <CardActionArea onClick={() => handleClickOpen(ticket.link)}>
-                                <CardMedia
-                                    component="img"
-                                    height="140"
-                                    src={ticket["Lien de l'image"]}
-                                    alt={ticket.title}
-                                />
-                                <CardContent>
-                                    <Typography gutterBottom variant="h5" component="div">
-                                        {ticket.title}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Price: {ticket.price ? `$${ticket.price}` : 'Free'}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Location: {ticket.Ville}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Next date: {ticket['Prochaine date']}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Categories: {ticket.Catégorie}
-                                    </Typography>
-                                </CardContent>
-                            </CardActionArea>
-                        </Card>
+                        <div className="ticketfnac" key={ticket._id}>
+                            <div className="ticket-link" onClick={() => handleClickOpen(ticket["Lien de l'offre"])}>
+                                <img src={ticket["Lien de l'image"]} alt={ticket["Titre de l'offre"]} />
+                                <div className="ticket-infoFnc">
+                                    <h3>{ticket["Titre de l'offre"]}</h3>
+                                    <p>Price: ${ticket.Prix}</p>
+                                    <p>Location: {ticket.Ville}</p>
+                                    <p>Next date: {ticket["Prochaine date"]}</p>
+                                    <p>Categories: {ticket.Catégorie}</p>
+                                </div>
+                            </div>
+                        </div>
                     ))
                 ) : (
                     <p className="no-events-message">No events match the chosen filters.</p>
@@ -317,6 +301,6 @@ const Evenements = () => {
             </Dialog>
         </div>
     );
-};
+}
 
 export default Evenements;

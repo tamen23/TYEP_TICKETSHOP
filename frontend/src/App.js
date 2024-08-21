@@ -15,6 +15,7 @@ import Contact from './view/Contact';
 import ErrorPage from './view/Error';
 import Footer from './view/Footer';
 import MaintenancePage from "./view/maintenancePage";
+import AdminDashboard from './components/Dashboard/AdminDashboard';
 import fagPublic from './view/Fag/fagPublic';
 import fagManager from './view/Fag/fagManager';
 
@@ -58,6 +59,11 @@ function MainContent() {
                 } />
                 <Route path="*" element={<ErrorWrapper />} />
                 <Route path="/soon" element={<MaintenancePage />} />
+                <Route path="/admin-dashboard/*" element={
+                                    <PrivateRoute requiredRoles={['admin']}>
+                                        <AdminDashboard />
+                                    </PrivateRoute>
+                } />
             </Routes>
 
             <Footer />
