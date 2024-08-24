@@ -3,14 +3,16 @@
   background-color: #f9f9f9;
 
   .section-titleFa {
-    font-size: 24px;
-    margin-bottom: 20px;
+    font-size: 28px; /* Augmente la taille du titre */
+    margin-bottom: 30px; /* Augmente l'espacement sous le titre */
+    text-align: center; /* Centre le titre */
+    font-weight: bold; /* Rend le titre plus visible */
   }
 
   .filters {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 15px; /* Augmente l'espacement entre les filtres */
+    margin-bottom: 30px; /* Augmente l'espacement sous les filtres */
     align-items: center;
     position: relative;
 
@@ -20,17 +22,17 @@
 
     select,
     .react-datepicker__input-container input {
-      padding: 10px;
+      padding: 12px; /* Augmente le padding pour un meilleur confort */
       border: 1px solid #ddd;
       border-radius: 5px;
-      font-size: 14px;
+      font-size: 16px; /* Augmente la taille du texte pour plus de lisibilité */
     }
 
     button {
-      padding: 10px;
+      padding: 12px; /* Augmente le padding du bouton */
       border: 1px solid #ddd;
       border-radius: 5px;
-      font-size: 14px;
+      font-size: 16px; /* Augmente la taille du texte */
       background-color: #f0f0f0;
       cursor: pointer;
     }
@@ -58,34 +60,44 @@
   .tickets-containerFnac {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 25px; /* Augmente l'espacement entre les cartes */
+    justify-content: center; /* Centre les cartes dans le conteneur */
   }
 
   .ticketfnac {
     background-color: #fff;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 10px; /* Arrondit légèrement les coins */
     overflow: hidden;
-    width: 200px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 250px; /* Augmente la largeur des cartes */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Augmente l'ombre pour plus de profondeur */
+    transition: transform 0.3s ease-in-out; /* Ajoute une transition pour un effet au survol */
+  }
+
+  .ticketfnac:hover {
+    transform: scale(1.05); /* Agrandit légèrement la carte au survol */
   }
 
   .ticketfnac img {
     width: 100%;
-    height: auto;
+    height: 180px; /* Fixe une hauteur pour les images */
+    object-fit: cover; /* Ajuste l'image pour qu'elle couvre l'espace */
   }
 
   .ticket-infoFnc {
-    padding: 10px;
+    padding: 15px; /* Augmente le padding interne de la carte */
   }
 
   .ticket-infoFnc h3 {
-    font-size: 18px;
-    margin: 0 0 10px;
+    font-size: 20px; /* Augmente la taille du titre de l'événement */
+    margin: 0 0 12px; /* Augmente l'espacement sous le titre */
+    font-weight: bold; /* Rend le titre de l'événement plus visible */
   }
 
   .ticket-infoFnc p {
-    margin: 5px 0;
+    margin: 8px 0; /* Augmente l'espacement entre les paragraphes */
+    font-size: 16px; /* Augmente la taille du texte pour plus de lisibilité */
+    color: #555; /* Améliore la couleur pour le contraste */
   }
 
   .discountFnc {
@@ -96,15 +108,15 @@
   .pagination {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 30px; /* Augmente l'espacement au-dessus de la pagination */
     text-align: center;
-    gap: 5px;
+    gap: 10px; /* Augmente l'espacement entre les boutons de pagination */
   }
 
   .ticket-link {
     text-decoration: none;
     color: inherit;
-    cursor: pointer; /* Ensures the link looks clickable */
+    cursor: pointer; /* Assure que le lien semble cliquable */
   }
 
   .ticket-link:hover {
@@ -114,8 +126,8 @@
 
   .no-events-message {
     text-align: center;
-    font-size: 18px;
+    font-size: 20px; /* Augmente la taille du texte du message */
     color: #999;
-    margin-top: 20px;
+    margin-top: 40px; /* Augmente l'espacement au-dessus du message */
   }
 }

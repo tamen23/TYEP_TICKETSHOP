@@ -42,9 +42,6 @@
   background-color: #ffffff;
 }
 
-
-
-
 .ticket__logo {
   margin-right: 10px;
   color: #ffffff;
@@ -58,9 +55,11 @@
   top: 3px;
   left: 12px;
 }
-.header__menu{
+
+.header__menu {
   padding-left: 40px;
 }
+
 .header__menu nav ul {
   display: flex;
   list-style: none;
@@ -112,8 +111,6 @@
   height: 100%;
 }
 
-
-
 .org {
   display: flex;
   align-items: center;
@@ -128,7 +125,7 @@
 
 .org a:hover {
   text-decoration: underline;
-  color:#1a8fdd;
+  color: #1a8fdd;
 }
 
 .loginBtn {
@@ -148,7 +145,7 @@
   font-size: 15px;
   line-height: 18px;
   padding: 12px 25px;
-  border:1px solid #1a8fdd;
+  border: 1px solid #1a8fdd;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 }
@@ -164,7 +161,7 @@
   display: block;
   transform: scale(1, 0);
   transform-origin: top;
-  transition: transform .2s;
+  transition: transform 0.2s;
   z-index: 5;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   background-color: #fff;
@@ -175,12 +172,19 @@
   border-top-left-radius: 0;
   top: 57px;
   left: 0;
+}
 
-  div {
-    cursor: pointer;
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
+.item-sign div {
+  cursor: pointer;
+  margin: 5px 0;
+}
+
+.item-sign div:first-child:hover {
+  color: #1a8fdd;
+}
+
+.item-sign div:nth-child(2):hover  {
+  color: #1a8fdd;
 }
 
 .loginBtn:hover .item-sign {
@@ -188,8 +192,7 @@
 }
 
 .item-sign li .conn {
-  margin-bottom: 5px;
-  margin-top: 5px;
+  margin: 5px 0;
   color: #000000;
 }
 
@@ -211,30 +214,37 @@
   border-top-right-radius: 4px;
 }
 
-.item-sign:hover .item-sign {
-  transform: scale(0, 0);
-}
-
-
-.headerLinkr{
+.headerLinkr {
   text-decoration: none;
 }
 
-.profile-logo{
+.profile-logo {
   font-size: 20px;
+
+  a{
+    color: #ffffff;
+
+  }
+
+  .profile-logo{
+    height:30px;
+    border-radius: 100%;
+    width: 30px;
+  }
 }
 
-/* header.scss */
 .header__logo a {
-    text-decoration: none;
+  text-decoration: none;
   color: white;
 }
 
-
-a{
+a {
   text-decoration: none;
 }
 
-ul{
-  text-decoration: none;
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
+

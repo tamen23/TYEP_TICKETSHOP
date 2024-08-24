@@ -13,13 +13,14 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import AuthContext from '../../context/AuthContext';
+import { ClipLoader } from 'react-spinners'; // Import the loader
 
 const Evenements = () => {
     const { user } = useContext(AuthContext);
     const [tickets, setTickets] = useState([]);
     const [filteredTickets, setFilteredTickets] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const ticketsPerPage = 12; // Limit to 12 tickets per page
+    const ticketsPerPage = 10; // Limit to 12 tickets per page
     const [filters, setFilters] = useState({
         startDate: null,
         endDate: null,
@@ -36,6 +37,9 @@ const Evenements = () => {
     const calendarRef = useRef(null);
     const buttonRef = useRef(null);
 
+    // State for loading images
+    const [loadingImages, setLoadingImages] = useState(true);
+
     // Fetch tickets from the API
     const fetchTickets = async () => {
         try {
@@ -45,6 +49,7 @@ const Evenements = () => {
             setAvailableLocations([...new Set(response.data.map(ticket => ticket.Ville))]);
             setAvailableCategories([...new Set(response.data.map(ticket => ticket.Catégorie))]);
             console.log(response.data);
+            setLoadingImages(false); // Set loading state to false once the data is fetched
         } catch (error) {
             console.error('Error fetching tickets:', error);
         }
@@ -235,11 +240,19 @@ const Evenements = () => {
             </div>
 
             <div className="tickets-containerFnac">
-                {currentTickets.length > 0 ? (
+                {loadingImages ? ( // Check if images are loading
+                    <div className="loader-container">
+                        <ClipLoader color="#007bff" size={150} /> {/* Display loader */}
+                    </div>
+                ) : currentTickets.length > 0 ? (
                     currentTickets.map(ticket => (
                         <div className="ticketfnac" key={ticket._id}>
                             <div className="ticket-link" onClick={() => handleClickOpen(ticket["Lien de l'offre"])}>
-                                <img src={ticket["Lien de l'image"]} alt={ticket["Titre de l'offre"]} />
+                                <img 
+                                    src={ticket["Lien de l'image"]} 
+                                    alt={ticket["Titre de l'offre"]}
+                                    onLoad={() => setLoadingImages(false)} // Hide loader when image is loaded
+                                />
                                 <div className="ticket-infoFnc">
                                     <h3>{ticket["Titre de l'offre"]}</h3>
                                     <p>Price: ${ticket.Prix}</p>

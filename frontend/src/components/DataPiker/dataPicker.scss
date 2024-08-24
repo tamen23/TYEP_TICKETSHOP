@@ -1,0 +1,30 @@
+.data-picker {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.data-picker__event {
+    margin-bottom: 20px;
+}
+
+.data-picker__image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.data-picker__details {
+    margin-top: 10px;
+}
+
+.data-picker__title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.data-picker__link {
+    color: #007bff;
+    text-decoration: none;
+}

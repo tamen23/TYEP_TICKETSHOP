@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationsProvider } from './context/NotificationsContext';
 import Header from './components/Header/Header';
@@ -21,21 +21,21 @@ import fagPublic from './view/Fag/fagPublic';
 import fagManager from './view/Fag/fagManager';
 import { Elements } from '@stripe/react-stripe-js'; // Import Elements
 import { loadStripe } from '@stripe/stripe-js'; // Import loadStripe
-
+import UserProfile from './view/UserProfile';
+import DataPicker from './components/DataPiker/DataPiker';
 // Load your Stripe publishable key
 const stripePromise = loadStripe('pk_test_51PfLnZRp56bwUV10pU6P6rVrVCtRXJ7KelIwNOyaiT81SMe6lLBaSW4PTemUmc6L5C4AMbvcZEDX1etBnsA8HP4H00pDrBqvZi');
-
 
 function App() {
     return (
         <AuthProvider>
             <NotificationsProvider>
                 <Router>
-                <Elements stripe={stripePromise}>
-                    <div className="App">
-                        <MainContent />
-                    </div>
-                </Elements>
+                    <Elements stripe={stripePromise}>
+                        <div className="App">
+                            <MainContent />
+                        </div>
+                    </Elements>
                 </Router>
             </NotificationsProvider>
         </AuthProvider>
@@ -43,14 +43,17 @@ function App() {
 }
 
 function MainContent() {
-
     return (
         <>
             <Header />
             <Routes>
+                <Route path="/profil" element={<PrivateRoute> 
+                    <UserProfile/>
+                </PrivateRoute>} />
+                <Route path="/pikerDate" element={<DataPicker />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/" element={<Home />} />
-                <Route path='/contact' element={<Contact />} />
+                <Route path="/contact" element={<Contact />} />
                 <Route path="/organisation" element={<Organisateur />} />
                 <Route path="/description" element={<EvenementView />} />
                 <Route path="/events" element={<EventCards />} />
@@ -62,19 +65,15 @@ function MainContent() {
                     </PrivateRoute>
                 } />
                 <Route path="/fag-public" element={<fagPublic />} />
-                <Route path="/fag-manager" element={
-                        <fagManager />
-
-                } />
+                <Route path="/fag-manager" element={<fagManager />} />
                 <Route path="*" element={<ErrorWrapper />} />
                 <Route path="/soon" element={<MaintenancePage />} />
                 <Route path="/admin-dashboard/*" element={
-                                    <PrivateRoute requiredRoles={['admin']}>
-                                        <AdminDashboard />
-                                    </PrivateRoute>
+                    <PrivateRoute requiredRoles={['admin']}>
+                        <AdminDashboard />
+                    </PrivateRoute>
                 } />
             </Routes>
-
             <Footer />
         </>
     );
@@ -83,6 +82,5 @@ function MainContent() {
 function ErrorWrapper() {
     return <ErrorPage />;
 }
-
 
 export default App;

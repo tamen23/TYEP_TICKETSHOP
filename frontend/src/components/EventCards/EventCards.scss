@@ -1,52 +1,127 @@
-.event-cards {
+.event-cards-container {
+  position: relative;
+  top: -180px;
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  height: 100vh;
+  
+  .event-cards {
+    width: 100%;
     display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    padding: 20px;
     justify-content: center;
-  }
-  
-  .event-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    width: 300px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-  
-    &:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    }
-  
-    img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-    }
-  
-    h3 {
-      margin: 16px;
-    }
-  
-    p {
-      margin: 0 16px 16px;
-    }
-  
-    a {
-      display: block;
-      margin: 16px;
-      padding: 8px 16px;
-      background-color: #007bff;
-      color: #fff;
-      text-align: center;
-      text-decoration: none;
-      border-radius: 4px;
-      transition: background-color 0.2s;
-  
+    flex-wrap: wrap;
+    gap: 20px; /* Reduce gap between cards */
+
+    .event-card {
+      width: 270px;
+      height: auto;
+      margin: -8px; /* Adjust margin for better spacing */
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.6s ease-in-out; /* Add fade-in animation */
+      transition: transform 0.3s ease-in-out;
+
       &:hover {
-        background-color: #0056b3;
+        transform: translateY(-10px); /* Add hover animation */
+      }
+
+      .event-card-image {
+        width: 100%;
+        height: 250px;
+        background-position: center;
+
+        img {
+          width: 100%;
+          height: 100%;
+          border-radius: 10px;
+          object-fit: cover;
+          animation: imageZoom 0.5s ease-in-out; /* Add zoom-in animation */
+        }
+      }
+
+      .event-card-content {
+        h3 {
+          font-size: 1.2rem;
+          margin-bottom: 8px;
+        }
+
+        p {
+          font-size: 0.9rem;
+          margin-bottom: 8px;
+          color: #666;
+        }
+
+        .event-card-button {
+          display: inline-block;
+          padding: 8px 16px;
+          background-color: #007bff;
+          color: white;
+          border-radius: 5px;
+          text-align: center;
+          text-decoration: none;
+          transition: background-color 0.3s;
+
+          &:hover {
+            background-color: #0056b3;
+          }
+        }
       }
     }
   }
-  
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+
+    button {
+      background: none;
+      border: 1px solid #ccc;
+      padding: 8px 12px;
+      margin: 0 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s; /* Add transition for smooth hover effect */
+
+      &.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+      }
+
+      &:hover {
+        background-color: #f0f0f0;
+        transform: scale(1.1); /* Add scale effect on hover */
+      }
+    }
+  }
+}
+
+/* Keyframes for animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes imageZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}

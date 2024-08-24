@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './calendar.scss';
 
-const Calendar = ({ onDateSelect }) => {
+const Calendar = ({ onDateSelect, eventsByDate }) => {
     const date = new Date();
     const [month, setMonth] = useState(date.getMonth());
     const [year, setYear] = useState(date.getFullYear());
     const today = date.getDate();
     const currentMonth = date.getMonth();
     const currentYear = date.getFullYear();
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Handle any additional effects when month or year changes
@@ -36,6 +38,19 @@ const Calendar = ({ onDateSelect }) => {
     const handleDayClick = (day) => {
         if (!day.disabled) {
             const selectedDate = new Date(year, month, day.date);
+            const formattedDate = selectedDate.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
+
+            console.log("Selected Date:", formattedDate);
+            console.log("Events by Date:", eventsByDate);
+
+            if (eventsByDate && eventsByDate[formattedDate]) {
+                const events = eventsByDate[formattedDate]; // Get all events for the date
+                console.log("Events for this date:", events);
+                navigate('/pikerDate', { state: { events } }); // Redirect to pikerDate with events
+            } else {
+                alert('Désolé, cette date n\'a pas d\'événement');
+            }
+
             if (typeof onDateSelect === 'function') {
                 onDateSelect(selectedDate);
             }
@@ -43,35 +58,37 @@ const Calendar = ({ onDateSelect }) => {
     };
 
     return (
-        <div className="calendar">
-            <div className="calendar__header">
-                <div className="calendar__icon">
-                    <i className="icon"></i>
+        <div>
+            <div className="calendar">
+                <div className="calendar__header">
+                    <div className="calendar__icon">
+                        <i className="icon"></i>
+                    </div>
+                    <div className="calendar__title">Trouver vos Tickets</div>
                 </div>
-                <div className="calendar__title">Trouver vos Tickets</div>
-            </div>
-            <div className="calendar__body">
-                <div className="calendar__month">
-                    <span>{monthName} {year}</span>
+                <div className="calendar__body">
+                    <div className="calendar__month">
+                        <span>{monthName} {year}</span>
+                    </div>
+                    <div className="calendar__weekdays">
+                        <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+                    </div>
+                    <div className="calendar__days">
+                        {generateDays(year, month, today, currentMonth, currentYear).map((day, index) => (
+                            <div
+                                key={index}
+                                className={`calendar__day ${day.disabled ? 'calendar__day--disabled' : ''} ${day.isToday ? 'calendar__day--today' : ''}`}
+                                onClick={() => handleDayClick(day)}
+                            >
+                                {day.date}
+                            </div>
+                        ))}
+                    </div>
                 </div>
-                <div className="calendar__weekdays">
-                    <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+                <div className="calendar__footer">
+                    <button className="calendar__nav calendar__nav--prev" onClick={prevMonth}>&lt;</button>
+                    <button className="calendar__nav calendar__nav--next" onClick={nextMonth}>&gt;</button>
                 </div>
-                <div className="calendar__days">
-                    {generateDays(year, month, today, currentMonth, currentYear).map((day, index) => (
-                        <div
-                            key={index}
-                            className={`calendar__day ${day.disabled ? 'calendar__day--disabled' : ''} ${day.isToday ? 'calendar__day--today' : ''}`}
-                            onClick={() => handleDayClick(day)}
-                        >
-                            {day.date}
-                        </div>
-                    ))}
-                </div>
-            </div>
-            <div className="calendar__footer">
-                <button className="calendar__nav calendar__nav--prev" onClick={prevMonth}>&lt;</button>
-                <button className="calendar__nav calendar__nav--next" onClick={nextMonth}>&gt;</button>
             </div>
         </div>
     );

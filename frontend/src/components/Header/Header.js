@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
 import PropTypes from 'prop-types';
+import { FaSignOutAlt } from 'react-icons/fa'; // Import FaSignOutAlt
 import logo from './logo.svg';
 import ModalAuth from '../Shared/ModalAuth';
 import AuthContext from '../../context/AuthContext';
@@ -33,7 +34,8 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
     };
 
     const handleLogout = () => {
-        logout();
+        logout(); // Perform the logout operation
+        navigate('/'); // Redirect to the homepage after logout
     };
 
     const handleProductionClick = (event) => {
@@ -64,12 +66,11 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                                         <li><Link to="/dashboard">DASHBOARD</Link></li>
                                         <li><Link to="/events">MES ÉVÉNEMENTS</Link></li>
                                         <li><Link to="/contact">CONTACT</Link></li>
-                                        <li><Link to="/profile">PROFIL</Link></li>
                                     </>
                                 ) : (
                                     <>
                                         <li><a href="/" onClick={onShowApp}>HOME</a></li>
-                                        <li><a href="#" onClick={handleProductionClick}>EVENEMENTS</a></li>
+                                        <li><a href="/events">EVENEMENTS</a></li>
                                         <li><a href="#" onClick={handleProductionClick}>CONCERTS</a></li>
                                         <li><Link to="/contact">CONTACT</Link></li>
                                         <li><a href="#" onClick={handleProductionClick}>DEVENIR PARTENAIRE</a></li>
@@ -85,12 +86,15 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                         <div className="child__menu">
                             {user ? (
                                 <>
-                                    <div onClick={toggleProfile} className="profile-logo">
-                                        <CgProfile className="profile-logo" />
+                                    <div className="profile-logo" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                                        <Link to='/profil'>
+                                           <CgProfile className="profile-logo" />
+                                        </Link>
+
+                                        <div className="logout-icon" onClick={handleLogout}>
+                                            <FaSignOutAlt title="Logout" />
+                                        </div>
                                     </div>
-                                    {showProfile && (
-                                        <Profile user={user} logout={handleLogout} />
-                                    )}
                                 </>
                             ) : (
                                 <div className='top_menu'>
