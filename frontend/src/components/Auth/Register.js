@@ -1,146 +1,226 @@
-import React, { useState, useEffect } from 'react';
-import { MdHideSource } from "react-icons/md";
-import { BiShowAlt } from "react-icons/bi";
-import api from '../../api';
-import './register.scss';
-import Login from './Login'; // Import the Login component
+import * as React from 'react';
+import { useState } from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
 
-const Register = ({ closeRegisterModal, openLoginModal, registerRef }) => {
-    const [form, setForm] = useState({
+function Copyright(props) {
+    return (
+        <Typography variant="body2" color="text.secondary" align="center" {...props}>
+            {'Copyright © '}
+            <Link color="inherit" href="https://mui.com/">
+                Your Website
+            </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+        </Typography>
+    );
+}
+
+const defaultTheme = createTheme();
+
+const validationSchema = Yup.object({
+  nom: Yup.string().required('Nom est requis'),
+  prenom: Yup.string().required('Prénom est requis'),
+  email: Yup.string().email('Email invalide').required('Email est requis'),
+  motDePasse: Yup.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères').required('Mot de passe est requis'),
+  confirmerMotDePasse: Yup.string().oneOf([Yup.ref('motDePasse'), null], 'Les mots de passe ne correspondent pas').required('Confirmation du mot de passe est requise'),
+  telephone: Yup.string().matches(/^\d+$/, 'Le téléphone doit contenir uniquement des chiffres').required('Téléphone est requis'),
+});
+
+const Register = ({ close, switchToLogin }) => {
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const formik = useFormik({
+    initialValues: {
         nom: '',
         prenom: '',
         email: '',
         motDePasse: '',
+        confirmerMotDePasse: '',
         telephone: '',
-        showPassword: false
-    });
-    const [isRegistered, setIsRegistered] = useState(false); // State to control login modal
-
-    const toggleShowPassword = () => {
-        setForm({ ...form, showPassword: !form.showPassword });
-    };
-
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
-
-    const handleLoginLinkClick = (e) => {
-        e.preventDefault();
-        closeRegisterModal();
-        openLoginModal();
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (form.motDePasse !== form.confirmerMotDePasse) {
-            alert('Les mots de passe ne correspondent pas');
-            return;
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        const response = await axios.post('http://localhost:8000/api/auth/register', {
+          role: 'utilisateur',
+          nom: values.nom,
+          prenom: values.prenom,
+          email: values.email,
+          motDePasse: values.motDePasse,
+          telephone: values.telephone,
+        });
+        // If registration is successful, switch to login page
+        switchToLogin();
+      } catch (error) {
+        if (error.response && error.response.data && error.response.data.msg) {
+          setErrorMessage(error.response.data.msg);
+        } else {
+          setErrorMessage('Échec de l\'inscription');
         }
-        try {
-            const response = await api.post('/auth/register', {
-                role: 'utilisateur',
-                nom: form.nom,
-                prenom: form.prenom,
-                email: form.email,
-                motDePasse: form.motDePasse,
-                telephone: form.telephone,
-            });
-            alert('Inscription réussie');
-            closeRegisterModal(); // Close the registration modal
-            setIsRegistered(true); // Set state to show login component
-        } catch (error) {
-            alert('Échec de l\'inscription');
-        }
-    };
+      }
+      setSubmitting(false);
+    },
+  });
 
-    const handleClickOutside = (event) => {
-        if (registerRef.current && !registerRef.current.contains(event.target)) {
-            closeRegisterModal();
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);  
-
-    return (
-        <div className="auth-container" ref={registerRef}>
-            {!isRegistered ? (
-                <>
-                    <h2>Register</h2>
-                    <form onSubmit={handleSubmit}>
-                        <div className="input-group">
-                            <input
-                                type="text"
-                                name="nom"
-                                placeholder="Nom"
-                                value={form.nom}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="input-group">
-                            <input
-                                type="text"
-                                name="prenom"
-                                placeholder="Prenom"
-                                value={form.prenom}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="input-group">
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Email"
-                                value={form.email}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="input-group">
-                            <input
-                                type="text"
-                                name="telephone"
-                                placeholder="Telephone"
-                                value={form.telephone}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="input-group password-input">
-                            <input
-                                type={form.showPassword ? "text" : "password"}
-                                name="motDePasse"
-                                placeholder="Mot de Passe"
-                                value={form.motDePasse}
-                                onChange={handleChange}
-                            />
-                            <span className='span' onClick={toggleShowPassword}>
-                                {form.showPassword ? <MdHideSource className='hideD' /> : <BiShowAlt className='showD' />}
-                            </span>
-                        </div>
-                        <div className="input-group">
-                            <input
-                                type={form.showPassword ? "text" : "password"}
-                                name="confirmerMotDePasse"
-                                placeholder="Confirmer le mot de passe"
-                                value={form.confirmerMotDePasse}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="buttons">
-                            <button className='button cancel' type="button" onClick={closeRegisterModal}>Annuler</button>
-                            <button className='button confirm' type="submit">Confirmer</button>
-                        </div>
-                    </form>
-                    <p>Vous avez déjà un compte ? <a href="#" onClick={handleLoginLinkClick}>Connectez-vous</a></p>
-                </>
-            ) : (
-                <Login close={closeRegisterModal} />
-            )}
-        </div>
-    );
-};
+  return (
+    <ThemeProvider theme={defaultTheme}>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Inscription
+          </Typography>
+          {errorMessage && (
+            <Box sx={{ mt: 2 }}>
+              <Typography color="error">{errorMessage}</Typography>
+            </Box>
+          )}
+          <Box component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="given-name"
+                  name="prenom"
+                  required
+                  fullWidth
+                  id="prenom"
+                  label="Prénom"
+                  autoFocus
+                  value={formik.values.prenom}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.prenom && Boolean(formik.errors.prenom)}
+                  helperText={formik.touched.prenom && formik.errors.prenom}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="nom"
+                  label="Nom"
+                  name="nom"
+                  autoComplete="family-name"
+                  value={formik.values.nom}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.nom && Boolean(formik.errors.nom)}
+                  helperText={formik.touched.nom && formik.errors.nom}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="Adresse email"
+                  name="email"
+                  autoComplete="email"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  helperText={formik.touched.email && formik.errors.email}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="motDePasse"
+                  label="Mot de passe"
+                  type="password"
+                  id="motDePasse"
+                  autoComplete="new-password"
+                  value={formik.values.motDePasse}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.motDePasse && Boolean(formik.errors.motDePasse)}
+                  helperText={formik.touched.motDePasse && formik.errors.motDePasse}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="confirmerMotDePasse"
+                  label="Confirmer le mot de passe"
+                  type="password"
+                  id="confirmerMotDePasse"
+                  autoComplete="new-password"
+                  value={formik.values.confirmerMotDePasse}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.confirmerMotDePasse && Boolean(formik.errors.confirmerMotDePasse)}
+                  helperText={formik.touched.confirmerMotDePasse && formik.errors.confirmerMotDePasse}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="telephone"
+                  label="Téléphone"
+                  id="telephone"
+                  autoComplete="tel"
+                  value={formik.values.telephone}
+                  onChange={(e) => {
+                    const { value } = e.target;
+                    if (/^\d*$/.test(value)) {
+                      formik.handleChange(e);
+                    }
+                  }}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.telephone && Boolean(formik.errors.telephone)}
+                  helperText={formik.touched.telephone && formik.errors.telephone}
+                />
+              </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={formik.isSubmitting}
+            >
+              Inscription
+            </Button>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link href="#" variant="body2" onClick={switchToLogin}>
+                  Vous avez déjà un compte ? Connectez-vous
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+        <Copyright sx={{ mt: 5 }} />
+      </Container>
+    </ThemeProvider>
+  );
+}
 
 export default Register;

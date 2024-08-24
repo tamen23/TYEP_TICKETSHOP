@@ -1,7 +1,6 @@
 import Hero from "../components/Hero/Hero";
 import Evenements from "../components/Evenements/Evenements";
 
-
 const Home = () => {
     return (
         <div>

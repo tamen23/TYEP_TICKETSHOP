@@ -11,7 +11,6 @@ import PaymentPage from './PaymentPage';
 
 const OrderPage = () => {
     const { id } = useParams(); // Order ID from the URL
-    const navigate = useNavigate();
     const { user } = useAuth();  // Get user details from context
     const { showNotification } = useNotifications();
 

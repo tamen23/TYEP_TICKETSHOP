@@ -64,8 +64,8 @@ const Evenements = () => {
     useEffect(() => {
         const handleMouseOver = (event) => {
             if (
-                calendarRef.current && 
-                !calendarRef.current.contains(event.target) && 
+                calendarRef.current &&
+                !calendarRef.current.contains(event.target) &&
                 !buttonRef.current.contains(event.target)
             ) {
                 setShowCalendar(false);
@@ -194,9 +194,9 @@ const Evenements = () => {
     return (
         <div className="evenementsFnac">
             <h2 className="section-titleFa">TICKETS</h2>
-            
+
             <div className="filters">
-                <button 
+                <button
                     ref={buttonRef}
                     onClick={() => setShowCalendar(!showCalendar)}
                     style={{ color: filters.startDate || filters.endDate ? 'black' : 'inherit' }}
@@ -233,7 +233,7 @@ const Evenements = () => {
                     ))}
                 </select>
             </div>
-            
+
             <div className="tickets-containerFnac">
                 {currentTickets.length > 0 ? (
                     currentTickets.map(ticket => (
@@ -267,13 +267,13 @@ const Evenements = () => {
                     showLastButton
                 />
             </div>
-            
+
             {/* Popup Dialog for Email Entry */}
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Redirecting to Event Page</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        {user 
+                        {user
                             ? 'A mail will be sent to your account. Click submit to continue.'
                             : 'Please enter your email address to be redirected to the event page.'
                         }

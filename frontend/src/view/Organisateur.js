@@ -1,36 +1,35 @@
-import React, { useState } from 'react';
-import hero from './image.png';
-import BackGroundImage from './anthony-delanoix-hzgs56Ze49s-unsplash.jpg';
-import './organisateur.scss'; 
-import OrganisateurSignUp from '../components/Organisateur/OrganisateurSignUp';
+import React from 'react';
+import { Typography, Button, Container } from '@mui/material';
+import backgroundImg from './marcela-laskoski-YrtFlrLo2DQ-unsplash.jpg'; // Assurez-vous de remplacer par le chemin correct
+import './Organisateur.css';
 
 const Organisateur = () => {
-    const [showOrganisateurAuth, setShowAuth] = useState(false);
-
-    const handlerOrganisateur = () => {
-        setShowAuth(true);
-    };
-
-    const closeModal = () => {
-        setShowAuth(false);
-    };
-
     return (
-        <div className="organisation" style={{ backgroundImage: `url(${BackGroundImage})` }}>
-            <div className='contenteOrganisation'>
-                <div className='leftSection'>
-                    <img src={hero} alt="Hero" className='heroImage' />
-                </div>
-                <div className='rightSection'>
-                    <h1>Gérez facilement vos événements</h1>
-                    <p>Ticketplace est une plateforme 100% en ligne de gestion d’événements incluant: billetterie en ligne et au guichet, inscriptions, invitations, contrôle d’accès, finance, marketing, etc... Elle permet l’administration à 360° et la supervision en temps réel de votre événement.</p>
-                    <button className='createEventButton' onClick={handlerOrganisateur}>CRÉER UN ÉVÉNEMENT</button>
-                </div>
+        <>
+            <div className="organisation" style={{backgroundImage: `url(${backgroundImg})`}}>
+                <Container maxWidth="lg" className="organisation__content">
+                    <Typography variant="h2" className="organisation__title" gutterBottom>
+                        BETTER, FASTER, STRONGER.
+                    </Typography>
+                    <Typography variant="subtitle1" className="organisation__subtitle" gutterBottom>
+                        La billetterie qui vous redonne le contrôle et permet de mieux vendre vos événements en
+                        développant vos communautés.
+                    </Typography>
+                    <div className="organisation__buttons">
+                        <Button variant="contained" color="primary" size="large" style={{marginRight: 16}}>
+                            Demander une démo
+                        </Button>
+                        <Button variant="outlined" color="primary" size="large">
+                            Commencer - c’est gratuit
+                        </Button>
+                    </div>
+                </Container>
+                <Container maxWidth="lg" className="organisation__content">
+
+                </Container>
             </div>
-            {
-                showOrganisateurAuth && <OrganisateurSignUp show={showOrganisateurAuth} onClose={closeModal}/>
-            }
-        </div>
+
+        </>
     );
 };
 

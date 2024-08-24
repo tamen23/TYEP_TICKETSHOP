@@ -1,115 +1,129 @@
-import React, { useRef, useEffect, useState, useContext } from 'react';
-import { MdHideSource } from "react-icons/md";
-import { BiShowAlt } from "react-icons/bi";
-import AuthContext from '../../context/AuthContext';
-import './login.scss';
-import ModalAuth from "../Shared/ModalAuth";
-import Register from "./Register";
+import * as React from 'react';
+import { useState, useContext } from 'react';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import AuthContext from '../../context/AuthContext'; // Importez votre contexte d'authentification
 
-const Login = ({ onClose }) => {
-    const outLogin = useRef(null);  // Reference for detecting clicks outside login modal
-    const registerRef = useRef(null);  // Reference for the registration modal
-    const [isRegistered, setIsRegistered] = useState(false);  // State to toggle registration modal
-    const [form, setForm] = useState({
-        email: '',
-        password: '',
-        showPassword: false
-    });
+const Copyright = (props) => (
+  <Typography className="modalAuth-content" variant="body2" color="text.secondary" align="center" {...props}>
+    {'Copyright © '}
+    <Link color="inherit" href="https://mui.com/">
+      Your Website
+    </Link>{' '}
+    {new Date().getFullYear()}
+    {'.'}
+  </Typography>
+);
 
-    const { login } = useContext(AuthContext);  // Authentication context for login
+const defaultTheme = createTheme();
 
-    // Function to open registration modal
-    const handleRegister = () => {
-        setIsRegistered(true);
-    };
+const Login = ({ close, switchToRegister }) => {
+  const [form, setForm] = useState({
+    email: '',
+    password: '',
+  });
 
-    // Function to close registration modal
-    const closeRegisterModal = () => {
-        setIsRegistered(false);
-    };
+  const { login } = useContext(AuthContext);
 
-    // Function to toggle password visibility
-    const toggleShowPassword = () => {
-        setForm({ ...form, showPassword: !form.showPassword });
-    };
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-    // Function to handle input changes
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await login(form.email, form.password);
+      alert('Connexion réussie');
+      close();
+    } catch (error) {
+      alert('Échec de la connexion');
+    }
+  };
 
-    // Function to handle form submission
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await login(form.email, form.password);
-            alert('Connexion réussie');
-            onClose();  // Call the onClose prop to close the modal after successful login
-        } catch (error) {
-            alert('Échec de la connexion');
-        }
-    };
-
-    // Adding and cleaning up the event listener for clicks outside the modal
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
-    // Function to handle clicks outside the login modal
-    const handleClickOutside = (event) => {
-        if (
-            outLogin.current &&
-            !outLogin.current.contains(event.target) &&
-            (!registerRef.current || !registerRef.current.contains(event.target))
-        ) {
-            // Handle closing logic if needed
-        }
-    };
-
-    return (
-        <div className='outme' ref={outLogin}>
-            <div className="auth-container">
-                <h2>Bienvenue</h2>
-                <p>Ravi de vous revoir 👋<br />Connectez-vous à votre compte ci-dessous</p>
-                <form onSubmit={handleSubmit}>
-                    <div className="input-group">
-                        <input
-                            className="input"
-                            type="email"
-                            name="email"
-                            placeholder="Entrez votre email..."
-                            value={form.email}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="input-group password-input">
-                        <input
-                            className="input"
-                            type={form.showPassword ? "text" : "password"}
-                            name="password"
-                            placeholder="Entrez votre mot de passe..."
-                            value={form.password}
-                            onChange={handleChange}
-                        />
-                        <span className='toggle-password' onClick={toggleShowPassword}>
-                            {form.showPassword ? <MdHideSource className='hide' /> : <BiShowAlt className='show' />}
-                        </span>
-                    </div>
-                    <button className='button' type="submit">Connexion</button>
-                </form>
-                <p className='p'>Vous n'avez pas de compte ? <a href="#" onClick={handleRegister}>Inscrivez-vous gratuitement</a></p>
-            </div>
-       
-            {
-                isRegistered && <ModalAuth show={isRegistered} onClose={closeRegisterModal}>
-                    <Register closeRegisterModal={closeRegisterModal} openLoginModal={() => setIsRegistered(false)} registerRef={registerRef} />
-                </ModalAuth>
-            }
-        </div>
-    );
-};
+  return (
+    <ThemeProvider theme={defaultTheme}>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Login
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Adresse email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={form.email}
+              onChange={handleChange}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Mot de passe"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={form.password}
+              onChange={handleChange}
+            />
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Remember me"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Login
+            </Button>
+            <Grid container>
+              <Grid item xs>
+                <Link href="#" variant="body2">
+                  Forgot password?
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link href="#" variant="body2" onClick={switchToRegister}>
+                  {"Don't have an account? Sign Up"}
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+        <Copyright sx={{ mt: 8, mb: 4 }} />
+      </Container>
+    </ThemeProvider>
+  );
+}
 
 export default Login;
