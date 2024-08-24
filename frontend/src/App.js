@@ -16,17 +16,26 @@ import ErrorPage from './view/Error';
 import Footer from './view/Footer';
 import MaintenancePage from "./view/maintenancePage";
 import AdminDashboard from './components/Dashboard/AdminDashboard';
+import OrderPage from './components/Order/OrderPage';
 import fagPublic from './view/Fag/fagPublic';
 import fagManager from './view/Fag/fagManager';
+import { Elements } from '@stripe/react-stripe-js'; // Import Elements
+import { loadStripe } from '@stripe/stripe-js'; // Import loadStripe
+
+// Load your Stripe publishable key
+const stripePromise = loadStripe('pk_test_51PfLnZRp56bwUV10pU6P6rVrVCtRXJ7KelIwNOyaiT81SMe6lLBaSW4PTemUmc6L5C4AMbvcZEDX1etBnsA8HP4H00pDrBqvZi');
+
 
 function App() {
     return (
         <AuthProvider>
             <NotificationsProvider>
                 <Router>
+                <Elements stripe={stripePromise}>
                     <div className="App">
                         <MainContent />
                     </div>
+                </Elements>
                 </Router>
             </NotificationsProvider>
         </AuthProvider>
@@ -34,7 +43,6 @@ function App() {
 }
 
 function MainContent() {
-    const location = useLocation();
 
     return (
         <>
@@ -47,6 +55,7 @@ function MainContent() {
                 <Route path="/description" element={<EvenementView />} />
                 <Route path="/events" element={<EventCards />} />
                 <Route path="/event/:id" element={<EventDetails />} />
+                <Route path="/order/:id" element={<OrderPage />} />
                 <Route path="/create-event" element={
                     <PrivateRoute requiredRoles={['organisateur', 'admin']}>
                         <CreateEvent />
