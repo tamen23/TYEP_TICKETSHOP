@@ -20,7 +20,7 @@ const Evenements = () => {
     const [tickets, setTickets] = useState([]);
     const [filteredTickets, setFilteredTickets] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const ticketsPerPage = 10; // Limit to 12 tickets per page
+    const ticketsPerPage = 12; // Limit to 12 tickets per page
     const [filters, setFilters] = useState({
         startDate: null,
         endDate: null,
