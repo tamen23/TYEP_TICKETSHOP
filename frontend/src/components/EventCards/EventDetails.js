@@ -4,6 +4,8 @@ import { Button, TextField, Typography, Box } from '@mui/material';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
 import './EventDetails.scss';
+import Login from '../Auth/Login'; // Import the Login component
+import ModalAuth from '../Shared/ModalAuth'; // Import the modal component
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -14,6 +16,7 @@ const EventDetails = () => {
   const [selectedTickets, setSelectedTickets] = useState({});
   const [totalAmount, setTotalAmount] = useState(null);
   const [showPurchaseForm, setShowPurchaseForm] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false); // State to control the login modal
 
   // Fetch event details
   useEffect(() => {
@@ -77,6 +80,12 @@ const EventDetails = () => {
 
   // Handle purchase submission
   const handlePurchase = async () => {
+    if (!user) {
+      // If the user is not logged in, show the login modal
+      setShowLoginModal(true);
+      return;
+    }
+
     if (Object.keys(selectedTickets).length === 0) {
       alert('Please select at least one ticket.');
       return;
@@ -90,8 +99,8 @@ const EventDetails = () => {
         })),
         totalAmount,
         eventId: id,
-        userId: user ? user._id : null,
-        email: user ? user.email : null
+        userId: user._id,
+        email: user.email
       };
 
       // Send the request to create an order
@@ -100,7 +109,7 @@ const EventDetails = () => {
       // Log the response for debugging
       console.log('Order created with ID:', response.data.orderId);
 
-      // Redirect to the order page (where user/guest will enter additional information)
+      // Redirect to the order page (where user will enter additional information)
       navigate(`/order/${response.data.orderId}`);
     } catch (error) {
       console.error('Error purchasing tickets:', error);
@@ -150,7 +159,13 @@ const EventDetails = () => {
       <Button
         variant="contained"
         color="primary"
-        onClick={() => setShowPurchaseForm(true)}
+        onClick={() => {
+          if (user) {
+            setShowPurchaseForm(true);
+          } else {
+            setShowLoginModal(true); // Show login modal if not logged in
+          }
+        }}
       >
         Buy Tickets
       </Button>
@@ -219,6 +234,12 @@ const EventDetails = () => {
             Confirm Purchase
           </Button>
         </Box>
+      )}
+
+      {showLoginModal && (
+        <ModalAuth show={showLoginModal} onClose={() => setShowLoginModal(false)}>
+          <Login onClose={() => setShowLoginModal(false)} />
+        </ModalAuth>
       )}
     </Box>
   );

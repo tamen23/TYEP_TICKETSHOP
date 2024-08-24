@@ -6,7 +6,7 @@ import './login.scss';
 import ModalAuth from "../Shared/ModalAuth";
 import Register from "./Register";
 
-const Login = () => {
+const Login = ({ onClose }) => {
     const outLogin = useRef(null);  // Reference for detecting clicks outside login modal
     const registerRef = useRef(null);  // Reference for the registration modal
     const [isRegistered, setIsRegistered] = useState(false);  // State to toggle registration modal
@@ -44,6 +44,7 @@ const Login = () => {
         try {
             await login(form.email, form.password);
             alert('Connexion réussie');
+            onClose();  // Call the onClose prop to close the modal after successful login
         } catch (error) {
             alert('Échec de la connexion');
         }
