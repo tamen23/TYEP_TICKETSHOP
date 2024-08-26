@@ -1,16 +1,15 @@
-import React, { useState, useContext } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
+import React, { useState, useContext, useCallback } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { FaSignOutAlt } from 'react-icons/fa'; // Import FaSignOutAlt
+import { FaSignOutAlt, FaBars } from 'react-icons/fa';
+import { CgProfile } from 'react-icons/cg';
 import logo from './logo.svg';
 import ModalAuth from '../Shared/ModalAuth';
 import AuthContext from '../../context/AuthContext';
 import Login from '../Auth/Login';
-import Register from "../Auth/Register";
-import OrganisateurSignUp from "../Organisateur/OrganisateurSignUp";
-import Profile from '../Shared/Profile'; // Importer le composant Profile
+import Register from '../Auth/Register';
+import OrganisateurSignUp from '../Organisateur/OrganisateurSignUp';
 import './header.scss';
-import { CgProfile } from "react-icons/cg";
 
 const Header = ({ onShowApp, onShowOrganisateur }) => {
     const [showAuth, setShowAuth] = useState(false);
@@ -18,7 +17,7 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
     const { user, logout } = useContext(AuthContext);
     const [authMode, setAuthMode] = useState('login');
     const location = useLocation();
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate();
 
     const handlerShowAuth = (mode) => {
         setAuthMode(mode);
@@ -29,30 +28,33 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
         setShowAuth(false);
     };
 
-    const toggleProfile = () => {
-        setShowProfile(!showProfile);
-    };
+    const toggleProfile = useCallback(() => {
+        setShowProfile(prevShowProfile => !prevShowProfile);
+    }, []);
 
-    const handleLogout = () => {
-        logout(); // Perform the logout operation
-        navigate('/'); // Redirect to the homepage after logout
-    };
+    const handleLogout = useCallback(() => {
+        logout();
+        navigate('/');
+    }, [logout, navigate]);
 
-    const handleProductionClick = (event) => {
-        event.preventDefault(); // Prevent default link behavior
-        navigate('/soon'); // Redirect to /soon page
-    };
+    const handleProductionClick = useCallback((event) => {
+        event.preventDefault();
+        navigate('/soon');
+    }, [navigate]);
 
-    const isOrganisateur = user && user.role === 'organisateur'; // Vérifiez le rôle de l'utilisateur
+    const isOrganisateur = user && user.role === 'organisateur';
+
+    // Determine the CSS class for the header based on the current path
+    const headerClass = location.pathname === '/events' ? 'header events-header' : 'header';
 
     return (
-        <div className='header'>
+        <div className={headerClass}>
             <div className='header__wrapper'>
                 <div className="header__left">
                     <Link to='/'>
                         <div className="header__logo">
                             <div className="ticket__logo">
-                                <img src={logo} alt="TiCKETSHOP"/>
+                                <img src={logo} alt="TiCKETSHOP" style={{ display: 'none' }} />
                                 TiCKETSHOP
                             </div>
                             <div className="underlinel"></div>
@@ -66,45 +68,48 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                                         <li><Link to="/dashboard">DASHBOARD</Link></li>
                                         <li><Link to="/events">MES ÉVÉNEMENTS</Link></li>
                                         <li><Link to="/contact">CONTACT</Link></li>
+                                        <li><Link to="/create-event">CREATE-EVENT</Link></li>
+                                        <li><Link to="ManagerFag">FAQ</Link></li>
                                     </>
                                 ) : (
                                     <>
-                                        <li><a href="/" onClick={onShowApp}>HOME</a></li>
-                                        <li><a href="/events">EVENEMENTS</a></li>
-                                        <li><a href="#" onClick={handleProductionClick}>CONCERTS</a></li>
+                                        <li><Link to="/" onClick={onShowApp}>HOME</Link></li>
+                                        <li><Link to="/events">EVENEMENTS</Link></li>
+                                        <li><Link to="#" onClick={handleProductionClick}>CONCERTS</Link></li>
                                         <li><Link to="/contact">CONTACT</Link></li>
-                                        <li><a href="#" onClick={handleProductionClick}>DEVENIR PARTENAIRE</a></li>
+                                        <li><Link to="#" onClick={handleProductionClick}>DEVENIR PARTENAIRE</Link></li>
+                                        <li><Link to="publicFag">FAQ</Link></li>
+                                       
+                                        
                                     </>
                                 )}
                             </ul>
                         </nav>
                     </div>
                 </div>
-                <div className="hamburgerMenu"></div>
+                {/* Utilisation de l'icône FaBars pour le menu hamburger */}
+                <div className="hamburgerMenu" onClick={() => {/* logique pour ouvrir le menu mobile */}}>
+                    <FaBars size={30} color="#fff" />
+                </div>
                 <div className="header__right">
                     <div className="login">
                         <div className="child__menu">
                             {user ? (
-                                <>
-                                    <div className="profile-logo" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                                        <Link to='/profil'>
-                                           <CgProfile className="profile-logo" />
-                                        </Link>
-
-                                        <div className="logout-icon" onClick={handleLogout}>
-                                            <FaSignOutAlt title="Logout" />
-                                        </div>
+                                <div className="profile-logo" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                                    <Link to='/profil'>
+                                        <CgProfile className="profile-logo" />
+                                    </Link>
+                                    <div className="logout-icon" onClick={handleLogout}>
+                                        <FaSignOutAlt title="Logout" />
                                     </div>
-                                </>
+                                </div>
                             ) : (
                                 <div className='top_menu'>
                                     <div className='itemLog'>
                                         <div className="org">
-                                            {location.pathname !== '/organisation' ? (
-                                                <Link to='/organisation'>JE SUIS ORGANISEUR</Link>
-                                            ) : (
-                                                <Link to='/'>JE SUIS UTILISATEUR</Link>
-                                            )}
+                                            <Link to={location.pathname !== '/organisation' ? '/organisation' : '/'}>
+                                                {location.pathname !== '/organisation' ? 'JE SUIS ORGANISEUR' : 'JE SUIS UTILISATEUR'}
+                                            </Link>
                                         </div>
                                         <div className='loginBtn'>
                                             <div className='loginA'>CONNEXION/INSCRIPTION</div>
@@ -140,7 +145,7 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
 
 Header.propTypes = {
     onShowOrganisateur: PropTypes.func.isRequired,
-    onShowApp: PropTypes.func.isRequired
+    onShowApp: PropTypes.func.isRequired,
 };
 
 export default Header;

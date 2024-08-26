@@ -17,12 +17,13 @@ import Footer from './view/Footer';
 import MaintenancePage from "./view/maintenancePage";
 import AdminDashboard from './components/Dashboard/AdminDashboard';
 import OrderPage from './components/Order/OrderPage';
-import fagPublic from './view/Fag/fagPublic';
-import fagManager from './view/Fag/fagManager';
 import { Elements } from '@stripe/react-stripe-js'; // Import Elements
 import { loadStripe } from '@stripe/stripe-js'; // Import loadStripe
 import UserProfile from './view/UserProfile';
 import DataPicker from './components/DataPiker/DataPiker';
+import PublickFag from './components/Fag/fagManager'
+import ManagerFag from './components/Fag/fagManager'
+
 // Load your Stripe publishable key
 const stripePromise = loadStripe('pk_test_51PfLnZRp56bwUV10pU6P6rVrVCtRXJ7KelIwNOyaiT81SMe6lLBaSW4PTemUmc6L5C4AMbvcZEDX1etBnsA8HP4H00pDrBqvZi');
 
@@ -53,6 +54,8 @@ function MainContent() {
                 <Route path="/pikerDate" element={<DataPicker />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/" element={<Home />} />
+                <Route path="/publicFag" element={<PublickFag/>} />
+                <Route path="/ManagerFag" element={<ManagerFag/>} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/organisation" element={<Organisateur />} />
                 <Route path="/description" element={<EvenementView />} />
@@ -64,8 +67,7 @@ function MainContent() {
                         <CreateEvent />
                     </PrivateRoute>
                 } />
-                <Route path="/fag-public" element={<fagPublic />} />
-                <Route path="/fag-manager" element={<fagManager />} />
+              
                 <Route path="*" element={<ErrorWrapper />} />
                 <Route path="/soon" element={<MaintenancePage />} />
                 <Route path="/admin-dashboard/*" element={
@@ -73,8 +75,9 @@ function MainContent() {
                         <AdminDashboard />
                     </PrivateRoute>
                 } />
+                
             </Routes>
-            <Footer />
+        
         </>
     );
 }

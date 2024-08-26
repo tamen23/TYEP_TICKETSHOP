@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Container, Typography, Checkbox, FormControlLabel, Link } from '@mui/material';
+import { TextField, Button, Grid, Container, Typography, Checkbox, FormControlLabel, Link, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import Footer from '../components/Footer/Footer';
 
 const Root = styled('div')(({ theme }) => ({
   display: 'flex',
-  height: '100vh',
-  alignItems: 'center',
-  justifyContent: 'center',
+  flexDirection: 'column', // Ajout pour le placement du footer en bas
+  minHeight: '100vh', // Assure que la hauteur est de 100% de la vue
+  justifyContent: 'space-between', // Espace entre le contenu et le footer
   background: `url(${require('./img.png')}) no-repeat center center fixed`,
   backgroundSize: 'cover',
 }));
@@ -18,6 +19,7 @@ const FormContainer = styled(Container)(({ theme }) => ({
   padding: theme.spacing(4),
   borderRadius: '8px',
   maxWidth: '500px',
+  marginTop: theme.spacing(8), // Ajout pour espacer le formulaire du haut
 }));
 
 const SubmitButton = styled(Button)(({ theme }) => ({
@@ -98,6 +100,7 @@ function ContactForm() {
             </Typography>
           )}
         </FormContainer>
+        <Footer /> {/* Footer ajouté ici */}
       </Root>
     );
   }
@@ -178,6 +181,7 @@ function ContactForm() {
           </Grid>
         </form>
       </FormContainer>
+      <Footer /> {/* Footer ajouté ici */}
     </Root>
   );
 }

@@ -10,6 +10,11 @@
   color: white;
   background-color: #000;
   z-index: 4000;
+
+  &.events-header {
+    position: relative;  // Appliqué uniquement sur la page /events
+    background-color: #000;  // Couleur de fond différente pour la page /events
+  }
 }
 
 .header__wrapper {
@@ -36,7 +41,7 @@
   content: '';
   height: 2px;
   position: absolute;
-  top: 31px;
+  top: 23px;
   width: 70px;
   right: -10px;
   background-color: #ffffff;
@@ -52,8 +57,8 @@
   width: 70px;
   background: #ffffff;
   position: absolute;
-  top: 3px;
-  left: 12px;
+  top: -4px;
+  left: -5px;
 }
 
 .header__menu {
@@ -81,7 +86,15 @@
 }
 
 .hamburgerMenu {
-  display: none;
+  display: none; /* Masqué par défaut sur les grands écrans */
+  cursor: pointer;
+  position: relative;
+  left: 12px;
+
+  /* Affiché sur les petits écrans */
+  @media (max-width: 768px) {
+    display: block;
+  }
 }
 
 .header__right {
@@ -221,13 +234,12 @@
 .profile-logo {
   font-size: 20px;
 
-  a{
+  a {
     color: #ffffff;
-
   }
 
-  .profile-logo{
-    height:30px;
+  .profile-logo {
+    height: 30px;
     border-radius: 100%;
     width: 30px;
   }
@@ -248,3 +260,26 @@ ul {
   margin: 0;
 }
 
+/* Styles responsives pour les petits écrans */
+@media (max-width: 768px) {
+  .header {
+    height: 60px;
+    padding: 0 10px;
+  }
+
+  .header__logo img {
+    display: none; /* Masquer l'image sur les petits écrans */
+  }
+
+  .header__menu {
+    display: none; /* Masquer le menu principal sur les petits écrans */
+  }
+
+  .hamburgerMenu {
+    display: block; /* Affiché sur les petits écrans */
+  }
+
+  .header__right {
+    display: none; /* Masquer les options de connexion/profil sur les petits écrans */
+  }
+}

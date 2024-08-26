@@ -1,4 +1,3 @@
-// src/components/EventFooter.js
 import React from 'react';
 import { Box, Typography, Link, Grid, Container } from '@mui/material';
 
@@ -10,7 +9,10 @@ const EventFooter = () => {
                 py: 5,
                 backgroundColor: 'primary.main',
                 color: 'white',
-                mt: 'auto'
+                position: 'absolute', // positionnement absolu
+                bottom: 0,
+                left: 0,
+                right: 0
             }}
         >
             <Container maxWidth="lg">
