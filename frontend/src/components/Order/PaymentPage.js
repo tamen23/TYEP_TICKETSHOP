@@ -15,24 +15,47 @@ import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import api from '../../api';
 import { useNotifications } from '../../context/NotificationsContext';
 
-const PaymentPage = ({ open, handleClose, orderId, totalAmount }) => {
+const PaymentPage = ({ open, handleClose, orderId, totalAmount, userDetails = {} }) => {
     const stripe = useStripe();  // Stripe instance for handling payment
     const elements = useElements();  // Stripe Elements instance for accessing the CardElement
     const { showNotification } = useNotifications();  // Notification context for user feedback
     const [loading, setLoading] = useState(false);  // State to manage loading status
     const [saveCard, setSaveCard] = useState(false);  // State to manage save card option
 
+    // Mapping of country names to their ISO 3166-1 alpha-2 codes
+    const countryCodes = {
+        'france': 'FR',
+        'France': 'FR',
+        'france ': 'FR',
+        'united states': 'US',
+        'united kingdom': 'GB',
+        'germany': 'DE',
+        'canada': 'CA',
+        // Add more countries as needed
+    };
+
     // Function to handle the payment submission
     const handlePaymentSubmit = async () => {
         setLoading(true);  // Set loading state to true while processing payment
         try {
-            // Access the card information entered by the user
             const cardElement = elements.getElement(CardElement);
 
-            // Create a payment method using the card information
+            // Get the country code from the full country name, trimming any extra spaces
+            const country = countryCodes[userDetails.country.trim().toLowerCase()] || userDetails.country.trim();
+
             const { paymentMethod, error } = await stripe.createPaymentMethod({
                 type: 'card',
                 card: cardElement,
+                billing_details: {
+                    name: `${userDetails.firstName || ''} ${userDetails.lastName || ''}`,
+                    email: userDetails.email || '',
+                    address: {
+                        line1: userDetails.address || '',
+                        postal_code: userDetails.postalCode || '',
+                        city: userDetails.city || '',
+                        country: country,  // Use the ISO 3166-1 alpha-2 country code
+                    },
+                },
             });
 
             if (error) {
@@ -51,6 +74,7 @@ const PaymentPage = ({ open, handleClose, orderId, totalAmount }) => {
             const response = await api.post(`/orders/${orderId}/process`, {
                 paymentMethodId: paymentMethod.id,
                 saveCard: saveCard,  // Include the save card option in the request
+                userDetails,  // Include userDetails in the request if needed
             });
 
             if (response.data.success) {
@@ -86,14 +110,17 @@ const PaymentPage = ({ open, handleClose, orderId, totalAmount }) => {
                         fullWidth
                         margin="normal"
                         variant="outlined"
-                        defaultValue="Paternus Tamen"  // Default cardholder name; can be dynamic based on user data
+                        defaultValue={`${userDetails.firstName || ''} ${userDetails.lastName || ''}`}
                     />
                 </Box>
 
                 <Box mt={2}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <CardElement options={{ style: { base: { fontSize: '16px' } } }} />
+                            <CardElement
+                                options={{ style: { base: { fontSize: '16px' } } }}
+                                disabled={loading}
+                            />
                         </Grid>
                     </Grid>
                 </Box>
@@ -105,6 +132,7 @@ const PaymentPage = ({ open, handleClose, orderId, totalAmount }) => {
                                 checked={saveCard}
                                 onChange={(e) => setSaveCard(e.target.checked)}
                                 color="primary"
+                                disabled={loading}
                             />
                         }
                         label="Enregistrer pour mes futurs paiements"
@@ -113,14 +141,14 @@ const PaymentPage = ({ open, handleClose, orderId, totalAmount }) => {
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={handleClose} color="secondary">
+                <Button onClick={handleClose} color="secondary" disabled={loading}>
                     Fermer
                 </Button>
                 <Button
                     variant="contained"
                     color="primary"
                     onClick={handlePaymentSubmit}
-                    disabled={loading}  // Disable the button while processing payment
+                    disabled={loading}
                     sx={{ width: '100%' }}
                 >
                     {loading ? 'Processing...' : `Payer € ${totalAmount}`}

@@ -6,6 +6,8 @@ dotenv.config();
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URL, {
+      serverSelectionTimeoutMS: 60000, // 30 seconds timeout
+      socketTimeoutMS: 60000, // 45 seconds timeout
       
     });
     console.log('MongoDB connected');
@@ -16,7 +18,8 @@ const connectDB = async () => {
 };
 
 mongoose.connection.on('disconnected', () => {
-  console.log('Mongoose connection is disconnected');
+  console.log('Mongoose connection is disconnected. Attempting to reconnect...');
+  connectDB();
 });
 
 export default connectDB;

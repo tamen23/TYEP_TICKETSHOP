@@ -10,6 +10,7 @@ import eventRoute from './routes/event.js';
 import adminRoutes from './routes/adminRoutes.js';  // Adjust the path as necessary
 import ticketRoutes from './routes/ticketRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import emailRoute from './routes/email.js';
 
 
 
@@ -29,7 +30,7 @@ app.use(cors());
 app.use(express.json());
 
 // Email route
-
+app.use('/api/email', emailRoute);
 
 // Basic route for testing
 app.get('/', (req, res) => {
