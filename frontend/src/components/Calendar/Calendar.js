@@ -12,7 +12,7 @@ const Calendar = ({ onDateSelect, eventsByDate }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Handle any additional effects when month or year changes
+        // Handle any additional effects when month or year changes if needed
     }, [month, year]);
 
     const prevMonth = () => {
@@ -38,7 +38,7 @@ const Calendar = ({ onDateSelect, eventsByDate }) => {
     const handleDayClick = (day) => {
         if (!day.disabled) {
             const selectedDate = new Date(year, month, day.date);
-            const formattedDate = selectedDate.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
+            const formattedDate = selectedDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
 
             console.log("Selected Date:", formattedDate);
             console.log("Events by Date:", eventsByDate);
@@ -99,17 +99,21 @@ const generateDays = (year, month, today, currentMonth, currentYear) => {
     const days = [];
 
     const prevMonthDays = new Date(year, month, 0).getDate();
-    const firstDayIndex = date.getDay();
+    const firstDayIndex = date.getDay() === 0 ? 6 : date.getDay() - 1; // Adjust for Monday start
+
+    // Days from the previous month
     for (let i = firstDayIndex; i > 0; i--) {
         days.push({ date: prevMonthDays - i + 1, disabled: true, isToday: false });
     }
 
+    // Days of the current month
     const currentMonthDays = new Date(year, month + 1, 0).getDate();
     for (let i = 1; i <= currentMonthDays; i++) {
         const isToday = i === today && month === currentMonth && year === currentYear;
         days.push({ date: i, disabled: false, isToday });
     }
 
+    // Days from the next month to fill the calendar grid
     const nextDays = 42 - days.length;
     for (let i = 1; i <= nextDays; i++) {
         days.push({ date: i, disabled: true, isToday: false });

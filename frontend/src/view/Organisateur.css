@@ -1,15 +1,20 @@
+/* Global styles to ensure full height is recognized */
+/* Main container that covers the full screen height */
 .organisation {
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    height: 100vh;
+    height: 100vh;  /* Take full viewport height */
+    width: 100vw;   /* Take full viewport width */
     background-size: cover;
     background-position: center;
     position: relative;
     color: white;
+    overflow-y: hidden;
 }
 
+/* Dark overlay for readability */
 .organisation::before {
     content: '';
     position: absolute;
@@ -20,42 +25,77 @@
     background: rgba(0, 0, 0, 0.5); /* Dark overlay to make text more readable */
 }
 
+/* Content area remains centered and above the overlay */
 .organisation__content {
     position: relative;
     z-index: 2;
     padding: 20px;
+    max-width: 1200px; /* Adjust max width for laptop screens */
+    width: 100%;
 }
 
+/* Title styling */
 .organisation__title {
     font-weight: bold;
     font-size: 3rem;
     text-transform: uppercase;
     margin-bottom: 1rem;
+    position: relative;
+    top:-70px
 }
 
+/* Subtitle styling */
 .organisation__subtitle {
     font-size: 1.25rem;
     margin-bottom: 2rem;
+    position: relative;
+    top:-70px
 }
 
+/* Button container with proper spacing */
 .organisation__buttons {
     display: flex;
     justify-content: center;
     gap: 16px;
+    position: relative;
+    top:-70px
 }
 
+/* Button styling */
 .organisation__buttons .MuiButton-root {
     padding: 10px 20px;
     font-size: 1rem;
     border-radius: 25px;
 }
 
+/* Styling for primary contained button */
 .organisation__buttons .MuiButton-containedPrimary {
     background-color: #007BFF;
     color: white;
 }
 
+/* Styling for primary outlined button */
 .organisation__buttons .MuiButton-outlinedPrimary {
     border-color: white;
     color: white;
+}
+
+/* Media query for small screens like tablets and mobile devices */
+@media (max-width: 768px) {
+    .organisation__title {
+        font-size: 2rem;
+    }
+
+    .organisation__subtitle {
+        font-size: 1rem;
+    }
+
+    .organisation__buttons {
+        flex-direction: column;
+    }
+
+    .organisation__buttons .MuiButton-root {
+        width: 100%;
+        margin-bottom: 10px;
+    }
 }

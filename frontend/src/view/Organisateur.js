@@ -2,6 +2,7 @@ import React from 'react';
 import { Typography, Button, Container } from '@mui/material';
 import backgroundImg from './marcela-laskoski-YrtFlrLo2DQ-unsplash.jpg'; // Assurez-vous de remplacer par le chemin correct
 import './Organisateur.css';
+import Footer from '../components/Footer/Footer';
 
 const Organisateur = () => {
     return (
@@ -27,6 +28,7 @@ const Organisateur = () => {
                 <Container maxWidth="lg" className="organisation__content">
 
                 </Container>
+                <Footer/>
             </div>
 
         </>

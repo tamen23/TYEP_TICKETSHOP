@@ -66,7 +66,7 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                                 {isOrganisateur ? (
                                     <>
                                         <li><Link to="/dashboard">DASHBOARD</Link></li>
-                                        <li><Link to="/events">MES ÉVÉNEMENTS</Link></li>
+                                        <li><Link to="/events">MY EVENTS</Link></li>
                                         <li><Link to="/contact">CONTACT</Link></li>
                                         <li><Link to="/create-event">CREATE-EVENT</Link></li>
                                         <li><Link to="ManagerFag">FAQ</Link></li>
@@ -77,7 +77,7 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                                         <li><Link to="/events">EVENEMENTS</Link></li>
                                         <li><Link to="#" onClick={handleProductionClick}>CONCERTS</Link></li>
                                         <li><Link to="/contact">CONTACT</Link></li>
-                                        <li><Link to="#" onClick={handleProductionClick}>DEVENIR PARTENAIRE</Link></li>
+                                        <li><Link to="/organisation">BECOME A PARTNER</Link></li>
                                         <li><Link to="publicFag">FAQ</Link></li>
                                        
                                         
@@ -108,7 +108,7 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                                     <div className='itemLog'>
                                         <div className="org">
                                             <Link to={location.pathname !== '/organisation' ? '/organisation' : '/'}>
-                                                {location.pathname !== '/organisation' ? 'JE SUIS ORGANISEUR' : 'JE SUIS UTILISATEUR'}
+                                                {location.pathname !== '/organisation' ? 'Je suis organisateur' : 'JE SUIS UTILISATEUR'}
                                             </Link>
                                         </div>
                                         <div className='loginBtn'>

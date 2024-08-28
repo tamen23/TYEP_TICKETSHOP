@@ -14,6 +14,8 @@ import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import AuthContext from '../../context/AuthContext';
 import { ClipLoader } from 'react-spinners'; // Import the loader
+import { Card, CardActionArea, CardContent, CardMedia, Typography, Grid, CardActions } from '@mui/material';
+import EventShowCard from './EvenementShow';
 
 const Evenements = () => {
     const { user } = useContext(AuthContext);
@@ -48,7 +50,6 @@ const Evenements = () => {
             setFilteredTickets(response.data);
             setAvailableLocations([...new Set(response.data.map(ticket => ticket.Ville))]);
             setAvailableCategories([...new Set(response.data.map(ticket => ticket.Catégorie))]);
-            console.log(response.data);
             setLoadingImages(false); // Set loading state to false once the data is fetched
         } catch (error) {
             console.error('Error fetching tickets:', error);
@@ -197,7 +198,11 @@ const Evenements = () => {
     const currentTickets = filteredTickets.slice(indexOfFirstTicket, indexOfLastTicket);
 
     return (
-        <div className="evenementsFnac">
+        <>
+          <div className='ourEvent'>
+            <EventShowCard/>
+          </div>
+          <div className="evenementsFnac">
             <h2 className="section-titleFa">TICKETS</h2>
 
             <div className="filters">
@@ -239,34 +244,78 @@ const Evenements = () => {
                 </select>
             </div>
 
-            <div className="tickets-containerFnac">
+            <Grid container spacing={2}>
                 {loadingImages ? ( // Check if images are loading
                     <div className="loader-container">
                         <ClipLoader color="#007bff" size={150} /> {/* Display loader */}
                     </div>
                 ) : currentTickets.length > 0 ? (
                     currentTickets.map(ticket => (
-                        <div className="ticketfnac" key={ticket._id}>
-                            <div className="ticket-link" onClick={() => handleClickOpen(ticket["Lien de l'offre"])}>
-                                <img 
-                                    src={ticket["Lien de l'image"]} 
+                        <Grid item xs={12} sm={6} md={4} lg={3} xl={2.4} key={ticket._id}>
+                            <Card
+                                sx={{
+                                    maxWidth: 345,
+                                    backgroundColor: '#fff',
+                                    color: '#000',
+                                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                                    borderRadius: '8px',
+                                }}
+                            >
+                                <CardMedia
+                                    component="img"
+                                    height="200"
+                                    image={ticket["Lien de l'image"]}
                                     alt={ticket["Titre de l'offre"]}
-                                    onLoad={() => setLoadingImages(false)} // Hide loader when image is loaded
+                                    sx={{ borderRadius: '8px 8px 0 0' }}
                                 />
-                                <div className="ticket-infoFnc">
-                                    <h3>{ticket["Titre de l'offre"]}</h3>
-                                    <p>Price: ${ticket.Prix}</p>
-                                    <p>Location: {ticket.Ville}</p>
-                                    <p>Next date: {ticket["Prochaine date"]}</p>
-                                    <p>Categories: {ticket.Catégorie}</p>
-                                </div>
-                            </div>
-                        </div>
+                                <CardContent>
+                                    <Typography
+                                        gutterBottom
+                                        variant="h6"
+                                        component="div"
+                                        sx={{ fontWeight: 'bold', fontSize: '18px' }}
+                                    >
+                                        {ticket["Titre de l'offre"].length > 10
+                                            ? `${ticket["Titre de l'offre"].substring(0, 10)}...`
+                                            : ticket["Titre de l'offre"]}
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                        sx={{ marginBottom: '8px' }}
+                                    >
+                                        {ticket["Description"] ? ticket["Description"].substring(0, 100) + "..." : "No description available"}
+                                    </Typography>
+                                </CardContent>
+                                <CardActions sx={{ justifyContent: 'space-between', padding: '16px' }}>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{ color: '#888', fontWeight: 'bold' }}
+                                    >
+                                        {new Date(ticket["Prochaine date"]).toLocaleDateString()}
+                                    </Typography>
+                                    <Typography
+                                        component="a"
+                                        href={ticket["Lien de l'offre"]}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        sx={{
+                                            color: '#03a9f4',
+                                            textTransform: 'none',
+                                            fontWeight: 'bold',
+                                            textDecoration: 'none',
+                                        }}
+                                    >
+                                        Learn More
+                                    </Typography>
+                                </CardActions>
+                            </Card>
+                        </Grid>
                     ))
                 ) : (
                     <p className="no-events-message">No events match the chosen filters.</p>
                 )}
-            </div>
+            </Grid>
             <div className="pagination">
                 <Pagination
                     count={Math.ceil(filteredTickets.length / ticketsPerPage)}
@@ -313,6 +362,7 @@ const Evenements = () => {
                 </DialogActions>
             </Dialog>
         </div>
+        </>
     );
 }
 

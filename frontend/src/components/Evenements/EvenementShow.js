@@ -4,7 +4,7 @@ import { Card, CardContent, CardMedia, CardActions, Typography, Grid, Box, Paper
 import Footer from '../../components/Footer/Footer';
 import api from '../../api';
 
-const EventCard = () => {
+const EventShowCard = () => {
   const [events, setEvents] = useState([]);
   const [activeTab, setActiveTab] = useState('upcoming');
   const [selectedMonth, setSelectedMonth] = useState('all'); // Initially show all data
@@ -122,17 +122,7 @@ const EventCard = () => {
   return (
     <>
       <div>
-        <div className="page-heading-shows-events">
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-12">
-                <h2>Our Shows & Events</h2>
-                <span>Check out upcoming and past shows & events.</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
+      
         <div className="content-container">
           <div className="filter-section">
             <div className="filter-card">
@@ -195,7 +185,7 @@ const EventCard = () => {
           </div>
         </div>
       </div>
-      <Footer />
+
 
       <style jsx>{`
         .content-container {
@@ -255,4 +245,4 @@ const EventCard = () => {
   );
 };
 
-export default EventCard;
+export default EventShowCard;

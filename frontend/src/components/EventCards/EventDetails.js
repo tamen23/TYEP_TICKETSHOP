@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, TextField, Typography, Box } from '@mui/material';
-import  {useAuth}  from '../../context/AuthContext';
+import { Button, Typography, Box, Grid, Card, TextField } from '@mui/material';
+import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
-import './EventDetails.scss';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Login from '../Auth/Login'; // Import the Login component
 import ModalAuth from '../Shared/ModalAuth'; // Import the modal component
+import Footer from '../../components/Footer/Footer'
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -37,7 +39,6 @@ const EventDetails = () => {
     const fetchTickets = async () => {
       try {
         const response = await api.get(`/tickets/${id}`);
-        console.log('Fetched tickets:', response.data); // Debugging log
         setTickets(response.data);
       } catch (error) {
         console.error('Error fetching tickets:', error);
@@ -72,16 +73,11 @@ const EventDetails = () => {
       0
     );
     setTotalAmount(newTotalAmount === 0 ? null : newTotalAmount);
-
-    // Debugging logs
-    console.log('Selected tickets:', newSelectedTickets);
-    console.log('Total amount:', newTotalAmount);
   };
 
   // Handle purchase submission
   const handlePurchase = async () => {
     if (!user) {
-      // If the user is not logged in, show the login modal
       setShowLoginModal(true);
       return;
     }
@@ -106,25 +102,17 @@ const EventDetails = () => {
       // Send the request to create an order
       const response = await api.post('/orders/purchase', orderData);
       
-      // Log the response for debugging
-      console.log('Order created with ID:', response.data.orderId);
-
-      // Redirect to the order page (where user will enter additional information)
+      // Redirect to the order page
       navigate(`/order/${response.data.orderId}`);
     } catch (error) {
       console.error('Error purchasing tickets:', error);
 
       // Enhanced error handling
       if (error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
-        console.error('Response headers:', error.response.headers);
         alert(`Error: ${error.response.data.error || error.response.status}`);
       } else if (error.request) {
-        console.error('Request data:', error.request);
         alert('No response received from the server. Please try again later.');
       } else {
-        console.error('Error message:', error.message);
         alert(`Unexpected error: ${error.message}`);
       }
     }
@@ -133,107 +121,163 @@ const EventDetails = () => {
   if (!event) return <div>Loading...</div>;
 
   return (
-    <Box className="event-details">
-      <Typography variant="h1">{event.name}</Typography>
-      <img
-        src={`http://localhost:8000/${event.images[0]}`}
-        alt={event.name}
-        style={{ width: '100%', maxHeight: '500px' }}
-      />
-      <Typography variant="body1">{event.description}</Typography>
-      <Typography variant="body2">
-        Date: {new Date(event.date).toLocaleDateString()}
-      </Typography>
-      <Typography variant="body2">
-        Location: {event.venue}, {event.street_address}, {event.city}, {event.country}
-      </Typography>
-      <Typography variant="h3">Pricing</Typography>
-      <ul>
-        {event.seat_categories.map((category, index) => (
-          <li key={index}>
-            {category.type} - {category.count} seats at{' '}
-            {category.price === 0 ? 'Free' : `${category.price} €`}
-          </li>
-        ))}
-      </ul>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => {
-          if (user) {
-            setShowPurchaseForm(true);
-          } else {
-            setShowLoginModal(true); // Show login modal if not logged in
-          }
-        }}
-      >
-        Buy Tickets
-      </Button>
+   <>
+    <Box sx={{ padding: '24px', backgroundColor: '#f5f5f5', fontFamily: 'Poppins, sans-serif', position: 'relative', top: '70px', height: '100vh', overflow: 'hidden', '::before': { content: '""', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 } }}>
+      {/* Content goes here */}
+      <Grid container spacing={3} justifyContent="center" sx={{ position: 'relative', zIndex: 2 }}>
+        {/* Event Info Card */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Card sx={{ padding: '16px', backgroundColor: '#fff', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+            <Typography variant="body1" sx={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '14px', lineHeight: '21px' }}>
+              {event.name}
+            </Typography>
+            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', marginBottom: '4px', fontSize: '14px', lineHeight: '21px' }}>
+              <AccessTimeIcon sx={{ marginRight: '8px' }} />
+              {new Date(event.date).toLocaleDateString()} - {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} to {new Date(event.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </Typography>
+            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', fontSize: '14px', lineHeight: '21px' }}>
+              <LocationOnIcon sx={{ marginRight: '8px' }} />
+              {event.venue}, {event.street_address}, {event.city}, {event.country}
+            </Typography>
+          </Card>
+        </Grid>
 
+        {/* Pricing Card */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Card sx={{ padding: '16px', backgroundColor: '#fff', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+            <Typography variant="body1" sx={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '14px', lineHeight: '21px' }}>
+              Pricing
+            </Typography>
+            <ul style={{ padding: 0, margin: 0, listStyleType: 'none', fontSize: '14px', lineHeight: '21px' }}>
+              {event.seat_categories.map((category, index) => (
+                <li key={index}>
+                  {category.type} - {category.count} seats at {category.price === 0 ? 'Free' : `${category.price} €`}
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </Grid>
+
+        {/* Purchase Button Card */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Card sx={{ padding: '16px', backgroundColor: '#fff', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                if (user) {
+                  setShowPurchaseForm(true);
+                } else {
+                  setShowLoginModal(true);
+                }
+              }}
+              sx={{ 
+                width: '155px', 
+                height: '45px', 
+                backgroundColor: '#110000', 
+                color: '#ffffff', 
+                fontSize: '14px', 
+                lineHeight: '21px', 
+                textAlign: 'center', 
+                fontFamily: 'Poppins, sans-serif', 
+                textTransform: 'none', 
+                letterSpacing: 'normal', 
+                '&:hover': { backgroundColor: '#000000' } 
+              }}
+            >
+              Purchase Tickets
+            </Button>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Purchase Form Section */}
       {showPurchaseForm && (
-        <Box className="purchase-form" mt={4}>
-          <Typography variant="h2">Select Tickets</Typography>
-          <ul>
-            {tickets.map((ticket) => (
-              <li key={ticket._id}>
-                <Typography variant="body1">
-                  {ticket.category} -{' '}
-                  {ticket.price === 0 ? 'Free' : `${ticket.price} €`}
-                </Typography>
-                <TextField
-                  type="number"
-                  min="0"
-                  max={ticket.count - ticket.sold}
-                  value={selectedTickets[ticket._id]?.count || ''}
-                  onChange={(e) =>
-                    handleQuantityChange(
-                      ticket._id,
-                      ticket.category,
-                      ticket.price,
-                      ticket.count - ticket.sold,
-                      parseInt(e.target.value, 10)
-                    )
-                  }
-                  label={`Available: ${ticket.count - ticket.sold}/${ticket.count}`}
-                  variant="outlined"
-                  size="small"
-                  margin="normal"
-                />
-                <Typography variant="body2">
-                  Price: {ticket.price * (selectedTickets[ticket._id]?.count || 0)} €
-                </Typography>
-              </li>
-            ))}
-          </ul>
-          <Typography variant="h3">
-            Total: {totalAmount === null ? '' : totalAmount === 0 ? 'Free' : `${totalAmount} €`}
-          </Typography>
-          {Object.keys(selectedTickets).length > 0 && (
-            <Box mt={4}>
-              <Typography variant="h4">Order Summary</Typography>
-              <Typography variant="body2">
-                For the event {event.name}, you are ordering:
-              </Typography>
-              <ul>
-                {Object.entries(selectedTickets).map(([key, ticket]) => (
-                  <li key={key}>
-                    {ticket.count} x {ticket.price}€ {ticket.category} ticket
+        <Grid container spacing={3} justifyContent="center" mt={4} sx={{ position: 'relative', zIndex: 2 }}>
+          <Grid item xs={12} sm={8} md={6}>
+            <Card sx={{ padding: '24px', backgroundColor: '#fff', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+              <Typography variant="h2" sx={{ textAlign: 'center', marginBottom: '24px' }}>Select Tickets</Typography>
+              <ul style={{ padding: 0, listStyleType: 'none' }}>
+                {tickets.map((ticket) => (
+                  <li key={ticket._id} style={{ marginBottom: '16px' }}>
+                    <Typography variant="body1">
+                      {ticket.category} - {ticket.price === 0 ? 'Free' : `${ticket.price} €`}
+                    </Typography>
+                    <TextField
+                      type="number"
+                      min="0"
+                      max={ticket.count - ticket.sold}
+                      value={selectedTickets[ticket._id]?.count || ''}
+                      onChange={(e) =>
+                        handleQuantityChange(
+                          ticket._id,
+                          ticket.category,
+                          ticket.price,
+                          ticket.count - ticket.sold,
+                          parseInt(e.target.value, 10)
+                        )
+                      }
+                      label={`Available: ${ticket.count - ticket.sold}/${ticket.count}`}
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      sx={{
+                        marginTop: '8px',
+                        '& .MuiOutlinedInput-root': {
+                          '&:hover fieldset': {
+                            borderColor: '#87CEEB', // Sky blue border on hover
+                          },
+                        },
+                      }}
+                    />
+                    <Typography variant="body2" sx={{ marginTop: '4px' }}>
+                      Price: {ticket.price * (selectedTickets[ticket._id]?.count || 0)} €
+                    </Typography>
                   </li>
                 ))}
               </ul>
-              <Typography variant="body2" style={{ color: 'red' }}>
-                Check your order because it will be impossible to modify it after you confirm the purchase.
+              <Typography variant="h3" sx={{ marginTop: '24px', textAlign: 'center' }}>
+                Total: {totalAmount === null ? '' : totalAmount === 0 ? 'Free' : `${totalAmount} €`}
               </Typography>
-            </Box>
-          )}
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handlePurchase}
-          >
-            Confirm Purchase
-          </Button>
-        </Box>
+              {Object.keys(selectedTickets).length > 0 && (
+                <Box mt={4}>
+                  <Typography variant="h4" sx={{ marginBottom: '16px' }}>Order Summary</Typography>
+                  <Typography variant="body2">
+                    For the event {event.name}, you are ordering:
+                  </Typography>
+                  <ul>
+                    {Object.entries(selectedTickets).map(([key, ticket]) => (
+                      <li key={key}>
+                        {ticket.count} x {ticket.price}€ {ticket.category} ticket
+                      </li>
+                    ))}
+                  </ul>
+                  <Typography variant="body2" sx={{ color: 'red', marginTop: '16px' }}>
+                    Check your order because it will be impossible to modify it after you confirm the purchase.
+                  </Typography>
+                </Box>
+              )}
+              <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handlePurchase}
+                  sx={{ 
+                    width: '200px', 
+                    height: '50px', 
+                    backgroundColor: '#110000', 
+                    color: '#ffffff', 
+                    fontSize: '16px', 
+                    textTransform: 'none', 
+                    '&:hover': { backgroundColor: '#000000' }
+                  }}
+                >
+                  Confirm Purchase
+                </Button>
+              </Box>
+            </Card>
+          </Grid>
+        </Grid>
       )}
 
       {showLoginModal && (
@@ -242,6 +286,8 @@ const EventDetails = () => {
         </ModalAuth>
       )}
     </Box>
+    <Footer/>
+   </>
   );
 };
 

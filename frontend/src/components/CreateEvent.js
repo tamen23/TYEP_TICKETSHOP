@@ -165,14 +165,14 @@ const CreateEvent = () => {
   };
 
   const handleSubmit = async () => {
-    const formDataToSend = new FormData(); //new
-    Object.keys(formData).forEach(key => { //new
+    const formDataToSend = new FormData(); 
+    Object.keys(formData).forEach(key => { 
       if (key === 'images') { //new
-        formData[key].forEach(image => { //new
-          formDataToSend.append('images', image); //new
+        formData[key].forEach(image => { 
+          formDataToSend.append('images', image);
         }); //new
       } else { //new
-        formDataToSend.append(key, formData[key]); //new
+        formDataToSend.append(key, formData[key]); 
       } //new
     }); //new
 
@@ -911,6 +911,7 @@ const CreateEvent = () => {
       
       </Container>
       <Footer/>
+
     </>
   );
 };
