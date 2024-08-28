@@ -4,6 +4,22 @@
   height: 500px;
 }
 
+
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height to center the loader vertically */
+  width: 100vw;  /* Full viewport width to center the loader horizontally */
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.8); /* Optional: Semi-transparent background */
+  z-index: 1000; /* Ensure it appears on top of other elements */
+}
+
+
 .evenementsFnac {
   padding: 40px;
   background-color: #f9f9f9;
