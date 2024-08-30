@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams} from 'react-router-dom';
 import {
     Box, Button, Typography, RadioGroup, FormControlLabel, Radio, TextField, Stepper, Step, StepLabel, CircularProgress, Grid, Divider
 } from '@mui/material';
@@ -126,6 +126,12 @@ const OrderPage = () => {
                 return;
             }
     
+            // Ensure userDetails are fully populated
+            if (!userDetails.email || !userDetails.firstName || !userDetails.lastName || !userDetails.address || !userDetails.city || !userDetails.postalCode || !userDetails.country || !userDetails.phoneNumber) {
+                showNotification('Please fill in all required fields.', 'error');
+                return;
+            }
+    
             // Ensure that the tickets data matches the backend's expected format
             const ticketsData = order.tickets.map(t => ({
                 ticketId: t.ticket._id,  // The ID of the ticket
@@ -154,6 +160,8 @@ const OrderPage = () => {
             showNotification('Error purchasing tickets', 'error');
         }
     };
+    
+    
 
     const closePaymentModal = () => {
         setPaymentModalOpen(false);
@@ -170,6 +178,10 @@ const OrderPage = () => {
         const ticketInfo = tickets.find(ticket => ticket._id === t.ticket._id);
         return `${t.quantity} x ${ticketInfo.category} (${ticketInfo.price}€ each)`;
     }).join(', ');
+
+    const handleDateChange = (e) => {
+        setUserDetails({ ...userDetails, birthDate: e.target.value });
+    };
 
     return (
         <Box sx={{ padding: 3 }}>
@@ -284,8 +296,8 @@ const OrderPage = () => {
                                         InputLabelProps={{
                                             shrink: true,
                                         }}
-                                        value={userDetails.birthDate}
-                                        onChange={(e) => setUserDetails({ ...userDetails, birthDate: e.target.value })}
+                                        value={dayjs(userDetails.birthDate).format('YYYY-MM-DD')} // Ensure correct format
+        onChange={handleDateChange}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -434,6 +446,7 @@ const OrderPage = () => {
                 handleClose={closePaymentModal}
                 orderId={order._id}
                 totalAmount={order.totalAmount}
+                userDetails={userDetails}
             />
         </Box>
     );

@@ -18,6 +18,11 @@ const orderSchema = new mongoose.Schema({
   ],
   totalAmount: { type: Number, required: true },
   status: { type: String, default: 'pending' },
+
+  generatedTickets: [{
+    ticketId: mongoose.Schema.Types.ObjectId,
+    pdfPath: String
+  }]
 }, {
   timestamps: true,
 });
