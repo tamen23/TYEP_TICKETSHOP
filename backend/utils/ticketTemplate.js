@@ -8,16 +8,15 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const generateTicketPDF = async (order, ticket, event, userDetails) => {
+export const generateTicketPDF = async (order, ticket, event, userDetails, pdfFilePath) => {
     return new Promise(async (resolve, reject) => {
       const doc = new PDFDocument({
         size: [450, 450], // Adjusted the size to fit the content properly
       });
 
-      const fileName = `${ticket._id}_ticket.pdf`;
-      const filePath = path.join(__dirname, `../tickets/${fileName}`);
+      const stream = fs.createWriteStream(pdfFilePath);
 
-      doc.pipe(fs.createWriteStream(filePath));
+      doc.pipe(stream);
 
       // Place the event name alone at the top
       doc
@@ -78,12 +77,12 @@ export const generateTicketPDF = async (order, ticket, event, userDetails) => {
 
       doc.end();
 
-      doc.on('finish', () => {
-        console.log(`Ticket created and stored in: ${filePath}`);
-        resolve(filePath);
+      stream.on('finish', () => {
+        console.log(`Ticket created and stored in: ${pdfFilePath}`);
+        resolve(pdfFilePath);
       });
 
-      doc.on('error', (error) => {
+      stream.on('error', (error) => {
         reject(error);
       });
     });

@@ -9,6 +9,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { generateTicketPDF } from '../utils/ticketTemplate.js';
 import { sendTicketEmail } from './emailController.js';  // Adjust the path accordingly
+import moment from 'moment';
 
 // __filename and __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -93,20 +94,21 @@ export const processPayment = async (req, res) => {
 
     console.log('Received userDetails:', JSON.stringify(userDetails, null, 2));
 
+    // Validate user details
     if (!userDetails || !userDetails.email) {
       console.log('User details are missing or incomplete.');
       return res.status(400).json({ message: 'User details are missing or incomplete.' });
     }
 
+    // Fetch order details
     console.log('Fetching order details...');
-    const order = await Order.findById(orderId)
-      .populate('tickets.ticket')
-      .populate('user');
+    const order = await Order.findById(orderId).populate('tickets.ticket').populate('user');
     if (!order) {
       console.log('Order not found:', orderId);
       return res.status(404).json({ message: 'Order not found' });
     }
 
+    // Fetch event details
     console.log('Fetching event details...');
     const event = await Event.findById(order.event);
     if (!event) {
@@ -114,9 +116,10 @@ export const processPayment = async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
 
+    // Create payment intent
     console.log('Creating payment intent...');
     const paymentIntent = await stripeInstance.paymentIntents.create({
-      amount: order.totalAmount * 100,
+      amount: order.totalAmount * 100, // Convert to cents
       currency: 'eur',
       payment_method: paymentMethodId,
       confirm: true,
@@ -129,10 +132,12 @@ export const processPayment = async (req, res) => {
     if (paymentIntent.status === 'succeeded') {
       console.log('Payment succeeded for order:', orderId);
 
+      // Update order status
       order.status = 'completed';
       await order.save();
       console.log('Order status updated to completed');
 
+      // Update ticket sales
       for (const orderedTicket of order.tickets) {
         await EventTicket.updateOne(
           { _id: orderedTicket.ticket._id },
@@ -141,9 +146,9 @@ export const processPayment = async (req, res) => {
       }
       console.log('Ticket sales updated for each ticket in the order');
 
+      // Save or update user purchase information
       if (userDetails) {
         let userPurchaseInfo;
-
         if (order.user) {
           userPurchaseInfo = await UserPurchaseInfo.findOne({ user: order.user });
           if (!userPurchaseInfo) {
@@ -161,12 +166,22 @@ export const processPayment = async (req, res) => {
         console.log('User purchase information saved or updated');
       }
 
-      // Start ticket generation process
+      // Generate tickets
       console.log('Generating tickets after payment...');
-      await generateTickets(order, event, userDetails);
+      const generatedTickets = await generateTickets(order, event, userDetails);
 
-      // Send the success response immediately
-      res.status(200).json({ success: true });
+      if (generatedTickets.length === 0) {
+        console.error('No tickets were generated.');
+        return res.status(500).json({ success: false, message: 'Failed to generate tickets' });
+      }
+
+      // Save the generated tickets to the order
+      order.generatedTickets = generatedTickets;
+      await order.save();
+      console.log('Tickets successfully generated and saved to the order.');
+
+      // Send the success response
+      res.status(200).json({ success: true, message: 'Payment processed and tickets generated successfully', orderId: order._id });
     } else {
       console.log('Payment failed for order:', orderId);
       return res.status(400).json({ success: false, message: 'Payment failed' });
@@ -181,29 +196,52 @@ export const processPayment = async (req, res) => {
 const generateTickets = async (order, event, userDetails) => {
   console.log('Starting to generate PDFs for tickets...');
   
-  for (const ticket of order.tickets) {
+  const generatedTickets = [];
+
+  for (const ticketOrder of order.tickets) {
     try {
-      const pdfFileName = `${ticket._id}_ticket.pdf`;
+      const dateTimeStamp = moment().format('YYYYMMDD_HHmmss');
+      const pdfFileName = `${dateTimeStamp}_${ticketOrder.ticket._id}_ticket.pdf`;
       const pdfFilePath = path.join(TICKET_STORAGE_DIR, pdfFileName);
 
-      console.log('Generating PDF for ticket:', ticket._id);
-      await generateTicketPDF(order, ticket.ticket, event, userDetails, pdfFilePath);
+      console.log('Generating PDF for ticket:', ticketOrder.ticket._id);
+      
+      // Generate the ticket PDF (ensure `generateTicketPDF` correctly saves the PDF)
+      await generateTicketPDF(order, ticketOrder.ticket, event, userDetails, pdfFilePath);
+
+      // Verify if the PDF file exists and then add to the array
+      if (fs.existsSync(pdfFilePath)) {
+        console.log(`File confirmed at: ${pdfFilePath}`);
+        generatedTickets.push({
+          ticketId: ticketOrder.ticket._id,
+          pdfPath: pdfFilePath
+        });
+      } else {
+        console.error(`File not found after save attempt: ${pdfFilePath}`);
+      }
+
       console.log(`Ticket generated at: ${pdfFilePath}`);
     } catch (error) {
-      console.error(`Error generating ticket PDF for ticket ${ticket._id}:`, error);
+      console.error(`Error generating ticket PDF for ticket ${ticketOrder.ticket._id}:`, error);
       throw new Error('Ticket generation failed');
     }
   }
 
-  console.log('All tickets generated successfully. Preparing to send email...');
+  console.log('Generated Tickets:', JSON.stringify(generatedTickets, null, 2)); 
+  return generatedTickets;
+};
+
+
+
+// Controller to handle email sending
+export const triggerTicketEmail = async (req, res) => {
   try {
-    console.log('User details for email:', JSON.stringify(userDetails));
-    await sendTicketEmail(order, event, userDetails);
-    console.log('Email sent successfully');
+    const { orderId } = req.params;
+    const result = await sendTicketEmail(orderId);
+    res.status(200).json(result);
   } catch (error) {
-    console.error('Error sending ticket email:', error);
-    console.error('Error details:', error.response ? error.response.body : error.message);
-    throw new Error('Failed to send ticket email');
+    console.error('Error triggering ticket email:', error);
+    res.status(500).json({ success: false, message: 'Failed to send ticket email' });
   }
 };
 

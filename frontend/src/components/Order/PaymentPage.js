@@ -21,6 +21,7 @@ const PaymentPage = ({ open, handleClose, orderId, totalAmount, userDetails = {}
     const { showNotification } = useNotifications();  // Notification context for user feedback
     const [loading, setLoading] = useState(false);  // State to manage loading status
     const [saveCard, setSaveCard] = useState(false);  // State to manage save card option
+    const [showEmailModal, setShowEmailModal] = useState(false); // State for controlling the email modal
 
     // Mapping of country names to their ISO 3166-1 alpha-2 codes
     const countryCodes = {
@@ -80,7 +81,7 @@ const PaymentPage = ({ open, handleClose, orderId, totalAmount, userDetails = {}
             if (response.data.success) {
                 // Show success notification and close the payment dialog
                 showNotification('Payment successful', 'success');
-                handleClose();  // Close the modal on success
+                setShowEmailModal(true);  // Open the email modal on success
             } else {
                 // Show failure notification
                 showNotification('Payment failed', 'error');
@@ -94,67 +95,94 @@ const PaymentPage = ({ open, handleClose, orderId, totalAmount, userDetails = {}
         }
     };
 
+    const handleSendEmail = async () => {
+        try {
+            await api.post(`/orders/${orderId}/send-email`);
+            showNotification('Ticket sent to your email', 'success');
+            setShowEmailModal(false);
+            handleClose();
+        } catch (error) {
+            console.error('Error sending email:', error);
+            showNotification('Error sending email', 'error');
+        }
+    };
+
     return (
-        <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-            <DialogContent>
-                <Typography variant="h6" gutterBottom>
-                    Paiement sécurisé
-                </Typography>
-                <Typography variant="h5" gutterBottom>
-                    Merci de compléter vos informations de paiement
-                </Typography>
+        <>
+            <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+                <DialogContent>
+                    <Typography variant="h6" gutterBottom>
+                        Paiement sécurisé
+                    </Typography>
+                    <Typography variant="h5" gutterBottom>
+                        Merci de compléter vos informations de paiement
+                    </Typography>
 
-                <Box mt={2}>
-                    <TextField
-                        label="Titulaire de la carte"
-                        fullWidth
-                        margin="normal"
-                        variant="outlined"
-                        defaultValue={`${userDetails.firstName || ''} ${userDetails.lastName || ''}`}
-                    />
-                </Box>
+                    <Box mt={2}>
+                        <TextField
+                            label="Titulaire de la carte"
+                            fullWidth
+                            margin="normal"
+                            variant="outlined"
+                            defaultValue={`${userDetails.firstName || ''} ${userDetails.lastName || ''}`}
+                        />
+                    </Box>
 
-                <Box mt={2}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <CardElement
-                                options={{ style: { base: { fontSize: '16px' } } }}
-                                disabled={loading}
-                            />
+                    <Box mt={2}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <CardElement
+                                    options={{ style: { base: { fontSize: '16px' } } }}
+                                    disabled={loading}
+                                />
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </Box>
+                    </Box>
 
-                <Box mt={2}>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={saveCard}
-                                onChange={(e) => setSaveCard(e.target.checked)}
-                                color="primary"
-                                disabled={loading}
-                            />
-                        }
-                        label="Enregistrer pour mes futurs paiements"
-                    />
-                </Box>
-            </DialogContent>
+                    <Box mt={2}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={saveCard}
+                                    onChange={(e) => setSaveCard(e.target.checked)}
+                                    color="primary"
+                                    disabled={loading}
+                                />
+                            }
+                            label="Enregistrer pour mes futurs paiements"
+                        />
+                    </Box>
+                </DialogContent>
 
-            <DialogActions>
-                <Button onClick={handleClose} color="secondary" disabled={loading}>
-                    Fermer
-                </Button>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handlePaymentSubmit}
-                    disabled={loading}
-                    sx={{ width: '100%' }}
-                >
-                    {loading ? 'Processing...' : `Payer € ${totalAmount}`}
-                </Button>
-            </DialogActions>
-        </Dialog>
+                <DialogActions>
+                    <Button onClick={handleClose} color="secondary" disabled={loading}>
+                        Fermer
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handlePaymentSubmit}
+                        disabled={loading}
+                        sx={{ width: '100%' }}
+                    >
+                        {loading ? 'Processing...' : `Payer € ${totalAmount}`}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={showEmailModal} onClose={() => setShowEmailModal(false)}>
+                <DialogContent>
+                    <Typography>
+                        Your ticket has been generated. Click OK to send it to your email.
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleSendEmail} color="primary">
+                        OK
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 };
 

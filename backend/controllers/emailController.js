@@ -1,8 +1,9 @@
 import sgMail from '../config/sendgrid.js';
 import path from 'path';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
 import capturmail from '../models/capturmail.js';
+import Order from '../models/Order.js';
+import fs from 'fs/promises';
 
 // __filename and __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -57,56 +58,84 @@ export const storeEmail = async (req, res) => {
 };
 
 // Function to send tickets via email after they have been generated
-export const sendTicketEmail = async (order, event, userDetails) => {
+export const sendTicketEmail = async (orderId) => {
+  try {
+    // Fetch the order and populate necessary fields
+    const order = await Order.findById(orderId).populate('event').populate('user');
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    const { event, generatedTickets } = order;
+
+    // Check if generatedTickets exist and is an array
+    if (!Array.isArray(generatedTickets) || generatedTickets.length === 0) {
+      console.error('No generated tickets available');
+      throw new Error('No generated tickets available');
+    }
+
     console.log('Entering sendTicketEmail function');
     console.log('Order:', JSON.stringify(order));
     console.log('Event:', JSON.stringify(event));
-    console.log('User Details:', JSON.stringify(userDetails));
-  
+    console.log('Generated Tickets in Email Function:', JSON.stringify(generatedTickets, null, 2));
+
     let attachments = [];
-  
+
     console.log('Starting to collect generated PDFs for tickets...');
-  
-    for (const ticket of order.tickets) {
-      const pdfFileName = `${ticket._id}_ticket.pdf`;
-      const pdfFilePath = path.join(TICKET_STORAGE_DIR, pdfFileName);
-  
+
+    for (const generatedTicket of generatedTickets) {
+      const pdfFilePath = generatedTicket.pdfPath;
+
       console.log(`Checking for PDF file: ${pdfFilePath}`);
-      if (fs.existsSync(pdfFilePath)) {
+      try {
+        // Check if the file exists
+        await fs.access(pdfFilePath);
+      
+        // Read the file
+        const fileContent = await fs.readFile(pdfFilePath);
+      
         attachments.push({
-          filename: pdfFileName,
-          path: pdfFilePath,
-          contentType: 'application/pdf',
+          filename: path.basename(pdfFilePath),
+          content: fileContent.toString('base64'), // Convert to base64
+          type: 'application/pdf',
+          disposition: 'attachment',
         });
         console.log(`Attached PDF: ${pdfFilePath}`);
-      } else {
-        console.error(`PDF not found for ticket ID: ${ticket._id}`);
+      } catch (err) {
+        console.error(`PDF not found for ticket ID: ${generatedTicket.ticketId}`, err);
       }
     }
-  
+
     if (attachments.length === 0) {
       console.error('No PDF files were found to attach. Email will not be sent.');
-      return;
+      throw new Error('No ticket PDFs found');
     }
-  
+
     console.log('Preparing email with the generated tickets...');
+    
+    // Ensure we have a valid email address to send to
+    const recipientEmail = order.user ? order.user.email : order.email;
+    if (!recipientEmail) {
+      throw new Error('No valid email address found for the order');
+    }
+
     const msg = {
-      to: userDetails.email,
+      to: recipientEmail,
       from: process.env.EMAIL_USER,
       subject: `Your Tickets for ${event.name}`,
       text: 'Please find attached your tickets.',
       attachments: attachments,
     };
-  
+
     console.log('Email message prepared:', JSON.stringify(msg));
-  
-    try {
-      console.log('Attempting to send email...');
-      await sgMail.send(msg);
-      console.log('Tickets sent successfully to:', userDetails.email);
-    } catch (error) {
-      console.error('Error sending email:', error);
-      console.error('SendGrid API Key:', process.env.SENDGRID_API_KEY);
-      throw error;
-    }
-  };
+
+    console.log('Attempting to send email...');
+    await sgMail.send(msg);
+    console.log('Tickets sent successfully to:', recipientEmail);
+
+    return { success: true, message: 'Email sent successfully' };
+  } catch (error) {
+    console.error('Error sending ticket email:', error);
+    throw error;
+  }
+};
