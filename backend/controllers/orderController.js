@@ -1,20 +1,28 @@
 import mongoose from 'mongoose';
-import Event from '../models/Event.js';  // Adjust the path if necessary
+import Event from '../models/Event.js';
 import Order from '../models/Order.js';
 import EventTicket from '../models/EventTicket.js';
 import UserPurchaseInfo from '../models/UserPurchaseInfo.js';
 import Stripe from 'stripe';
-import sgMail from '../config/sendgrid.js';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { generateTicketPDF } from '../utils/ticketTemplate.js';
-
-// Initialize Stripe instance with the secret key
-const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
+import { sendTicketEmail } from './emailController.js';  // Adjust the path accordingly
 
 // __filename and __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Initialize Stripe instance with the secret key
+const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+const TICKET_STORAGE_DIR = path.join(__dirname, '../tickets'); // Directory where PDFs will be stored
+
+// Ensure the directory exists
+if (!fs.existsSync(TICKET_STORAGE_DIR)) {
+  fs.mkdirSync(TICKET_STORAGE_DIR, { recursive: true });
+}
 
 // Controller to handle ticket purchases
 export const purchaseTickets = async (req, res) => {
@@ -93,14 +101,14 @@ export const processPayment = async (req, res) => {
     console.log('Fetching order details...');
     const order = await Order.findById(orderId)
       .populate('tickets.ticket')
-      .populate('user');  // Ensure user data is fetched
+      .populate('user');
     if (!order) {
       console.log('Order not found:', orderId);
       return res.status(404).json({ message: 'Order not found' });
     }
 
     console.log('Fetching event details...');
-    const event = await Event.findById(order.event);  // Fetch event details
+    const event = await Event.findById(order.event);
     if (!event) {
       console.log('Event not found:', order.event);
       return res.status(404).json({ message: 'Event not found' });
@@ -153,18 +161,12 @@ export const processPayment = async (req, res) => {
         console.log('User purchase information saved or updated');
       }
 
+      // Start ticket generation process
+      console.log('Generating tickets after payment...');
+      await generateTickets(order, event, userDetails);
+
       // Send the success response immediately
       res.status(200).json({ success: true });
-
-      // Perform ticket generation and sending in the background
-      console.log('Starting ticket generation and email sending process...');
-      try {
-        console.log(`Calling sendTicketEmail function with email: ${userDetails.email}`);
-        await sendTicketEmail(userDetails.email, order, order.tickets, event, userDetails);
-        console.log('Tickets have been sent to:', userDetails.email);
-      } catch (err) {
-        console.error('Error generating or sending tickets:', err);
-      }
     } else {
       console.log('Payment failed for order:', orderId);
       return res.status(400).json({ success: false, message: 'Payment failed' });
@@ -175,49 +177,35 @@ export const processPayment = async (req, res) => {
   }
 };
 
-// Function to send tickets via email after payment
-const sendTicketEmail = async (email, order, tickets, event, userDetails) => {
-  let attachments = [];
-
+// Function to generate tickets after successful payment
+const generateTickets = async (order, event, userDetails) => {
   console.log('Starting to generate PDFs for tickets...');
-  for (const ticket of tickets) {
+  
+  for (const ticket of order.tickets) {
     try {
-      console.log('Calling generateTicketPDF function for ticket:', ticket._id);
-      const pdfPath = await generateTicketPDF(order, ticket.ticket, event, userDetails);
-      console.log(`Ticket generated at: ${pdfPath}`);  // Log when the ticket is generated and stored
-      attachments.push({
-        filename: `${ticket._id}_ticket.pdf`,
-        path: pdfPath,
-        contentType: 'application/pdf'
-      });
+      const pdfFileName = `${ticket._id}_ticket.pdf`;
+      const pdfFilePath = path.join(TICKET_STORAGE_DIR, pdfFileName);
+
+      console.log('Generating PDF for ticket:', ticket._id);
+      await generateTicketPDF(order, ticket.ticket, event, userDetails, pdfFilePath);
+      console.log(`Ticket generated at: ${pdfFilePath}`);
     } catch (error) {
       console.error(`Error generating ticket PDF for ticket ${ticket._id}:`, error);
-      continue; // Continue generating other tickets even if one fails
+      throw new Error('Ticket generation failed');
     }
   }
 
-  if (attachments.length === 0) {
-    console.error('No PDF files were generated successfully. Email will not be sent.');
-    return;
-  }
-
-  console.log('Sending email with the generated tickets...');
-  const msg = {
-    to: email,
-    from: process.env.EMAIL_USER,
-    subject: `Your Tickets for ${event.name}`,
-    text: 'Please find attached your tickets.',
-    attachments: attachments,
-  };
-
+  console.log('All tickets generated successfully. Preparing to send email...');
   try {
-    await sgMail.send(msg);
-    console.log('Tickets sent successfully to:', email);  // Log when tickets are sent successfully
+    console.log('User details for email:', JSON.stringify(userDetails));
+    await sendTicketEmail(order, event, userDetails);
+    console.log('Email sent successfully');
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error sending ticket email:', error);
+    console.error('Error details:', error.response ? error.response.body : error.message);
+    throw new Error('Failed to send ticket email');
   }
 };
-
 
 // Controller to get order details with detailed logging
 export const getOrderDetails = async (req, res) => {
@@ -275,4 +263,3 @@ export const getUserPurchaseInfo = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
-
