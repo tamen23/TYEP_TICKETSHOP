@@ -94,8 +94,12 @@ const EventList = () => {
                             <TableRow key={event._id}>
                                 <TableCell>{(page - 1) * itemsPerPage + index + 1}</TableCell>
                                 <TableCell>{event.name}</TableCell>
-                                <TableCell>{event.organizer_id.nom} {event.organizer_id.prenom}</TableCell>
-                                <TableCell>{event.organizer_id.nomDeStructure}</TableCell>
+                                <TableCell>
+                                    {event.organizer_id ? `${event.organizer_id.nom} ${event.organizer_id.prenom}` : 'Organizer not available'}
+                                </TableCell>
+                                <TableCell>
+                                    {event.organizer_id ? event.organizer_id.nomDeStructure : 'Structure not available'}
+                                </TableCell>
                                 <TableCell>{event.venue}</TableCell>
                                 <TableCell>{event.street_address}, {event.city}, {event.country}</TableCell>
                                 <TableCell>{event.category}</TableCell>
@@ -143,7 +147,8 @@ const EventList = () => {
                                 <TableCell colSpan={16} align="center">No events found</TableCell>
                             </TableRow>
                         )}
-                    </TableBody>
+                   </TableBody>
+
                 </Table>
             </TableContainer>
             <Stack spacing={2} alignItems="center" mt={2}>
