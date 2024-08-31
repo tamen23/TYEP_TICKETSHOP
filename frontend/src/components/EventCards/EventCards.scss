@@ -1,131 +1,51 @@
-.event-cards-container {
+.event-cards {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-  margin: 20px;
-  background-color: red;
+  gap: 16px;
+  padding: 20px;
+  justify-content: center;
 }
 
-.event-item {
-  background-color: #fff;
+.event-card {
   border: 1px solid #ddd;
   border-radius: 8px;
-  margin-bottom: 20px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-  width: 100%;
-  max-width: 400px;
-}
+  width: 300px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
 
-.event-item:hover {
-  transform: translateY(-10px);
-}
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
 
-.left-content {
-  padding: 20px;
-}
+  img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
 
-.left-content h4 {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
+  h3 {
+    margin: 16px;
+  }
 
-.left-content p {
-  font-size: 14px;
-  color: #777;
-  margin-bottom: 20px;
-}
+  p {
+    margin: 0 16px 16px;
+  }
 
-.main-dark-button a {
-  background-color: #343a3e;
-  color: #fff;
-  padding: 10px 20px;
-  text-transform: uppercase;
-  font-size: 14px;
-  border-radius: 25px;
-  transition: background-color 0.3s ease;
-}
+  a {
+    display: block;
+    margin: 16px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.2s;
 
-.main-dark-button a:hover {
-  background-color: #656c74;
-}
-
-.thumb img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.right-content ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.right-content ul li {
-  margin-bottom: 15px;
-}
-
-.right-content ul li i {
-  margin-right: 10px;
-}
-
-.right-content ul li h6,
-.right-content ul li span {
-  font-size: 16px;
-  color: #333;
-  font-weight: 600;
-}
-
-.right-content ul li span {
-  color: #777;
-}
-
-/* Media query for phones */
-@media (max-width: 768px) {
-
-
-  .filter-section{
-    background-color: red;
-    display: none;
-  
-    .filter-card {
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
+    &:hover {
+      background-color: #0056b3;
     }
   }
-  
-
-  .event-cards-container {
-    margin: 10px;
-    justify-content: center; /* Center the cards */
-  }
-
-  .event-item {
-    max-width: 100%; /* Make the cards take full width */
-    margin-bottom: 15px; /* Reduce the margin between cards */
-  }
-
-  .left-content h4 {
-    font-size: 18px; /* Slightly reduce the title size */
-  }
-
-  .left-content p {
-    font-size: 13px; /* Slightly reduce the description size */
-  }
-
-  .main-dark-button a {
-    padding: 8px 16px; /* Slightly reduce the padding */
-    font-size: 12px; /* Slightly reduce the button text size */
-  }
-
-  .right-content ul li h6,
-  .right-content ul li span {
-    font-size: 14px; /* Slightly reduce the size of the list text */
-  }
 }
-
-
