@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardMedia, CardActions, Typography, Grid, Box, Paper, MenuList, MenuItem, ListItemText } from '@mui/material';
 import Footer from '../../components/Footer/Footer';
 import api from '../../api';
+import '../EventCards/EventCards.scss';
 
 const EventCard = () => {
   const [events, setEvents] = useState([]);
@@ -198,59 +199,100 @@ const EventCard = () => {
       <Footer />
 
       <style jsx>{`
-        .content-container {
-          display: flex;
-          gap: 20px;
-          padding: 20px;
-          height:100vh
-        }
+  .content-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    height: 100vh;
+    overflow-y: auto; /* Enable vertical scrolling */
+  }
 
-        .filter-section {
-          flex: 1;
-          max-width: 300px;
-        }
+  .filter-section {
+    flex: 1;
+    max-width: 300px;
+    overflow-y: auto; /* Ensure the filter section is scrollable if necessary */
+  }
 
-        .filter-card {
-          background-color: #fff;
-          border: 1px solid #ddd;
-          padding: 15px;
-          border-radius: 8px;
-        }
+  .filter-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+  }
 
-        .filter-title {
-          font-size: 16px; /* Reduce text size */
-          font-weight: bold;
-          margin-bottom: 10px;
-        }
+  .filter-title {
+    font-size: 16px; /* Reduce text size */
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
 
-        .events-container {
-          flex: 5;
-          background-color: #F9F9F9;
-        }
+  .events-container {
+    flex: 5;
+    background-color: #F9F9F9;
+    overflow-y: auto; /* Enable vertical scrolling within the event container */
+    max-height: 100%; /* Ensure it fits within the available height */
+    padding-bottom: 20px; /* Add padding at the bottom */
+  }
 
-        .page-heading-shows-events {
-          background-image: url('https://les-seminaires.eu/wp-content/uploads/2019/04/organisation-evenement-grand-public.jpg');
-          background-size: cover;
-          background-repeat: no-repeat;
-          padding: 80px 0;
-          text-align: center;
-        }
+  .page-heading-shows-events {
+    background-image: url('https://les-seminaires.eu/wp-content/uploads/2019/04/organisation-evenement-grand-public.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 80px 0;
+    text-align: center;
+  }
 
-        .page-heading-shows-events h2 {
-          font-size: 50px;
-          color: #fff;
-          font-weight: 800;
-          margin-bottom: 15px;
-        }
+  .page-heading-shows-events h2 {
+    font-size: 50px;
+    color: #fff;
+    font-weight: 800;
+    margin-bottom: 15px;
+  }
 
-        .page-heading-shows-events span {
-          font-size: 20px;
-          color: #fff;
-          font-weight: 300;
-          padding: 0 250px;
-          display: inline-block;
-        }
-      `}</style>
+  .page-heading-shows-events span {
+    font-size: 20px;
+    color: #fff;
+    font-weight: 300;
+    padding: 0 250px;
+    display: inline-block;
+  }
+
+  /* Responsive design for phones */
+  @media (max-width: 768px) {
+    .content-container {
+      flex-direction: column;
+      padding: 10px;
+      height: 100vh; /* Keep the height at 100vh */
+      overflow-y: auto; /* Ensure the entire container is scrollable */
+    }
+
+    .filter-section {
+      max-width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .events-container {
+      flex: none;
+      max-width: 100%;
+      overflow-y: auto; /* Enable vertical scrolling within the event container */
+      padding: 10px;
+    }
+
+    .page-heading-shows-events h2 {
+      font-size: 36px;
+    }
+
+    .page-heading-shows-events span {
+      font-size: 16px;
+      padding: 0 20px;
+    }
+
+    .page-heading-shows-events {
+      padding: 40px 0;
+    }
+  }
+`}</style>
+
     </>
   );
 };

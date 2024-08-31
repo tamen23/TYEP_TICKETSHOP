@@ -89,7 +89,7 @@
   display: none; /* Masqué par défaut sur les grands écrans */
   cursor: pointer;
   position: relative;
-  left: 12px;
+  left: -23px;
 
   /* Affiché sur les petits écrans */
   @media (max-width: 768px) {

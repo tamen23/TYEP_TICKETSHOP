@@ -215,7 +215,7 @@ const Evenements = () => {
                         ? `${filters.startDate.toLocaleDateString()} - ${filters.endDate.toLocaleDateString()}`
                         : filters.startDate
                         ? filters.startDate.toLocaleDateString()
-                        : "Filter by Date Range"}
+                        : "Date"}
                 </button>
                 {showCalendar && (
                     <div ref={calendarRef} className="calendar-container">
@@ -230,14 +230,14 @@ const Evenements = () => {
                         />
                     </div>
                 )}
-                <select name="location" value={filters.location} onChange={handleFilterChange}>
-                    <option value="">Filter by Location</option>
+                <select name="location" value={filters.location} onChange={handleFilterChange} className="reduitOption">
+                    <option value="">Filter..</option>
                     {availableLocations.map(location => (
                         <option key={location} value={location}>{location}</option>
                     ))}
                 </select>
-                <select name="category" value={filters.category} onChange={handleFilterChange}>
-                    <option value="">Filter by Category</option>
+                <select name="category" value={filters.category} onChange={handleFilterChange} className="reduitOption">
+                    <option value="">Filter..</option>
                     {availableCategories.map(category => (
                         <option key={category} value={category}>{category}</option>
                     ))}

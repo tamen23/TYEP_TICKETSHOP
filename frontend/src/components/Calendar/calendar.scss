@@ -55,9 +55,9 @@
 
   .calendar__day {
     margin-bottom: 5px;
-    font-size: 1.2rem; /* Increase the size of the days */
-    height: 40px; /* Increase height to make them take more space */
-    line-height: 40px; /* Center the text vertically */
+    font-size: 1.2rem;
+    height: 40px;
+    line-height: 40px;
 
     &--disabled {
       color: #777;
@@ -91,14 +91,25 @@
   }
 
   &__day {
-    // existing styles...
-
     &--today {
       background-color: #1A8FDD;
       color: #fff;
       height: 50px;
       width: 40px;
       border-radius: 50%;
+    }
+  }
+
+  // Media query for phones
+  @media (max-width: 768px) {
+    display: none;
+    width: 80%; /* Reduce width to 80% of the original */
+    height: 320px; /* Reduce height to 80% of the original */
+
+    &__day {
+      font-size: 1rem; /* Adjust font size to fit smaller width */
+      height: 32px; /* Adjust height for dates */
+      line-height: 32px; /* Ensure text is centered vertically */
     }
   }
 }

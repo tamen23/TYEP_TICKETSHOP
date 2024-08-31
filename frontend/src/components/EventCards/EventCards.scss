@@ -3,6 +3,7 @@
   flex-wrap: wrap;
   justify-content: space-around;
   margin: 20px;
+  background-color: red;
 }
 
 .event-item {
@@ -81,3 +82,50 @@
 .right-content ul li span {
   color: #777;
 }
+
+/* Media query for phones */
+@media (max-width: 768px) {
+
+
+  .filter-section{
+    background-color: red;
+    display: none;
+  
+    .filter-card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+  }
+  
+
+  .event-cards-container {
+    margin: 10px;
+    justify-content: center; /* Center the cards */
+  }
+
+  .event-item {
+    max-width: 100%; /* Make the cards take full width */
+    margin-bottom: 15px; /* Reduce the margin between cards */
+  }
+
+  .left-content h4 {
+    font-size: 18px; /* Slightly reduce the title size */
+  }
+
+  .left-content p {
+    font-size: 13px; /* Slightly reduce the description size */
+  }
+
+  .main-dark-button a {
+    padding: 8px 16px; /* Slightly reduce the padding */
+    font-size: 12px; /* Slightly reduce the button text size */
+  }
+
+  .right-content ul li h6,
+  .right-content ul li span {
+    font-size: 14px; /* Slightly reduce the size of the list text */
+  }
+}
+
+

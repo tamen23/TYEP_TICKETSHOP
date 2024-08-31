@@ -10,10 +10,11 @@ import Login from '../Auth/Login';
 import Register from '../Auth/Register';
 import OrganisateurSignUp from '../Organisateur/OrganisateurSignUp';
 import './header.scss';
+// import Humberger from './humberger';
 
 const Header = ({ onShowApp, onShowOrganisateur }) => {
     const [showAuth, setShowAuth] = useState(false);
-    const [showProfile, setShowProfile] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);  // State to handle menu open/close
     const { user, logout } = useContext(AuthContext);
     const [authMode, setAuthMode] = useState('login');
     const location = useLocation();
@@ -28,9 +29,9 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
         setShowAuth(false);
     };
 
-    const toggleProfile = useCallback(() => {
-        setShowProfile(prevShowProfile => !prevShowProfile);
-    }, []);
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
 
     const handleLogout = useCallback(() => {
         logout();
@@ -65,7 +66,7 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                             <ul>
                                 {isOrganisateur ? (
                                     <>
-                                        <li><Link to="/dashboard">DASHBOARD</Link></li>
+                                        <li><Link to="/admin-dashboard/*">DASHBOARD</Link></li>
                                         <li><Link to="/events">MY EVENTS</Link></li>
                                         <li><Link to="/contact">CONTACT</Link></li>
                                         <li><Link to="/create-event">CREATE-EVENT</Link></li>
@@ -79,8 +80,6 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                                         <li><Link to="/contact">CONTACT</Link></li>
                                         <li><Link to="/organisation">BECOME A PARTNER</Link></li>
                                         <li><Link to="publicFag">FAQ</Link></li>
-                                       
-                                        
                                     </>
                                 )}
                             </ul>
@@ -88,7 +87,7 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                     </div>
                 </div>
                 {/* Utilisation de l'icône FaBars pour le menu hamburger */}
-                <div className="hamburgerMenu" onClick={() => {/* logique pour ouvrir le menu mobile */}}>
+                <div className="hamburgerMenu" onClick={toggleMenu}>
                     <FaBars size={30} color="#fff" />
                 </div>
                 <div className="header__right">
@@ -139,6 +138,9 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                     </div>
                 </div>
             </div>
+
+            {/* Menu Mobile */}
+            {/* <Humberger isOpen={isMenuOpen} toggleMenu={toggleMenu} onShowApp={onShowApp} handleProductionClick={handleProductionClick} /> */}
         </div>
     );
 };

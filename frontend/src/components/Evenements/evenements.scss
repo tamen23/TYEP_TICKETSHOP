@@ -1,30 +1,26 @@
 .ourEvent {
   padding: 0 15px;
-
   height: 500px;
 }
-
-
 
 .loader-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full viewport height to center the loader vertically */
-  width: 100vw;  /* Full viewport width to center the loader horizontally */
+  height: 100vh;
+  width: 100vw;
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(255, 255, 255, 0.8); /* Optional: Semi-transparent background */
-  z-index: 1000; /* Ensure it appears on top of other elements */
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 1000;
 }
-
 
 .evenementsFnac {
   padding: 40px;
   background-color: #f9f9f9;
-  overflow-x: hidden; /* Empêche le défilement horizontal */
-  overflow-y: auto; /* Ajoute un défilement vertical si le contenu dépasse */
+  overflow-x: hidden;
+  overflow-y: auto;
 
   .section-titleFa {
     font-size: 28px;
@@ -81,6 +77,10 @@
     }
   }
 
+  .reduitOption {
+    width: 80px;
+  }
+
   .tickets-containerFnac {
     display: flex;
     flex-wrap: wrap;
@@ -135,6 +135,49 @@
     margin-top: 30px;
     text-align: center;
     gap: 10px;
+
+    @media (max-width: 768px) {
+      gap: 5px; /* Reduce the gap between pagination items */
+      margin: auto;
+      margin-top: 20px;
+      transform: scale(0.8); /* Scale down the pagination for smaller screens */
+      width: 700px; /* Set the width to 700px */
+      gap: 5px;
+      margin: auto;
+      margin-top: 20px;
+      transform: scale(0.8);
+      width: 700px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      left: -200px;
+      /* left: 50%; */
+      justify-content: center;
+
+      .evenementsFnac {
+        padding: 40px;
+        background-color: #f9f9f9;
+        overflow-x: hidden;
+        overflow-y: auto;
+        position: relative;
+        top: 770px;
+    }
+    }
+
+
+    .MuiPagination-ul {
+      justify-content: center;
+    }
+
+    .MuiPaginationItem-root {
+      @media (max-width: 768px) {
+        width: 30px; /* Adjust size */
+        height: 30px; /* Adjust size */
+        font-size: 0.75rem; /* Smaller text */
+
+ 
+      }
+    }
   }
 
   .ticket-link {
@@ -154,4 +197,15 @@
     color: #999;
     margin-top: 40px;
   }
+}
+
+@media (max-width: 768px) {
+  .evenementsFnac {
+    padding: 40px;
+    background-color: #f9f9f9;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+    top: 770px;
+}
 }

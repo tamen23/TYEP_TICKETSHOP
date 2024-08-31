@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Container, Grid, Typography, Link, Box } from '@mui/material';
+import './footer.scss'
 
 const Footer = () => {
     const location = useLocation();
