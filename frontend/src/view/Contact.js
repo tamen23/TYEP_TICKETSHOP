@@ -3,7 +3,7 @@ import { TextField, Button, Grid, Container, Typography, Checkbox, FormControlLa
 import { styled } from '@mui/material/styles';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-
+import Footer from '../components/Footer/Footer';
 const Root = styled('div')(({ theme }) => ({
   display: 'flex',
   height: '100vh',
@@ -87,24 +87,28 @@ function ContactForm() {
 
   if (!showForm) {
     return (
-      <Root>
-        <FormContainer>
-          <Typography variant="h5" gutterBottom style={{ color: responseColor }}>
-            {responseMessage}
-          </Typography>
-          {responseColor === 'green' && (
-            <Typography variant="body1" gutterBottom>
-              <Link href="/contact" style={{ color: '#3f51b5' }}>
-                Send a new message
-              </Link>
+      <div>
+          <Root>
+          <FormContainer>
+            <Typography variant="h5" gutterBottom style={{ color: responseColor }}>
+              {responseMessage}
             </Typography>
-          )}
-        </FormContainer>
+            {responseColor === 'green' && (
+              <Typography variant="body1" gutterBottom>
+                <Link href="/contact" style={{ color: '#3f51b5' }}>
+                  Send a new message
+                </Link>
+              </Typography>
+            )}
+          </FormContainer>
+         
       </Root>
+      </div>
     );
   }
 
   return (
+  <>
     <Root>
       <FormContainer>
         <Typography variant="h4" gutterBottom>
@@ -183,6 +187,9 @@ function ContactForm() {
         </form>
       </FormContainer>
     </Root>
+    <Footer/>
+    </>
+    
   );
 }
 
