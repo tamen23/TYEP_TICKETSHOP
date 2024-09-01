@@ -66,7 +66,7 @@ function MainContent() {
                 <Route path="/order/:id" element={<OrderPage />} />
                 <Route path="/create-event" element={
                     <PrivateRoute requiredRoles={['organisateur', 'admin']}>
-                        <CreateEvent />
+                        <CreateEvent/>
                     </PrivateRoute>
                 } />
               
@@ -74,17 +74,17 @@ function MainContent() {
                 <Route path="/soon" element={<MaintenancePage />} />
                 <Route path="/admin-dashboard/*" element={
                     <PrivateRoute requiredRoles={['admin']}>
-                        <AdminDashboard />
+                        <AdminDashboard/>
                     </PrivateRoute>
                 } />
                  <Route path="/organisator-dashboard/*" element={
                     <PrivateRoute requiredRoles={['organisateur']}>
-                        <OrganisatorDashboard />
+                        <OrganisatorDashboard/>
                     </PrivateRoute>
                 } />
                 <Route path="/user-dashboard" element={
                     <PrivateRoute>
-                        <UserDashboard />
+                        <UserDashboard/>
                     </PrivateRoute>
                 } />
             </Routes>

@@ -3,14 +3,12 @@ import { TextField, Button, Grid, Container, Typography, Checkbox, FormControlLa
 import { styled } from '@mui/material/styles';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-import Footer from '../components/Footer/Footer';
 
 const Root = styled('div')(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'column',
-  height: '120vh', // Set the height of the parent to 120vh
-  justifyContent: 'center', // Center the children vertically
-  alignItems: 'center', // Center the children horizontally
+  height: '100vh',
+  alignItems: 'center',
+  justifyContent: 'center',
   background: `url(${require('./img.png')}) no-repeat center center fixed`,
   backgroundSize: 'cover',
 }));
@@ -20,11 +18,6 @@ const FormContainer = styled(Container)(({ theme }) => ({
   padding: theme.spacing(4),
   borderRadius: '8px',
   maxWidth: '500px',
-  width: '100%', // Ensure the container doesn't overflow horizontally
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center', // Center the content within the form container
-  alignItems: 'center', // Center the content horizontally within the form container
 }));
 
 const SubmitButton = styled(Button)(({ theme }) => ({
@@ -39,9 +32,10 @@ const validateEmail = (email) => {
 };
 
 function ContactForm() {
-  const [name, setName] = useState('');
-  const [recipient, setRecipient] = useState('');
-  const [subject, setSubject] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [object, setObject] = useState('');
   const [message, setMessage] = useState('');
   const [responseMessage, setResponseMessage] = useState('');
   const [responseColor, setResponseColor] = useState('');
@@ -52,17 +46,17 @@ function ContactForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateEmail(recipient)) {
+    if (!validateEmail(email)) {
       setResponseMessage('Invalid email address');
       setResponseColor('red');
       return;
     }
 
     const contactData = {
-      firstName: name,
-      lastName: recipient,
-      email: recipient,
-      subject: subject,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      Object: object,
       message: message,
     };
 
@@ -72,9 +66,10 @@ function ContactForm() {
       if (response.status === 201) {
         setResponseMessage('Message sent successfully!');
         setResponseColor('green');
-        setName('');
-        setRecipient('');
-        setSubject('');
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setObject('');
         setMessage('');
         setTimeout(() => {
           setShowForm(false);
@@ -105,14 +100,12 @@ function ContactForm() {
             </Typography>
           )}
         </FormContainer>
-        <Footer />
       </Root>
     );
   }
 
   return (
-    <>
-          <Root>
+    <Root>
       <FormContainer>
         <Typography variant="h4" gutterBottom>
           Let's talk about the future
@@ -128,8 +121,8 @@ function ContactForm() {
                 variant="outlined"
                 fullWidth
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -138,8 +131,8 @@ function ContactForm() {
                 variant="outlined"
                 fullWidth
                 required
-                value={recipient}
-                onChange={(e) => setRecipient(e.target.value)}
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -148,17 +141,18 @@ function ContactForm() {
                 variant="outlined"
                 fullWidth
                 required
-                value={recipient}
-                onChange={(e) => setRecipient(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="subject"
+                label="Object"
                 variant="outlined"
                 fullWidth
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
+                required
+                value={object}
+                onChange={(e) => setObject(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -177,6 +171,7 @@ function ContactForm() {
               <FormControlLabel
                 control={<Checkbox color="primary" />}
                 label="I agree to the terms of use and privacy policy."
+                required
               />
             </Grid>
             <Grid item xs={12}>
@@ -187,11 +182,7 @@ function ContactForm() {
           </Grid>
         </form>
       </FormContainer>
-   
     </Root>
-
-<Footer />
-    </>
   );
 }
 

@@ -14,8 +14,8 @@ const AdminDashboard = () => {
     const location = useLocation();
 
     return (
-        <Box display="flex">
-            <Box width="250px" bgcolor="#f0f0f0" p={2} height="100vh" position="fixed">
+        <Box display="flex" top="30px" position="relative">
+            <Box width="250px" bgcolor="#f0f0f0" p={2} height="100vh" top="130px" position="relative">
                 <Typography variant="h6" gutterBottom>Welcome, {user.username}</Typography>
                 <hr />
                 <Button component={Link} to="/admin-dashboard/users" fullWidth>Users</Button>

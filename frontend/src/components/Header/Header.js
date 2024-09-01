@@ -66,15 +66,17 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                             <ul>
                                 {isOrganisateur ? (
                                     <>
-                                        <li><Link to="/admin-dashboard/*">DASHBOARD</Link></li>
+                                        <li><Link to="/organisator-dashboard">DASHBOARD</Link></li>
                                         <li><Link to="/events">MY EVENTS</Link></li>
                                         <li><Link to="/contact">CONTACT</Link></li>
                                         <li><Link to="/create-event">CREATE-EVENT</Link></li>
                                         <li><Link to="ManagerFag">FAQ</Link></li>
+
                                     </>
                                 ) : (
                                     <>
                                         <li><Link to="/" onClick={onShowApp}>HOME</Link></li>
+                                        <li><Link to="/user-dashboard">DASHBOARD</Link></li>
                                         <li><Link to="/events">EVENEMENTS</Link></li>
                                         <li><Link to="#" onClick={handleProductionClick}>CONCERTS</Link></li>
                                         <li><Link to="/contact">CONTACT</Link></li>
