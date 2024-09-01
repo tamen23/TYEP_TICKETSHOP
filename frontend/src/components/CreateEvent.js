@@ -7,6 +7,7 @@ import { styled } from '@mui/system';
 import api from '../api';
 import AuthContext from '../context/AuthContext';
 import Footer from './Footer/Footer';
+import { useNotifications } from '../context/NotificationsContext';
 
 
 
@@ -25,6 +26,7 @@ const FormSection = styled('div')({
 
 const CreateEvent = () => {
   const { user } = useContext(AuthContext);
+  const { showNotification } = useNotifications();
   const navigate = useNavigate();
 
   const [step, setStep] = useState(0); 
@@ -183,6 +185,7 @@ const CreateEvent = () => {
         } //new
       }); //new
       console.log('Event created successfully:', response.data);
+      showNotification('Event created successfully', 'success', 1000);
       if (user.role === 'admin') {
         navigate('/admin-dashboard');
       } else if (user.role === 'organisateur') {
@@ -190,6 +193,7 @@ const CreateEvent = () => {
       }
     } catch (error) {
       console.error('Error creating event:', error);
+      showNotification('Error creating event', 'error', 1000);
     }
   };
 

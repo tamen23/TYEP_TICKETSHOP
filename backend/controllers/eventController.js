@@ -229,10 +229,25 @@ export const getApprovedEvents = async (req, res) => {
 // Controller to fetch all events by organizer
 export const getEventsByOrganizer = async (req, res) => {
   try {
-    const events = await Event.find({ organizer_id: req.user._id });
+    // Check if the user ID exists in the request object
+    if (!req.user || !req.user._id) {
+      return res.status(400).json({ msg: 'User ID is missing in request' });
+    }
+
+    // Fetch events created by this organizer
+    const events = await Event.find({ organizer_id: req.user._id })
+      .populate('organizer_id', 'nom prenom nomDeStructure email telephone') // Populate organizer details
+      .sort({ date: -1 }); // Sort events by date, most recent first
+
+    // If no events are found, return a 404 status with a message
+    if (events.length === 0) {
+      return res.status(404).json({ msg: 'No events found for this organizer' });
+    }
+
+    // Send the events as a response
     res.status(200).json(events);
   } catch (error) {
     console.error('Error fetching events:', error);
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ msg: 'Server error', error: error.message });
   }
 };

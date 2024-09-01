@@ -16,6 +16,7 @@ import ErrorPage from './view/Error';
 import Footer from './view/Footer';
 import MaintenancePage from "./view/maintenancePage";
 import AdminDashboard from './components/Dashboard/AdminDashboard';
+import OrganisatorDashboard from './components/Dashboard/OrganisatorDashboard';
 import OrderPage from './components/Order/OrderPage';
 import { Elements } from '@stripe/react-stripe-js'; // Import Elements
 import { loadStripe } from '@stripe/stripe-js'; // Import loadStripe
@@ -75,7 +76,11 @@ function MainContent() {
                         <AdminDashboard />
                     </PrivateRoute>
                 } />
-                
+                 <Route path="/organisator-dashboard/*" element={
+                    <PrivateRoute requiredRoles={['organisateur']}>
+                        <OrganisatorDashboard />
+                    </PrivateRoute>
+                } />
             </Routes>
         
         </>

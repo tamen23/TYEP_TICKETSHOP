@@ -7,6 +7,8 @@ const router = express.Router();
 
 // Route to create a new event
 router.post('/create', protect, adminOrOrganisateur, uploadImages, createEvent);
+// Route to get all events by organizer
+router.get('/organizer', protect, adminOrOrganisateur, getEventsByOrganizer);
 
 // Route to update an existing event
 router.put('/:id', protect, adminOrOrganisateur, uploadImages, updateEvent);
@@ -26,8 +28,7 @@ router.get('/', protect, getAllEvents);
 // Route to approve an event (admin only)
 router.put('/:id/status', protect, admin, updateEventStatus);
 
-// Route to get all events by organizer
-router.get('/organizer', protect, adminOrOrganisateur, getEventsByOrganizer);
+
 
 
 export default router;
