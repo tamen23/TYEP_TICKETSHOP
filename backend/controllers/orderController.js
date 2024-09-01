@@ -301,3 +301,56 @@ export const getUserPurchaseInfo = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+
+// Controller to fetch all orders for a specific user
+export const getUserOrders = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Fetch all orders for the specified user
+    const orders = await Order.find({ user: userId }).populate('event').populate('tickets.ticket');
+
+    // If orders are found, return them
+    if (orders && orders.length > 0) {
+      return res.status(200).json(orders);
+    }
+
+    // If no orders found, return an empty array
+    return res.status(404).json({ message: 'No orders found for this user' });
+  } catch (error) {
+    console.error('Error fetching user orders:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
+export const downloadTicket = async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+
+    // Find the order that contains the ticket
+    const order = await Order.findOne({ "generatedTickets.ticketId": ticketId });
+
+    if (!order) {
+      console.log('Ticket not found:', ticketId);
+      return res.status(404).json({ message: 'Ticket not found' });
+    }
+
+    // Find the correct ticket within the order's generatedTickets array
+    const ticket = order.generatedTickets.find(t => t.ticketId.toString() === ticketId);
+
+    if (!ticket || !ticket.pdfPath) {
+      console.log('Ticket not found or no PDF path:', ticketId);
+      return res.status(404).json({ message: 'Ticket not found or PDF path missing' });
+    }
+
+    // Resolve the file path and serve it for download
+    const filePath = path.resolve(ticket.pdfPath);
+    console.log('Resolved file path:', filePath);
+    res.download(filePath);
+  } catch (error) {
+    console.error('Error downloading ticket:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};

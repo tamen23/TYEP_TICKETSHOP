@@ -15,6 +15,7 @@ import Contact from './view/Contact';
 import ErrorPage from './view/Error';
 import Footer from './view/Footer';
 import MaintenancePage from "./view/maintenancePage";
+import UserDashboard from './components/Dashboard/UserDashboard';
 import AdminDashboard from './components/Dashboard/AdminDashboard';
 import OrganisatorDashboard from './components/Dashboard/OrganisatorDashboard';
 import OrderPage from './components/Order/OrderPage';
@@ -79,6 +80,11 @@ function MainContent() {
                  <Route path="/organisator-dashboard/*" element={
                     <PrivateRoute requiredRoles={['organisateur']}>
                         <OrganisatorDashboard />
+                    </PrivateRoute>
+                } />
+                <Route path="/user-dashboard" element={
+                    <PrivateRoute>
+                        <UserDashboard />
                     </PrivateRoute>
                 } />
             </Routes>
