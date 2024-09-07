@@ -10,11 +10,11 @@ import Login from '../Auth/Login';
 import Register from '../Auth/Register';
 import OrganisateurSignUp from '../Organisateur/OrganisateurSignUp';
 import './header.scss';
-// import Humberger from './humberger';
+import Humberger from './humberger';
 
 const Header = ({ onShowApp, onShowOrganisateur }) => {
     const [showAuth, setShowAuth] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);  // State to handle menu open/close
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { user, logout } = useContext(AuthContext);
     const [authMode, setAuthMode] = useState('login');
     const location = useLocation();
@@ -44,8 +44,9 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
     }, [navigate]);
 
     const isOrganisateur = user && user.role === 'organisateur';
+    const isUser = user && user.role === 'utilisateur';
+    const isAdmin = user && user.role === 'admin';
 
-    // Determine the CSS class for the header based on the current path
     const headerClass = location.pathname === '/events' ? 'header events-header' : 'header';
 
     return (
@@ -69,14 +70,27 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                                         <li><Link to="/organisator-dashboard">DASHBOARD</Link></li>
                                         <li><Link to="/events">MY EVENTS</Link></li>
                                         <li><Link to="/contact">CONTACT</Link></li>
-                                        <li><Link to="/create-event">CREATE-EVENT</Link></li>
+                                        <li><Link to="/create-event">CREATE EVENT</Link></li>
                                         <li><Link to="ManagerFag">FAQ</Link></li>
-
+                                    </>
+                                ) : isUser ? (
+                                    <>
+                                        <li><Link to="/" onClick={onShowApp}>HOME</Link></li>
+                                        <li><Link to="/user-dashboard">DASHBOARD</Link></li>
+                                        <li><Link to="/events">EVENEMENTS</Link></li>
+                                        <li><Link to="#" onClick={handleProductionClick}>CONCERTS</Link></li>
+                                        <li><Link to="/contact">CONTACT</Link></li>
+                                        <li><Link to="/organisation">BECOME A PARTNER</Link></li>
+                                        <li><Link to="publicFag">FAQ</Link></li>
+                                    </>
+                                ) : isAdmin ? (
+                                    <>
+                                        <li><Link to="/" onClick={onShowApp}>HOME</Link></li>
+                                        <li><Link to="/admin-dashboard">ADMIN DASHBOARD</Link></li>
                                     </>
                                 ) : (
                                     <>
                                         <li><Link to="/" onClick={onShowApp}>HOME</Link></li>
-                                        <li><Link to="/user-dashboard">DASHBOARD</Link></li>
                                         <li><Link to="/events">EVENEMENTS</Link></li>
                                         <li><Link to="#" onClick={handleProductionClick}>CONCERTS</Link></li>
                                         <li><Link to="/contact">CONTACT</Link></li>
@@ -88,7 +102,7 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                         </nav>
                     </div>
                 </div>
-                {/* Utilisation de l'icône FaBars pour le menu hamburger */}
+                {/* Use FaBars icon for the hamburger menu */}
                 <div className="hamburgerMenu" onClick={toggleMenu}>
                     <FaBars size={30} color="#fff" />
                 </div>
@@ -141,8 +155,52 @@ const Header = ({ onShowApp, onShowOrganisateur }) => {
                 </div>
             </div>
 
-            {/* Menu Mobile */}
-            {/* <Humberger isOpen={isMenuOpen} toggleMenu={toggleMenu} onShowApp={onShowApp} handleProductionClick={handleProductionClick} /> */}
+            <Humberger
+                isOpen={isMenuOpen}
+                toggleMenu={toggleMenu}
+                onShowApp={onShowApp}
+                handleProductionClick={handleProductionClick}
+            >
+                <div className="header__menu">
+                    <nav>
+                        <ul>
+                            {isOrganisateur ? (
+                                <>
+                                    <li><Link to="/organisator-dashboard">DASHBOARD</Link></li>
+                                    <li><Link to="/events">MY EVENTS</Link></li>
+                                    <li><Link to="/contact">CONTACT</Link></li>
+                                    <li><Link to="/create-event">CREATE EVENT</Link></li>
+                                    <li><Link to="ManagerFag">FAQ</Link></li>
+                                </>
+                            ) : isUser ? (
+                                <>
+                                    <li><Link to="/" onClick={onShowApp}>HOME</Link></li>
+                                    <li><Link to="/user-dashboard">DASHBOARD</Link></li>
+                                    <li><Link to="/events">EVENEMENTS</Link></li>
+                                    <li><Link to="#" onClick={handleProductionClick}>CONCERTS</Link></li>
+                                    <li><Link to="/contact">CONTACT</Link></li>
+                                    <li><Link to="/organisation">BECOME A PARTNER</Link></li>
+                                    <li><Link to="publicFag">FAQ</Link></li>
+                                </>
+                            ) : isAdmin ? (
+                                <>
+                                    <li><Link to="/" onClick={onShowApp}>HOME</Link></li>
+                                    <li><Link to="/admin-dashboard">ADMIN DASHBOARD</Link></li>
+                                </>
+                            ) : (
+                                <>
+                                    <li><Link to="/" onClick={onShowApp}>HOME</Link></li>
+                                    <li><Link to="/events">EVENEMENTS</Link></li>
+                                    <li><Link to="#" onClick={handleProductionClick}>CONCERTS</Link></li>
+                                    <li><Link to="/contact">CONTACT</Link></li>
+                                    <li><Link to="/organisation">BECOME A PARTNER</Link></li>
+                                    <li><Link to="publicFag">FAQ</Link></li>
+                                </>
+                            )}
+                        </ul>
+                    </nav>
+                </div>
+            </Humberger>
         </div>
     );
 };

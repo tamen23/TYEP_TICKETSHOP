@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { TextField, Button, Grid, Container, Typography, IconButton, InputAdornment } from '@mui/material';
 import { MdHideSource } from "react-icons/md";
 import { BiShowAlt } from "react-icons/bi";
 import axios from 'axios';
 import Login from '../Auth/Login';
-import Footer from '../Footer/Footer';
 
-const OrganisateurSignUp = ({ onClose }) => {
+const OrganisateurSignUp = ({ switchToLogin }) => {
     const [form, setForm] = useState({
         nom: '',
         prenom: '',
@@ -230,17 +228,22 @@ const OrganisateurSignUp = ({ onClose }) => {
                                     </Button>
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Typography variant="body2" align="center" className="alreadyRegistered">
+                                    <Typography
+                                        variant="body2"
+                                        align="center"
+                                        className="alreadyRegistered"
+                                        onClick={switchToLogin}
+                                        style={{ cursor: 'pointer' }}
+                                    >
                                         Déjà inscrit
                                     </Typography>
                                 </Grid>
                             </Grid>
                         </form>
                     </Container>
-                    <Footer />
                 </>
             ) : (
-                <Login close={onClose} />
+                <Login />
             )}
         </>
     );

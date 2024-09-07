@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
-  TextField, Button, Grid, Typography, MenuItem, Stepper, InputLabel, Step, StepLabel, Select, FormControl, FormControlLabel, FormGroup, Checkbox, FormHelperText, FormLabel, Dialog, DialogTitle, DialogContent
+  TextField, Button, Grid, Typography, MenuItem, Box, Stepper, InputLabel, Step, StepLabel, Select, FormControl, FormControlLabel, FormGroup, Checkbox, FormHelperText, FormLabel, Dialog, DialogTitle, DialogContent
 } from '@mui/material';
 import { styled } from '@mui/system';
 import api from '../api';
 import AuthContext from '../context/AuthContext';
-import Footer from './Footer/Footer';
 import { useNotifications } from '../context/NotificationsContext';
 
 
@@ -782,6 +781,7 @@ const CreateEvent = () => {
                   <Button
                     variant="contained"
                     onClick={handleNext}
+                    
                   >
                     Next
                   </Button>
@@ -914,7 +914,53 @@ const CreateEvent = () => {
         )}
       
       </Container>
-      <Footer/>
+      <div className='createEvent'>
+      <div class="createEvent">
+  <div class="container">
+    <div class="grid">
+      <div class="grid-item">
+        <div class="grid-inner">
+          <div class="grid-link">
+            <a href="/">HOME</a>
+          </div>
+          <div class="grid-link">
+            <a href="/events">EVENTS</a>
+          </div>
+          <div class="grid-link">
+            <a href="/concerts">CONCERTS</a>
+          </div>
+          <div class="grid-link">
+            <a href="/contact">CONTACT</a>
+          </div>
+          <div class="grid-link">
+            <a href="/organisation">BECOME A PARTNER</a>
+          </div>
+          <div class="grid-link">
+            <a href="/a-propos">ABOUT</a>
+          </div>
+        </div>
+      </div>
+      <div class="grid-item">
+        <p class="body2">
+          Email: <a href="mailto:ticketshop@gmail.com">ticketshop@gmail.com</a>
+        </p>
+        <p class="body2">
+          Tel: <a href="tel:060004545">060004545</a>
+        </p>
+        <p class="body2">
+          <a href="https://www.facebook.com" target="_blank" rel="noopener">Facebook</a> |
+          <a href="https://www.twitter.com" target="_blank" rel="noopener">Twitter</a> |
+          <a href="https://www.instagram.com" target="_blank" rel="noopener">Instagram</a>
+        </p>
+      </div>
+    </div>
+    <div class="box">
+      <p class="body2">&copy; 2024</p>
+    </div>
+  </div>
+</div>
+
+      </div>
 
     </>
   );

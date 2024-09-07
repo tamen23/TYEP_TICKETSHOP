@@ -7,7 +7,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Login from '../Auth/Login'; // Import the Login component
 import ModalAuth from '../Shared/ModalAuth'; // Import the modal component
-import Footer from '../../components/Footer/Footer'
+import Footer from '../../components/Footer/Footer';
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -122,22 +122,31 @@ const EventDetails = () => {
 
   return (
    <>
-    <Box sx={{ padding: '24px', backgroundColor: '#f5f5f5', fontFamily: 'Poppins, sans-serif', position: 'relative', top: '70px', height: '100vh', overflow: 'hidden', '::before': { content: '""', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 } }}>
+    <Box sx={{ padding: '24px', backgroundColor: '#f5f5f5', fontFamily: 'Poppins, sans-serif', position: 'relative', top: '70px', height: '150vh', overflow: 'hidden', '::before': { content: '""', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1 } }}>
       {/* Content goes here */}
       <Grid container spacing={3} justifyContent="center" sx={{ position: 'relative', zIndex: 2 }}>
         {/* Event Info Card */}
         <Grid item xs={12} sm={6} md={4}>
           <Card sx={{ padding: '16px', backgroundColor: '#fff', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
-            <Typography variant="body1" sx={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '14px', lineHeight: '21px' }}>
+            <Typography variant="body1" sx={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '25px', lineHeight: '21px' }}>
               {event.name}
+            </Typography>
+            <Typography variant="body1" sx={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '14px', lineHeight: '21px' }}>
+              {event.description}
             </Typography>
             <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', marginBottom: '4px', fontSize: '14px', lineHeight: '21px' }}>
               <AccessTimeIcon sx={{ marginRight: '8px' }} />
-              {new Date(event.date).toLocaleDateString()} - {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} to {new Date(event.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {new Date(event.date).toLocaleDateString()} - {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} 
             </Typography>
             <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', fontSize: '14px', lineHeight: '21px' }}>
               <LocationOnIcon sx={{ marginRight: '8px' }} />
               {event.venue}, {event.street_address}, {event.city}, {event.country}
+            </Typography>
+            <Typography variant="body1" sx={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '14px', lineHeight: '21px' }}>
+            Category and sub category : {event.category} : {event.sub_category} 
+            </Typography>
+            <Typography variant="body1" sx={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '14px', lineHeight: '21px' }}>
+              Audience : {event.target_audience}
             </Typography>
           </Card>
         </Grid>
@@ -145,7 +154,7 @@ const EventDetails = () => {
         {/* Pricing Card */}
         <Grid item xs={12} sm={6} md={4}>
           <Card sx={{ padding: '16px', backgroundColor: '#fff', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
-            <Typography variant="body1" sx={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '14px', lineHeight: '21px' }}>
+            <Typography variant="body1" sx={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '20px', lineHeight: '21px' }}>
               Pricing
             </Typography>
             <ul style={{ padding: 0, margin: 0, listStyleType: 'none', fontSize: '14px', lineHeight: '21px' }}>

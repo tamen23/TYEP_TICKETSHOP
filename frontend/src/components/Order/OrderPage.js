@@ -184,7 +184,7 @@ const OrderPage = () => {
     };
 
     return (
-        <Box sx={{ padding: 3 }}>
+        <Box sx={{ padding: 3 }} position='relative' top='90px'>
             <Stepper activeStep={activeStep} alternativeLabel>
                 {['Delivery', 'Payment', 'Order Review'].map((label) => (
                     <Step key={label}>

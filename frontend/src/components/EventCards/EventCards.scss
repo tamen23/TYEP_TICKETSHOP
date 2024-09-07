@@ -1,51 +1,88 @@
-.event-cards {
+.event-cards-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  padding: 20px;
-  justify-content: center;
+  gap: 10px;
+  justify-content: space-between;
+  
 }
 
+
+
 .event-card {
+  background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 22%;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  width: 300px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  text-align: center;
+  transition: transform 0.3s ease;
+  min-height: 380px;
+}
 
-  &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+.event-card:hover {
+  transform: scale(1.05);
+}
+
+.event-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.event-info {
+  padding: 15px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.event-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  height: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-info p {
+  font-size: 14px;
+  color: #666;
+  margin: 5px 0;
+}
+
+.event-price {
+  font-weight: bold;
+  color: #000;
+}
+
+.view-event-link {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #03a9f4;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.view-event-link:hover {
+  background-color: #0288d1;
+}
+
+@media (max-width: 768px) {
+  .event-card {
+    width: 48%;
   }
+}
 
-  img {
+@media (max-width: 480px) {
+  .event-card {
     width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-
-  h3 {
-    margin: 16px;
-  }
-
-  p {
-    margin: 0 16px 16px;
-  }
-
-  a {
-    display: block;
-    margin: 16px;
-    padding: 8px 16px;
-    background-color: #007bff;
-    color: #fff;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-
-    &:hover {
-      background-color: #0056b3;
-    }
   }
 }

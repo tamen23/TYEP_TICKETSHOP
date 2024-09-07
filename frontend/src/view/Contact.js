@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer/Footer';
 const Root = styled('div')(({ theme }) => ({
   display: 'flex',
-  height: '100vh',
+  height: '120vh',
   alignItems: 'center',
   justifyContent: 'center',
   background: `url(${require('./img.png')}) no-repeat center center fixed`,

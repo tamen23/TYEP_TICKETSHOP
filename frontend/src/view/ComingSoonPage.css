@@ -2,19 +2,19 @@
     text-align: center;
     background: url('/src/view/img_2.png') no-repeat center center/cover;
     width: 100%;
-    height: 80vh;
+    height: 90vh;
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-       color: #FFFFFF;
+    color: #FFFFFF;
 }
 
 .coming-soon h1 {
     font-size: 4rem;
     letter-spacing: 2px;
-       color: #FFFFFF;
+    color: #FFFFFF;
 }
 
 .countdown {
@@ -42,4 +42,22 @@
     font-size: 1.2rem;
     letter-spacing: 1px;
     color: aliceblue;
+}
+
+/* New styles for the "Go back to Home" link */
+.go-back-home {
+    margin-top: 40px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+.go-back-home a {
+    color: #FFFFFF;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.go-back-home a:hover {
+    color: #FFD700; /* Optional: Change color on hover */
 }

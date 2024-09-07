@@ -1,4 +1,4 @@
-import sgMail from '../config/sendgrid.js';
+import nodemailer from 'nodemailer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import capturmail from '../models/capturmail.js';
@@ -10,6 +10,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const TICKET_STORAGE_DIR = path.join(__dirname, '../tickets'); // Directory where PDFs are stored
+
+// Nodemailer transporter configuration
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // true for 465, false for other ports
+  auth: {
+    user: 'lalberick@quantlake.com', // Your Gmail address
+    pass: 'dckxxnactnmvaqct', // Your Gmail app password
+  },
+});
 
 // Controller function to handle email storage and sending
 export const storeEmail = async (req, res) => {
@@ -28,8 +39,8 @@ export const storeEmail = async (req, res) => {
     }
 
     const msg = {
+      from: 'lalberick@quantlake.com',
       to: email,
-      from: process.env.EMAIL_USER,
       subject: 'Welcome to Our Event Platform',
       text: 'Thank you for registering your email. We will keep you updated with the latest events!',
       html: `
@@ -47,9 +58,9 @@ export const storeEmail = async (req, res) => {
     };
 
     console.log('Sending email to:', email);
-    await sgMail.send(msg);
+    await transporter.sendMail(msg);
     console.log('Email sent successfully');
-    
+
     res.status(200).json({ message: 'Email stored and welcome email sent' });
   } catch (error) {
     console.error('Error storing email or sending message:', error);
@@ -90,14 +101,15 @@ export const sendTicketEmail = async (orderId) => {
       try {
         // Check if the file exists
         await fs.access(pdfFilePath);
-      
+
         // Read the file
         const fileContent = await fs.readFile(pdfFilePath);
-      
+
         attachments.push({
           filename: path.basename(pdfFilePath),
           content: fileContent.toString('base64'), // Convert to base64
-          type: 'application/pdf',
+          encoding: 'base64', // Specify the encoding
+          contentType: 'application/pdf',
           disposition: 'attachment',
         });
         console.log(`Attached PDF: ${pdfFilePath}`);
@@ -112,7 +124,7 @@ export const sendTicketEmail = async (orderId) => {
     }
 
     console.log('Preparing email with the generated tickets...');
-    
+
     // Ensure we have a valid email address to send to
     const recipientEmail = order.user ? order.user.email : order.email;
     if (!recipientEmail) {
@@ -120,8 +132,8 @@ export const sendTicketEmail = async (orderId) => {
     }
 
     const msg = {
+      from: 'lalberick@quantlake.com',
       to: recipientEmail,
-      from: process.env.EMAIL_USER,
       subject: `Your Tickets for ${event.name}`,
       text: 'Please find attached your tickets.',
       attachments: attachments,
@@ -130,7 +142,7 @@ export const sendTicketEmail = async (orderId) => {
     console.log('Email message prepared:', JSON.stringify(msg));
 
     console.log('Attempting to send email...');
-    await sgMail.send(msg);
+    await transporter.sendMail(msg);
     console.log('Tickets sent successfully to:', recipientEmail);
 
     return { success: true, message: 'Email sent successfully' };

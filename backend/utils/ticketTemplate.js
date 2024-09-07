@@ -22,7 +22,7 @@ export const generateTicketPDF = async (order, ticket, event, userDetails, pdfFi
       doc
         .fontSize(25)
         .text(event.name, { align: 'center' }) // Align event name at the center
-        .moveDown(1); // Add some space after the event name
+        .moveDown(3); // Add some space after the event name
 
       // Ticket details
       doc

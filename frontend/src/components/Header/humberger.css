@@ -1,111 +1,79 @@
-.humberHeader {
-    background-color: #ffffff; /* Fond blanc */
-    padding: 20px;
-    position: fixed;
-    top: 0;
+.humberger-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 250px;
+  height: 100%;
+  background-color: #333;
+  transition: right 0.3s ease;
+  z-index: 1000;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.humberger-menu.open {
+  right: 0;
+}
+
+.humberger-menu__header {
+  width: 100%;
+  padding: 15px;
+  display: flex;
+  justify-content: flex-end;
+  background-color: #444;
+}
+
+.humberger-menu__nav {
+  margin-top: 30px;
+  width: 100%;
+}
+
+.humberger-menu__nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.humberger-menu__nav ul li {
+  padding: 15px 0;
+  border-bottom: 1px solid #555;
+}
+
+.humberger-menu__nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  width: 100%;
+  display: block;
+}
+
+.humberger-menu__nav ul li a:hover {
+  background-color: #555;
+}
+
+
+@media (max-width: 600px){
+  .css-qhgsnb {
+    background-color: #333;
+    color: #ccc;
+    height: 110px;
+    text-align: center;
+    position: absolute;
+    bottom: -7700px;
+    /* top: 940px; */
     left: 0;
     right: 0;
-    bottom: 0;
-    width: 100%;
-    z-index: 9999;
-  
-    .header__wrapper {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-  
-    .mobileMenu {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      background-color: #ffffff; /* Fond blanc */
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-  
-      nav ul {
-        list-style: none;
-        padding: 0;
-        text-align: center;
-  
-        li {
-          margin: 20px 0;
-  
-          a {
-            color: #333; /* Couleur du texte */
-            font-size: 24px;
-            text-decoration: none;
-            text-transform: uppercase;
-  
-            &:hover {
-              color: #007bff; /* Couleur du texte au survol */
-            }
-          }
-        }
-      }
-  
-      .mobileMenu__logout,
-      .mobileMenu__login {
-        position: absolute;
-        bottom: 30px;
-        text-align: center;
-  
-        div {
-          cursor: pointer;
-          color: #333;
-          font-size: 18px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-  
-          svg {
-            margin-right: 8px;
-          }
-  
-          &:hover {
-            color: #007bff; /* Couleur au survol */
-          }
-        }
-      }
-  
-      .mobileMenu__login {
-        bottom: 80px; /* Espacement supplémentaire pour le login */
-      }
-    }
-  }
-  
-  /* Ajout de styles pour l'icône de fermeture */
-  .humberHeader .mobileMenu__close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    cursor: pointer;
-    color: #333;
-  
-    &:hover {
-      color: #007bff; /* Couleur de l'icône au survol */
-    }
-  }
-  
-  /* Media Queries pour s'assurer que le style est adapté aux petits écrans */
-  @media (max-width: 768px) {
-    .humberHeader {
-      padding: 15px;
-  
-      .mobileMenu {
-        nav ul li a {
-          font-size: 20px;
-        }
-  
-        .mobileMenu__logout,
-        .mobileMenu__login {
-          font-size: 16px;
-        }
-      }
-    }
-  }
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+}

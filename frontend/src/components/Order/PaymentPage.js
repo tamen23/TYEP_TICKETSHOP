@@ -12,6 +12,7 @@ import {
     Checkbox
 } from '@mui/material';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate
 import api from '../../api';
 import { useNotifications } from '../../context/NotificationsContext';
 
@@ -22,6 +23,7 @@ const PaymentPage = ({ open, handleClose, orderId, totalAmount, userDetails = {}
     const [loading, setLoading] = useState(false);  // State to manage loading status
     const [saveCard, setSaveCard] = useState(false);  // State to manage save card option
     const [showEmailModal, setShowEmailModal] = useState(false); // State for controlling the email modal
+    const navigate = useNavigate();  // Initialize useNavigate for redirection
 
     // Mapping of country names to their ISO 3166-1 alpha-2 codes
     const countryCodes = {
@@ -101,6 +103,7 @@ const PaymentPage = ({ open, handleClose, orderId, totalAmount, userDetails = {}
             showNotification('Ticket sent to your email', 'success');
             setShowEmailModal(false);
             handleClose();
+            navigate('/user-dashboard');
         } catch (error) {
             console.error('Error sending email:', error);
             showNotification('Error sending email', 'error');

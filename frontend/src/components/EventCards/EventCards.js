@@ -3,12 +3,11 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardMedia, CardActions, Typography, Grid, Box, Paper, MenuList, MenuItem, ListItemText } from '@mui/material';
 import Footer from '../../components/Footer/Footer';
 import api from '../../api';
-import '../EventCards/EventCards.scss';
 
 const EventCard = () => {
   const [events, setEvents] = useState([]);
   const [activeTab, setActiveTab] = useState('upcoming');
-  const [selectedMonth, setSelectedMonth] = useState('all'); // Initially show all data
+  const [selectedMonth, setSelectedMonth] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
@@ -24,7 +23,11 @@ const EventCard = () => {
     fetchEvents();
   }, []);
 
-  // Function to get the name of a month relative to the current month
+  const getSmallestPrice = (seatCategories) => {
+    const prices = seatCategories.map(category => category.price).filter(price => price > 0);
+    return prices.length ? Math.min(...prices) : 'Free';
+  };
+
   const getMonthName = (offset) => {
     const date = new Date();
     date.setMonth(date.getMonth() + offset);
@@ -37,9 +40,7 @@ const EventCard = () => {
   };
 
   const filterEventsByMonth = (event) => {
-    if (selectedMonth === 'all') {
-      return true; // If "all" is selected, return all events
-    }
+    if (selectedMonth === 'all') return true;
 
     const eventDate = new Date(event.date);
     const today = new Date();
@@ -104,6 +105,9 @@ const EventCard = () => {
                 <Typography variant="body2" color="text.secondary" sx={{ marginBottom: '8px' }}>
                   {truncateText(event.description, 13)}
                 </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ marginBottom: '8px' }}>
+                  {getSmallestPrice(event.seat_categories)} €
+                </Typography>
               </CardContent>
               <CardActions sx={{ justifyContent: 'space-between', padding: '16px' }}>
                 <Typography variant="body2" sx={{ color: '#888', fontWeight: 'bold' }}>
@@ -142,19 +146,19 @@ const EventCard = () => {
                 <Paper sx={{ width: 320, maxWidth: '100%' }}>
                   <MenuList>
                     <MenuItem onClick={() => setSelectedMonth('all')}>
-                      <ListItemText primary="All" /> {/* All events */}
+                      <ListItemText primary="All" />
                     </MenuItem>
                     <MenuItem onClick={() => setSelectedMonth('current')}>
-                      <ListItemText primary={getMonthName(0)} /> {/* Current month */}
+                      <ListItemText primary={getMonthName(0)} />
                     </MenuItem>
                     <MenuItem onClick={() => setSelectedMonth('last')}>
-                      <ListItemText primary={getMonthName(-1)} /> {/* Last month */}
+                      <ListItemText primary={getMonthName(-1)} />
                     </MenuItem>
                     <MenuItem onClick={() => setSelectedMonth('next')}>
-                      <ListItemText primary={getMonthName(1)} /> {/* Next month */}
+                      <ListItemText primary={getMonthName(1)} />
                     </MenuItem>
                     <MenuItem onClick={() => setSelectedMonth('afterNext')}>
-                      <ListItemText primary={getMonthName(2)} /> {/* Month after next */}
+                      <ListItemText primary={getMonthName(2)} />
                     </MenuItem>
                   </MenuList>
                 </Paper>
@@ -164,7 +168,6 @@ const EventCard = () => {
 
           <div className="events-container">
             <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-              {/* Navigation bar */}
               <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', alignItems: 'center' }}>
                 <div
                   onClick={() => setActiveTab('upcoming')}
@@ -199,100 +202,96 @@ const EventCard = () => {
       <Footer />
 
       <style jsx>{`
-  .content-container {
-    display: flex;
-    gap: 20px;
-    padding: 20px;
-    height: 100vh;
-    overflow-y: auto; /* Enable vertical scrolling */
-  }
+        .content-container {
+          display: flex;
+          gap: 20px;
+          padding: 20px;
+          height: calc(100vh - 60px); /* Ensure content fits within viewport height minus header */
+          overflow: hidden;
+        }
 
-  .filter-section {
-    flex: 1;
-    max-width: 300px;
-    overflow-y: auto; /* Ensure the filter section is scrollable if necessary */
-  }
+        .filter-section {
+          flex: 1;
+          max-width: 300px;
+          overflow-y: auto;
+          height: 100%;
+        }
 
-  .filter-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 8px;
-  }
+        .filter-card {
+          background-color: #fff;
+          border: 1px solid #ddd;
+          padding: 15px;
+          border-radius: 8px;
+        }
 
-  .filter-title {
-    font-size: 16px; /* Reduce text size */
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
+        .filter-title {
+          font-size: 16px;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
 
-  .events-container {
-    flex: 5;
-    background-color: #F9F9F9;
-    overflow-y: auto; /* Enable vertical scrolling within the event container */
-    max-height: 100%; /* Ensure it fits within the available height */
-    padding-bottom: 20px; /* Add padding at the bottom */
-  }
+        .events-container {
+          flex: 5;
+          background-color: #f9f9f9;
+          max-height: 100%;
+          padding-bottom: 20px;
+        }
 
-  .page-heading-shows-events {
-    background-image: url('https://les-seminaires.eu/wp-content/uploads/2019/04/organisation-evenement-grand-public.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    padding: 80px 0;
-    text-align: center;
-  }
+        .page-heading-shows-events {
+          background-image: url('https://les-seminaires.eu/wp-content/uploads/2019/04/organisation-evenement-grand-public.jpg');
+          background-size: cover;
+          background-repeat: no-repeat;
+          padding: 80px 0;
+          text-align: center;
+        }
 
-  .page-heading-shows-events h2 {
-    font-size: 50px;
-    color: #fff;
-    font-weight: 800;
-    margin-bottom: 15px;
-  }
+        .page-heading-shows-events h2 {
+          font-size: 50px;
+          color: #fff;
+          font-weight: 800;
+          margin-bottom: 15px;
+        }
 
-  .page-heading-shows-events span {
-    font-size: 20px;
-    color: #fff;
-    font-weight: 300;
-    padding: 0 250px;
-    display: inline-block;
-  }
+        .page-heading-shows-events span {
+          font-size: 20px;
+          color: #fff;
+          font-weight: 300;
+          padding: 0 250px;
+          display: inline-block;
+        }
 
-  /* Responsive design for phones */
-  @media (max-width: 768px) {
-    .content-container {
-      flex-direction: column;
-      padding: 10px;
-      height: 100vh; /* Keep the height at 100vh */
-      overflow-y: auto; /* Ensure the entire container is scrollable */
-    }
+        @media (max-width: 768px) {
+          .content-container {
+            flex-direction: column;
+            padding: 10px;
+            height: calc(100vh - 60px);
+          }
 
-    .filter-section {
-      max-width: 100%;
-      margin-bottom: 20px;
-    }
+          .filter-section {
+            max-width: 100%;
+            margin-bottom: 20px;
+          }
 
-    .events-container {
-      flex: none;
-      max-width: 100%;
-      overflow-y: auto; /* Enable vertical scrolling within the event container */
-      padding: 10px;
-    }
+          .events-container {
+            flex: none;
+            max-width: 100%;
+            padding: 10px;
+          }
 
-    .page-heading-shows-events h2 {
-      font-size: 36px;
-    }
+          .page-heading-shows-events h2 {
+            font-size: 36px;
+          }
 
-    .page-heading-shows-events span {
-      font-size: 16px;
-      padding: 0 20px;
-    }
+          .page-heading-shows-events span {
+            font-size: 16px;
+            padding: 0 20px;
+          }
 
-    .page-heading-shows-events {
-      padding: 40px 0;
-    }
-  }
-`}</style>
-
+          .page-heading-shows-events {
+            padding: 40px 0;
+          }
+        }
+      `}</style>
     </>
   );
 };

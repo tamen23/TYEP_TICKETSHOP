@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardMedia, CardActions, Typography, Grid, Box, Paper, MenuList, MenuItem, ListItemText } from '@mui/material';
 import Footer from '../../components/Footer/Footer';
 import api from '../../api';
+import '../EventCards/EventCards.scss';
 
-const EventShowCard = () => {
+const EventCard = () => {
   const [events, setEvents] = useState([]);
   const [activeTab, setActiveTab] = useState('upcoming');
   const [selectedMonth, setSelectedMonth] = useState('all'); // Initially show all data
@@ -22,6 +23,12 @@ const EventShowCard = () => {
 
     fetchEvents();
   }, []);
+
+  const getSmallestPrice = (seatCategories) => {
+    const prices = seatCategories.map(category => category.price).filter(price => price > 0);
+    return prices.length ? Math.min(...prices) : 'Free';
+  };
+
 
   // Function to get the name of a month relative to the current month
   const getMonthName = (offset) => {
@@ -77,7 +84,7 @@ const EventShowCard = () => {
     });
 
     return (
-      <Grid container spacing={2}>
+      <Grid container spacing={2} >
         {filteredEvents.map((event) => (
           <Grid item xs={12} sm={6} md={4} lg={3} xl={2.4} key={event._id}>
             <Card
@@ -103,6 +110,9 @@ const EventShowCard = () => {
                 <Typography variant="body2" color="text.secondary" sx={{ marginBottom: '8px' }}>
                   {truncateText(event.description, 13)}
                 </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ marginBottom: '8px' }}>
+                {getSmallestPrice(event.seat_categories)} €
+                </Typography>
               </CardContent>
               <CardActions sx={{ justifyContent: 'space-between', padding: '16px' }}>
                 <Typography variant="body2" sx={{ color: '#888', fontWeight: 'bold' }}>
@@ -122,7 +132,17 @@ const EventShowCard = () => {
   return (
     <>
       <div>
-      
+        <div className="page-heading-shows-events">
+          <div className="container">
+            <div className="row">
+              <div className="col-lg-12">
+                <h2>Our Shows & Events</h2>
+                <span>Check out upcoming and past shows & events.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="content-container">
           <div className="filter-section">
             <div className="filter-card">
@@ -185,64 +205,100 @@ const EventShowCard = () => {
           </div>
         </div>
       </div>
-
+    
 
       <style jsx>{`
-        .content-container {
-          display: flex;
-          gap: 20px;
-          padding: 20px;
-          height:100vh
-        }
+  .content-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    height: 100vh;
+     /* Enable vertical scrolling */
+    position:relative;
+    top:-120px
+  }
 
-        .filter-section {
-          flex: 1;
-          max-width: 300px;
-        }
+  .filter-section {
+    flex: 1;
+    max-width: 300px;
+   /* Ensure the filter section is scrollable if necessary */
+  }
 
-        .filter-card {
-          background-color: #fff;
-          border: 1px solid #ddd;
-          padding: 15px;
-          border-radius: 8px;
-        }
+  .filter-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+  }
 
-        .filter-title {
-          font-size: 16px; /* Reduce text size */
-          font-weight: bold;
-          margin-bottom: 10px;
-        }
+  .filter-title {
+    font-size: 16px; /* Reduce text size */
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
 
-        .events-container {
-          flex: 5;
-          background-color: #F9F9F9;
-        }
+  .events-container {
+    flex: 5;
+    background-color: #F9F9F9;
+    overflow: hidden; /* Enable vertical scrolling within the event container */
+    max-height: 100%; /* Ensure it fits within the available height */
+    padding-bottom: 20px; /* Add padding at the bottom */
+  }
 
-        .page-heading-shows-events {
-          background-image: url('https://les-seminaires.eu/wp-content/uploads/2019/04/organisation-evenement-grand-public.jpg');
-          background-size: cover;
-          background-repeat: no-repeat;
-          padding: 80px 0;
-          text-align: center;
-        }
 
-        .page-heading-shows-events h2 {
-          font-size: 50px;
-          color: #fff;
-          font-weight: 800;
-          margin-bottom: 15px;
-        }
+  .page-heading-shows-events h2 {
+    font-size: 50px;
+    color: #fff;
+    font-weight: 800;
+    margin-bottom: 15px;
+  }
 
-        .page-heading-shows-events span {
-          font-size: 20px;
-          color: #fff;
-          font-weight: 300;
-          padding: 0 250px;
-          display: inline-block;
-        }
-      `}</style>
+  .page-heading-shows-events span {
+    font-size: 20px;
+    color: #fff;
+    font-weight: 300;
+    padding: 0 250px;
+    display: inline-block;
+  }
+
+  /* Responsive design for phones */
+  @media (max-width: 768px) {
+    .content-container {
+      flex-direction: column;
+      padding: 10px;
+      height: 100vh; /* Keep the height at 100vh */
+      overflow-y: auto; /* Ensure the entire container is scrollable */
+    }
+
+    .filter-section {
+      max-width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .events-container {
+      flex: none;
+      max-width: 100%;
+       /* Enable vertical scrolling within the event container */
+      padding: 10px;
+    }
+
+    .page-heading-shows-events h2 {
+      font-size: 36px;
+    }
+
+    .page-heading-shows-events span {
+      font-size: 16px;
+      padding: 0 20px;
+    }
+
+    .page-heading-shows-events {
+      padding: 40px 0;
+    }
+  }
+`}</style>
+
     </>
   );
 };
 
-export default EventShowCard;
+export default EventCard;
